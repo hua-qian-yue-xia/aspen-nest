@@ -1,0 +1,9 @@
+{
+  "name": "@aspen-app/admin",
+  "version": "1.0.0",
+  "description": "aspen管理系统",
+  "main": "index.js",
+  "scripts": {
+
+  }
+}

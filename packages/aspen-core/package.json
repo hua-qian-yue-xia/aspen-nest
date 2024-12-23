@@ -1,0 +1,7 @@
+{
+  "name": "@aspen/core",
+  "private": true,
+  "version": "1.0.0",
+  "description": "aspen框架核心模块",
+  "main": "src/index.ts"
+}
