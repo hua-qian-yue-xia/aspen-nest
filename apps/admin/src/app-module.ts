@@ -1,4 +1,8 @@
 import { Module } from "@nestjs/common"
 
-@Module({})
+import { DemoController } from "apps/admin/src/domo/demo-controller"
+
+@Module({
+	controllers: [DemoController],
+})
 export class AppModule {}

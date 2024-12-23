@@ -1,7 +1,8 @@
 import { applyDecorators } from "@nestjs/common"
 
-import { ReqMethod } from "packages/aspen-core/src/constant/decorator-constant"
+import { ReqMethod, ReqMethodMap } from "packages/aspen-core/src/constant/decorator-constant"
 import { AspenLog, LogOption } from "packages/aspen-core/src/decorator/log-decorator"
+import { AspenRateLimit, RateLimitOption } from "packages/aspen-core/src/decorator/repeat-submit-decorator"
 
 /******************** start type start ********************/
 
@@ -26,6 +27,10 @@ type CreateReqOptions = {
 	 * 日志配置信息
 	 */
 	log?: Omit<LogOption, "summary">
+	/**
+	 * 限流配置信息
+	 */
+	rateLimit?: RateLimitOption
 }
 
 export type MethodReqOptions = Omit<CreateReqOptions, "method">
@@ -33,14 +38,17 @@ export type MethodReqOptions = Omit<CreateReqOptions, "method">
 /******************** end type end ********************/
 
 function createReqDecorators(options: CreateReqOptions) {
-	const { summary, log } = options
-	const decorators = []
+	const { summary, router, method, log, rateLimit } = options
+	const decorators = [ReqMethodMap[method](router)]
 	if (log) {
 		const logOptions: LogOption = {
 			summary,
 			...log,
 		}
 		decorators.push(AspenLog(logOptions))
+	}
+	if (rateLimit) {
+		decorators.push(AspenRateLimit(rateLimit))
 	}
 	return applyDecorators(...decorators)
 }
