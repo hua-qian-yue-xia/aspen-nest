@@ -1,7 +1,7 @@
 {
   "name": "aspen-nest",
   "version": "1.0.0",
-  "description": "",
+  "description": "nest多模块快速开发系统",
   "scripts": {
     "start:admin:dev": "nest start @aspen/admin --debug --watch",
     "start:app:dev": "nest start @aspen/app --debug --watch"
