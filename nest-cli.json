@@ -1,0 +1,39 @@
+{
+  "$schema": "https://json.schemastore.org/nest-cli",
+  "collection": "@nestjs/schematics",
+  "sourceRoot": "apps/admin/src",
+  "monorepo": true,
+  "root": "apps/admin",
+  "compilerOptions": {
+    "deleteOutDir": true
+  },
+  "projects": {
+    "@aspen-app/admin": {
+      "type": "application",
+      "root": "apps/admin",
+      "entryFile": "main",
+      "sourceRoot": "apps/admin/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/admin/tsconfig.json"
+      }
+    },
+    "@aspen-app/app": {
+      "type": "application",
+      "root": "apps/app",
+      "entryFile": "main",
+      "sourceRoot": "apps/app/src",
+      "compilerOptions": {
+        "tsConfigPath": "apps/app/tsconfig.json"
+      }
+    },
+    "@aspen/core": {
+      "type": "library",
+      "root": "packages/core",
+      "entryFile": "index",
+      "sourceRoot": "packages/core",
+      "compilerOptions": {
+        "tsConfigPath": "packages/core/tsconfig.json"
+      }
+    }
+  }
+}
