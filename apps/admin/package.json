@@ -3,9 +3,6 @@
   "private": true,
   "version": "1.0.0",
   "description": "aspen管理系统",
-  "scripts": {
-    "start:dev": "nest start --watch"
-  },
   "dependencies": {
     "@aspen/core": "workspace:*"
   }

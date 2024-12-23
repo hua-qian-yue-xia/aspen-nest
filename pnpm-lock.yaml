@@ -67,7 +67,11 @@ importers:
         specifier: workspace:*
         version: link:../../packages/aspen-core
 
-  apps/app: {}
+  apps/app:
+    dependencies:
+      '@aspen/core':
+        specifier: workspace:*
+        version: link:../../packages/aspen-core
 
   packages/aspen-core:
     dependencies:
