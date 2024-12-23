@@ -3,7 +3,7 @@
   "private": true,
   "version": "1.0.0",
   "description": "aspen框架核心模块",
-  "main": "src/main.ts",
+  "main": "src/index.ts",
   "dependencies": {
     "@nestjs/platform-fastify": "^10.4.15"
   }

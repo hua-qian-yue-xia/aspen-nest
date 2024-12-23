@@ -12,8 +12,8 @@
       "apps/*": [
         "./apps/*"
       ],
-      "libs/*": [
-        "./libs/*"
+      "packages/*": [
+        "./packages/*"
       ]
     },
     "outDir": "./dist",
