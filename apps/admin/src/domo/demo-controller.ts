@@ -1,10 +1,10 @@
 import { Controller } from "@nestjs/common"
 
-import { router } from "packages/aspen-core/src/index"
+import { router } from "packages/aspen-core/src"
 
 @Controller("/demo")
 export class DemoController {
-	@router.Get({
+	@router.get({
 		summary: "查询下拉",
 		router: "/select",
 	})
@@ -12,7 +12,7 @@ export class DemoController {
 		return "查询下拉"
 	}
 
-	@router.Get({
+	@router.get({
 		summary: "查询分页",
 		router: "/page",
 	})
@@ -20,7 +20,7 @@ export class DemoController {
 		return "查询下拉"
 	}
 
-	@router.Patch({
+	@router.patch({
 		summary: "查询详情",
 		router: "/detail",
 	})
@@ -28,7 +28,7 @@ export class DemoController {
 		return "查询详情"
 	}
 
-	@router.Put({
+	@router.put({
 		summary: "更新",
 		router: "/update",
 	})
@@ -36,7 +36,7 @@ export class DemoController {
 		return "更新"
 	}
 
-	@router.Post({
+	@router.post({
 		summary: "新增",
 		router: "/create",
 	})
@@ -44,7 +44,7 @@ export class DemoController {
 		return "更新"
 	}
 
-	@router.Delete({
+	@router.delete({
 		summary: "删除",
 		router: "/del",
 	})

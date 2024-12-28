@@ -3,6 +3,7 @@ import { applyDecorators } from "@nestjs/common"
 import { ReqMethod, ReqMethodMap } from "packages/aspen-core/src/constant/decorator-constant"
 import { AspenLog, LogOption } from "packages/aspen-core/src/decorator/log-decorator"
 import { AspenRateLimit, RateLimitOption } from "packages/aspen-core/src/decorator/repeat-submit-decorator"
+import { ApiOperation } from "@nestjs/swagger"
 
 /******************** start type start ********************/
 
@@ -38,8 +39,10 @@ export type MethodReqOptions = Omit<CreateReqOptions, "method">
 /******************** end type end ********************/
 
 function createReqDecorators(options: CreateReqOptions) {
-	const { summary, router, method, log, rateLimit } = options
+	const { summary, description, router, method, log, rateLimit } = options
 	const decorators = [ReqMethodMap[method](router)]
+	const swagger = [ApiOperation({ summary: summary, description: description })]
+	decorators.push(...swagger)
 	if (log) {
 		const logOptions: LogOption = {
 			summary,

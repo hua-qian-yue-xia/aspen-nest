@@ -1,9 +1,12 @@
 import { AspenGet, AspenPost, AspenPut, AspenDelete, AspenPatch } from "packages/aspen-core/src/decorator/req-decorator"
+import { registerSwaggerDoc } from "packages/aspen-core/src/doc/swagger"
 
 export const router = {
-	Get: AspenGet,
-	Post: AspenPost,
-	Put: AspenPut,
-	Delete: AspenDelete,
-	Patch: AspenPatch,
+	get: AspenGet,
+	post: AspenPost,
+	put: AspenPut,
+	delete: AspenDelete,
+	patch: AspenPatch,
 }
+
+export const doc = { registerSwaggerDoc }
