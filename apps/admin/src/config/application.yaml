@@ -1,0 +1,7 @@
+app:
+  name: nest快速开发平台
+  description: 一个node的快速开放平台
+  version: 0.1.0
+  prefix: /
+  port: 7001
+  platformHeader: platform

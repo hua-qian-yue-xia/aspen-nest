@@ -3,9 +3,15 @@
   "collection": "@nestjs/schematics",
   "sourceRoot": "apps/admin/src",
   "monorepo": true,
-  "root": "apps/admin",
+  "root": "apps",
   "compilerOptions": {
-    "deleteOutDir": true
+    "watchAssets": true,
+    "assets": [
+      {
+        "include": "**/*.yaml",
+        "outDir": "./dist/apps/admin/src"
+      }
+    ]
   },
   "projects": {
     "@aspen-app/admin": {
@@ -23,7 +29,13 @@
       "entryFile": "main",
       "sourceRoot": "apps/app/src",
       "compilerOptions": {
-        "tsConfigPath": "apps/app/tsconfig.json"
+        "tsConfigPath": "apps/app/tsconfig.json",
+        "assets": [
+          {
+            "include": "**/*.yaml",
+            "outDir": "./dist/apps/app/src"
+          }
+        ]
       }
     },
     "@aspen/core": {

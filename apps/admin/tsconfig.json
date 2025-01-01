@@ -5,7 +5,8 @@
     "outDir": "../../dist/apps/admin"
   },
   "include": [
-    "src/**/*"
+    "src/**/*",
+    "src/config/*.yaml"
   ],
   "exclude": [
     "node_modules",
