@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common"
+import { Controller, createParamDecorator, ExecutionContext } from "@nestjs/common"
 
 import { router } from "packages/aspen-core/src"
 
@@ -8,7 +8,12 @@ export class DemoController {
 		summary: "查询下拉",
 		router: "/select",
 	})
-	list() {
+	async list() {
+		const user = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
+			console.log(ctx, data)
+			return "--"
+		})
+		console.log(user(), "11")
 		return "查询下拉"
 	}
 

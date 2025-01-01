@@ -63,17 +63,17 @@ export enum DecoratorKey {
 	/**
 	 * 日志记录
 	 */
-	RushLog = "rush_log",
+	Log = "log",
 	/**
 	 * 重复提交
 	 */
-	RepeatSubmit = "rush_repeat_submit",
+	RepeatSubmit = "repeat_submit",
 	/**
 	 * 限流
 	 */
-	RateLimit = "rush_limit",
+	RateLimit = "rate_limit",
 	/**
 	 * 免token鉴权
 	 */
-	Anonymous = "rush_anonymous",
+	NoToken = "no_token",
 }

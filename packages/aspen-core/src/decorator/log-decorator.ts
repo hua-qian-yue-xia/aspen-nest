@@ -29,7 +29,7 @@ export type LogOption = {
 
 /******************** end type end ********************/
 
-export const AspenLog = (option: LogOption) => SetMetadata(DecoratorKey.RushLog, option)
+export const AspenLog = (option: LogOption) => SetMetadata(DecoratorKey.Log, option)
 
 @Injectable()
 export class LogInterceptor implements NestInterceptor {

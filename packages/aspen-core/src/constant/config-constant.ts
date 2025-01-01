@@ -1,1 +1,1 @@
-export type ConfigFileSuffixConstant = "dev" | "dev" | ""
+export type ConfigFileSuffixConstant = "dev" | "prod" | ""

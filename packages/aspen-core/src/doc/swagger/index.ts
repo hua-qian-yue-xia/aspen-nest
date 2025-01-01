@@ -1,5 +1,6 @@
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger"
 import { NestFastifyApplication } from "@nestjs/platform-fastify"
+import { INestApplication } from "@nestjs/common"
 
 /******************** start type start ********************/
 
@@ -34,7 +35,7 @@ const defaultSwaggerOptions = (): SwaggerOptions => {
 	}
 }
 
-export const registerSwaggerDoc = (app: NestFastifyApplication, option: SwaggerOptions) => {
+export const registerSwaggerDoc = (app: INestApplication, option: SwaggerOptions) => {
 	const { title, description, version, pathPrefix } = Object.assign(defaultSwaggerOptions(), option)
 	const options = new DocumentBuilder()
 		.addBasicAuth()
