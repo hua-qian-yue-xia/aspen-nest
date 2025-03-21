@@ -1,9 +1,10 @@
 import { NestFactory } from "@nestjs/core"
 import { ConfigService } from "@nestjs/config"
 import { ValidationPipe } from "@nestjs/common"
+
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify"
 
-import { AppConfig, Application, registerSwaggerDoc } from "packages/aspen-core/src"
+import { AppConfig, Application, registerSwaggerDoc, AppCtx } from "packages/aspen-core/src"
 
 import { AppModule } from "./app-module"
 
@@ -17,6 +18,7 @@ async function bootstrap() {
 	app.useGlobalPipes(new ValidationPipe({ transform: true }))
 	// 配置swagger文档
 	registerSwaggerDoc(app, { title: "aspen-nest后台服务文档" })
+	AppCtx.getInstance().setApp(app)
 	await app.listen(appConfig.port)
 }
 

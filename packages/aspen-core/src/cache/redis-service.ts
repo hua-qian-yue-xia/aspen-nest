@@ -16,7 +16,7 @@ export const registerRedis = () => {
 			const logger = new Logger(REDIS_TAG)
 			const { host, port, password, db } = config.get<RedisConfig>("redis")
 			if (_.isEmpty(host) || _.isEmpty(port) || _.isEmpty(db)) return {}
-			logger.debug(`连接redis host:|${host}|port:|${port}|password:|${password}|db:|${db}|`)
+			logger.debug(`连接redis成功host:<${host}>port:<${port}>password:<${password}>db:<${db}>`)
 			return {
 				config: {
 					host: host,

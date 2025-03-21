@@ -1,20 +1,19 @@
-import { Controller, createParamDecorator, ExecutionContext } from "@nestjs/common"
+import { Controller, Inject } from "@nestjs/common"
 
-import { router } from "packages/aspen-core/src"
+import { router, AppCtx } from "packages/aspen-core/src"
+import { REQUEST } from "@nestjs/core"
 
 @Controller("/demo")
 export class DemoController {
+	constructor(@Inject(REQUEST) private readonly request: Request) {}
+
 	@router.get({
 		summary: "查询下拉",
 		router: "/select",
 	})
 	async list() {
-		const user = createParamDecorator((data: unknown, ctx: ExecutionContext) => {
-			console.log(ctx, data)
-			return "--"
-		})
-		console.log(user(), "11")
-		return "查询下拉"
+		const page = AppCtx.getInstance().getPage()
+		return page
 	}
 
 	@router.get({
@@ -52,6 +51,9 @@ export class DemoController {
 	@router.delete({
 		summary: "删除",
 		router: "/del",
+		log: {
+			tag: "DELETE",
+		},
 	})
 	del() {
 		return "删除"
