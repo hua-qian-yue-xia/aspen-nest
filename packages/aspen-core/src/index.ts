@@ -12,7 +12,7 @@ export { AppClsModule } from "packages/aspen-core/src/app/app-cls"
 /******************** start base start ********************/
 export { BaseDb, BaseRecordDb } from "packages/aspen-core/src/base/base-db"
 export { BasePage, BasePageVo, BasePageTool } from "packages/aspen-core/src/base/base-page"
-export { BaseAdminUser } from "packages/aspen-core/src/base/base-admin-user"
+export { BaseAdminUser } from "packages/aspen-core/src/base/base-user"
 /******************** end base end ********************/
 
 /******************** start doc start ********************/
