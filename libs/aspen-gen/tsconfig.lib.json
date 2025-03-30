@@ -1,0 +1,17 @@
+{
+  "extends": "../../tsconfig.option.json",
+  "compilerOptions": {
+    "declaration": true,
+    "experimentalDecorators": true,
+    "outDir": "../../dist/libs/aspen-gen"
+  },
+  "include": [
+    "src/**/*"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "test",
+    "**/*spec.ts"
+  ]
+}

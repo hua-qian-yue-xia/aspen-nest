@@ -1,9 +1,0 @@
-{
-  "name": "@aspen/gen",
-  "private": true,
-  "version": "1.0.0",
-  "description": "aspen代码生成模块",
-  "dependencies": {
-
-  }
-}

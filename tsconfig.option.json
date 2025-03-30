@@ -14,6 +14,24 @@
       ],
       "packages/*": [
         "./packages/*"
+      ],
+      "@aspen/aspen-core": [
+        "libs/aspen-core/src"
+      ],
+      "@aspen/aspen-core/*": [
+        "libs/aspen-core/src/*"
+      ],
+      "@aspen/aspen-gen": [
+        "libs/aspen-gen/src"
+      ],
+      "@aspen/aspen-gen/*": [
+        "libs/aspen-gen/src/*"
+      ],
+      "@aspen/aspen-workflow": [
+        "libs/aspen-workflow/src"
+      ],
+      "@aspen/aspen-workflow/*": [
+        "libs/aspen-workflow/src/*"
       ]
     },
     "outDir": "./dist",
@@ -25,6 +43,6 @@
     "noImplicitAny": false,
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false,
+    "noFallthroughCasesInSwitch": false
   }
 }

@@ -1,6 +1,6 @@
 import { Controller, Inject } from "@nestjs/common"
 
-import { router, AppCtx } from "packages/aspen-core/src"
+import { router, AppCtx } from "libs/aspen-core/src"
 import { REQUEST } from "@nestjs/core"
 
 @Controller("/demo")

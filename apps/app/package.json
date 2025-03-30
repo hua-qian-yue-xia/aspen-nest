@@ -3,6 +3,5 @@
   "version": "1.0.0",
   "description": "aspen移动端服务",
   "dependencies": {
-    "@aspen/core": "workspace:*"
   }
 }

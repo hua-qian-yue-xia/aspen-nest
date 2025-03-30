@@ -1,0 +1,6 @@
+export * from "./gen-color"
+export * from "./gen-column-entity"
+export * from "./gen-column-relation-entity"
+export * from "./gen-enum"
+export * from "./gen-table-entity"
+export * from "./gen-table-group-entity"

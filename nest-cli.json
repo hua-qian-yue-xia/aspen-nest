@@ -11,7 +11,8 @@
         "include": "**/*.yaml",
         "outDir": "./dist/apps/admin/src"
       }
-    ]
+    ],
+    "webpack": false
   },
   "projects": {
     "@aspen-app/admin": {
@@ -40,11 +41,38 @@
     },
     "@aspen/core": {
       "type": "library",
-      "root": "packages/core",
+      "root": "libs/aspen-core",
       "entryFile": "index",
-      "sourceRoot": "packages/core",
+      "sourceRoot": "libs/aspen-core",
       "compilerOptions": {
-        "tsConfigPath": "packages/core/tsconfig.json"
+        "tsConfigPath": "libs/aspen-core/tsconfig.lib.json"
+      }
+    },
+    "@aspen/framework": {
+      "type": "library",
+      "root": "libs/aspen-framework",
+      "entryFile": "index",
+      "sourceRoot": "libs/aspen-framework/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/aspen-framework/tsconfig.lib.json"
+      }
+    },
+    "@aspen/gen": {
+      "type": "library",
+      "root": "libs/aspen-gen",
+      "entryFile": "index",
+      "sourceRoot": "libs/aspen-gen/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/aspen-gen/tsconfig.lib.json"
+      }
+    },
+    "@aspen/workflow": {
+      "type": "library",
+      "root": "libs/aspen-workflow",
+      "entryFile": "index",
+      "sourceRoot": "libs/aspen-workflow/src",
+      "compilerOptions": {
+        "tsConfigPath": "libs/aspen-workflow/tsconfig.lib.json"
       }
     }
   }
