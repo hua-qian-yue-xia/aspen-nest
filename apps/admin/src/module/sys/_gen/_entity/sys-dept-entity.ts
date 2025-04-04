@@ -2,7 +2,7 @@ import { Entity, OneToMany, Column, PrimaryGeneratedColumn } from "typeorm"
 import { BaseRecordDb } from "@aspen/aspen-core"
 import { SysUserEntity } from "apps/admin/src/module/sys/_gen/_entity/sys-user-entity"
 
-@Entity({ comment: "部门" })
+@Entity({ comment: "部门", name: "sys_dept" })
 export class SysDeptEntity extends BaseRecordDb {
 	@PrimaryGeneratedColumn({ type: "bigint", comment: "部门id" })
 	deptId: number
@@ -14,5 +14,5 @@ export class SysDeptEntity extends BaseRecordDb {
 	deptName: string
 
 	@OneToMany(() => SysUserEntity, (sysUser) => sysUser.userDept)
-	userList: SysUserEntity[]
+	users: Array<SysUserEntity>
 }

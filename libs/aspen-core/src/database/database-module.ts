@@ -41,6 +41,7 @@ export const registerDatabase = () => {
 				synchronize: true,
 				logging: "all",
 				entities: [entityDir],
+				// 转换为蛇形命名
 				namingStrategy: new SnakeNamingStrategy(),
 			}
 		},
