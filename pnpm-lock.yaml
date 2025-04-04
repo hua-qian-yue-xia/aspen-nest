@@ -65,6 +65,9 @@ importers:
       typeorm:
         specifier: ^0.3.21
         version: 0.3.21(ioredis@5.4.2)(mysql2@3.14.0)(reflect-metadata@0.2.2)(ts-node@10.9.2(@types/node@20.3.1)(typescript@5.7.2))
+      typeorm-naming-strategies:
+        specifier: ^4.1.0
+        version: 4.1.0(typeorm@0.3.21(ioredis@5.4.2)(mysql2@3.14.0)(reflect-metadata@0.2.2)(ts-node@10.9.2(@types/node@20.3.1)(typescript@5.7.2)))
     devDependencies:
       '@nestjs/cli':
         specifier: ^10.0.0
@@ -112,12 +115,6 @@ importers:
   apps/admin: {}
 
   apps/app: {}
-
-  packages/aspen-core:
-    dependencies:
-      '@nestjs/platform-fastify':
-        specifier: ^10.4.15
-        version: 10.4.15(@fastify/static@7.0.0)(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(@nestjs/core@10.4.15(@nestjs/common@10.4.15(class-transformer@0.5.1)(class-validator@0.14.1)(reflect-metadata@0.2.2)(rxjs@7.8.1))(reflect-metadata@0.2.2)(rxjs@7.8.1))
 
 packages:
 
@@ -1995,6 +1992,11 @@ packages:
   type-fest@0.21.3:
     resolution: {integrity: sha512-t0rzBq87m3fVcduHDUFhKmyyX+9eo6WQjZvf51Ea/M0Q7+T374Jp1aUiyUl0GKxp8M/OETVHSDvmkyPgvX+X2w==}
     engines: {node: '>=10'}
+
+  typeorm-naming-strategies@4.1.0:
+    resolution: {integrity: sha512-vPekJXzZOTZrdDvTl1YoM+w+sUIfQHG4kZTpbFYoTsufyv9NIBRe4Q+PdzhEAFA2std3D9LZHEb1EjE9zhRpiQ==}
+    peerDependencies:
+      typeorm: ^0.2.0 || ^0.3.0
 
   typeorm@0.3.21:
     resolution: {integrity: sha512-lh4rUWl1liZGjyPTWpwcK8RNI5x4ekln+/JJOox1wCd7xbucYDOXWD+1cSzTN3L0wbTGxxOtloM5JlxbOxEufA==}
@@ -4127,6 +4129,10 @@ snapshots:
   type-fest@0.20.2: {}
 
   type-fest@0.21.3: {}
+
+  typeorm-naming-strategies@4.1.0(typeorm@0.3.21(ioredis@5.4.2)(mysql2@3.14.0)(reflect-metadata@0.2.2)(ts-node@10.9.2(@types/node@20.3.1)(typescript@5.7.2))):
+    dependencies:
+      typeorm: 0.3.21(ioredis@5.4.2)(mysql2@3.14.0)(reflect-metadata@0.2.2)(ts-node@10.9.2(@types/node@20.3.1)(typescript@5.7.2))
 
   typeorm@0.3.21(ioredis@5.4.2)(mysql2@3.14.0)(reflect-metadata@0.2.2)(ts-node@10.9.2(@types/node@20.3.1)(typescript@5.7.2)):
     dependencies:

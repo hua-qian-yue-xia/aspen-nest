@@ -2,7 +2,7 @@ import { Column, Entity, PrimaryColumn } from "typeorm"
 import { BaseRecordDb } from "libs/aspen-core/src"
 
 @Entity({ comment: "颜色" })
-export class GenColor extends BaseRecordDb {
+export class GenColorEntity extends BaseRecordDb {
 	@PrimaryColumn({ type: "bigint", length: 20, comment: "颜色id" })
 	colorId: number
 

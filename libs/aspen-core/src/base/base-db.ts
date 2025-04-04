@@ -1,9 +1,6 @@
 import { BaseEntity, Column } from "typeorm"
 
-export class BaseDb extends BaseEntity {
-	@Column({ type: "bit", length: 1, default: false, comment: "是否删除" })
-	delFlag: boolean
-}
+export class BaseDb extends BaseEntity {}
 
 export class BaseRecordDb extends BaseDb {
 	@Column({ type: "varchar", length: 64, comment: "新增人" })

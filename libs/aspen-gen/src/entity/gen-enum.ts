@@ -1,6 +1,6 @@
 import { Column, Entity, JoinColumn, OneToOne, PrimaryColumn } from "typeorm"
 
-import { GenColor } from "libs/aspen-gen/src/entity/index"
+import { GenColorEntity } from "libs/aspen-gen/src/entity/index"
 
 @Entity({ comment: "枚举信息" })
 export class GenEnum {
@@ -13,7 +13,7 @@ export class GenEnum {
 	@Column({ type: "int", length: 8, comment: "枚举排序" })
 	sort: number
 
-	@OneToOne(() => GenColor)
+	@OneToOne(() => GenColorEntity)
 	@JoinColumn()
-	color: GenColor
+	color: GenColorEntity
 }

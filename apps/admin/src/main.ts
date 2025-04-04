@@ -4,7 +4,7 @@ import { ValidationPipe } from "@nestjs/common"
 
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify"
 
-import { AppConfig, Application, registerSwaggerDoc, AppCtx } from "packages/aspen-core/src"
+import { AppConfig, Application, registerSwaggerDoc, AppCtx } from "@aspen/aspen-core"
 
 import { AppModule } from "./app-module"
 

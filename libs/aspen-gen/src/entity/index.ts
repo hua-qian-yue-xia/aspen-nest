@@ -1,4 +1,4 @@
-export * from "./gen-color"
+export * from "./gen-color-entity"
 export * from "./gen-column-entity"
 export * from "./gen-column-relation-entity"
 export * from "./gen-enum"

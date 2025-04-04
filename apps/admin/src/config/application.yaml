@@ -5,6 +5,3 @@ app:
   prefix: /
   port: 7001
   platformHeader: platform
-redis:
-  host: 127.0.0.1
-  db: 15

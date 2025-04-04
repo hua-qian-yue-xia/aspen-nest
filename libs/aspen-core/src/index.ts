@@ -21,17 +21,21 @@ export { registerSwaggerDoc } from "libs/aspen-core/src/doc/swagger"
 
 /******************** start config start ********************/
 export { readActiveYamlFile } from "libs/aspen-core/src/config/read-config"
-export type { Application, AppConfig, RedisConfig } from "libs/aspen-core/src/config/read-config"
+export type { Application, AppConfig, RedisConfig, DatabaseConfig } from "libs/aspen-core/src/config/read-config"
 /******************** end config end ********************/
 
 /******************** start cache start ********************/
-export { registerRedis } from "libs/aspen-core/src/cache/redis-service"
+export { registerRedis } from "@aspen/aspen-core/cache/redis-module"
 export { RedisTool } from "libs/aspen-core/src/cache/redis-tool"
-/******************** start cache start ********************/
+/******************** end cache end ********************/
 
-export * from "libs/aspen-core/src/constant/decorator-constant"
+/******************** start database start ********************/
+export { registerDatabase } from "@aspen/aspen-core/database/database-module"
+/******************** end database end ********************/
 
 /******************** start 装饰器 start ********************/
+export * from "libs/aspen-core/src/constant/decorator-constant"
+/******************** end 装饰器 end ********************/
 
 export const router = {
 	get: AspenGet,

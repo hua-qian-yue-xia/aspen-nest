@@ -1,0 +1,9 @@
+redis:
+  host: 127.0.0.1
+  db: 15
+database:
+  host: localhost
+  port: 3306
+  username: root
+  password: root
+  database: nest-admin

@@ -9,6 +9,7 @@ import * as _ from "radash"
 export type Application = {
 	app: AppConfig
 	redis: RedisConfig
+	database: DatabaseConfig
 }
 
 export type AppConfig = {
@@ -56,6 +57,38 @@ export type RedisConfig = {
 	db?: number
 }
 
+export type DatabaseConfig = {
+	/**
+	 * 数据库类型
+	 * @default mysql
+	 */
+	type?: "mysql"
+	/**
+	 * database 访问地址
+	 * @define localhost
+	 */
+	host?: string
+	/**
+	 * database 访问端口
+	 * @define 3306
+	 */
+	port?: number
+	/**
+	 * database 用户名
+	 * @define root
+	 */
+	username?: string
+	/**
+	 * database 密码
+	 * @define root
+	 */
+	password?: string
+	/**
+	 * database 名称
+	 */
+	database?: string
+}
+
 /******************** end type end ********************/
 
 const redisDefault = () => {
@@ -64,6 +97,17 @@ const redisDefault = () => {
 		password: "",
 		db: 0,
 	} as RedisConfig
+}
+
+const databaseDefault = () => {
+	return {
+		type: "mysql",
+		host: "localhost",
+		port: 3306,
+		username: "root",
+		password: "root",
+		database: "",
+	} as DatabaseConfig
 }
 
 const readYamlFile = (cwdPath: string, type: ConfigFileSuffixConstant) => {
@@ -75,7 +119,7 @@ const readYamlFile = (cwdPath: string, type: ConfigFileSuffixConstant) => {
 
 export const readActiveYamlFile = (cwdPath: string): Record<string, any> => {
 	let defaultConf = readYamlFile(cwdPath, "")
-	defaultConf = _.assign({ redis: redisDefault() }, defaultConf)
+	defaultConf = _.assign({ redis: redisDefault(), database: databaseDefault() }, defaultConf)
 	const devConfig = readYamlFile(cwdPath, "dev")
 	return _.assign(defaultConf, devConfig)
 }
