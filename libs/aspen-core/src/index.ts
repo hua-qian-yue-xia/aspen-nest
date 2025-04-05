@@ -12,6 +12,7 @@ export { AppClsModule } from "libs/aspen-core/src/app/app-cls"
 /******************** start base start ********************/
 export { BaseDb, BaseRecordDb } from "libs/aspen-core/src/base/base-db"
 export { BasePage, BasePageVo, BasePageTool } from "libs/aspen-core/src/base/base-page"
+export { R } from "libs/aspen-core/src/base/base-result"
 export { BaseAdminUser } from "libs/aspen-core/src/base/base-user"
 /******************** end base end ********************/
 

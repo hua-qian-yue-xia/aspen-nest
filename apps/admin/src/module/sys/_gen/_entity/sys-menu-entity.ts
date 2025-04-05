@@ -33,6 +33,6 @@ export class SysMenuEntity extends BaseRecordDb {
 	@Column({ type: "varchar", length: 128, unique: true, comment: "权限标识" })
 	permission: string
 
-	@Column({ type: "int8", default: 0, comment: "排序" })
+	@Column({ type: "int", default: 0, comment: "排序" })
 	sort: number
 }
