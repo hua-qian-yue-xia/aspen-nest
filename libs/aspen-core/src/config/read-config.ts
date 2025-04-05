@@ -87,6 +87,18 @@ export type DatabaseConfig = {
 	 * database 名称
 	 */
 	database?: string
+	/**
+	 * 每次建立连接时删除架构
+	 * 请注意此选项，不要在生产环境中使用它，否则将丢失所有生产数据。但是此选项在调试和开发期间非常有用
+	 * @define false
+	 */
+	dropSchema?: boolean
+	/**
+	 * 是否在每次应用程序启动时自动创建数据库架构
+	 * 请注意此选项，不要在生产环境中使用它，否则将丢失所有生产数据。但是此选项在调试和开发期间非常有用
+	 * @define false
+	 */
+	synchronize?: boolean
 }
 
 /******************** end type end ********************/
@@ -107,6 +119,8 @@ const databaseDefault = () => {
 		username: "root",
 		password: "root",
 		database: "",
+		dropSchema: false,
+		synchronize: false,
 	} as DatabaseConfig
 }
 

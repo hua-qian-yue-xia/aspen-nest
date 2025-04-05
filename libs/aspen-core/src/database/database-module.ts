@@ -14,7 +14,8 @@ export const registerDatabase = () => {
 		inject: [ConfigService],
 		useFactory: async (config: ConfigService<Application, true>): Promise<TypeOrmModuleOptions> => {
 			const logger = new Logger(DATABASE_TAG)
-			const { type, host, port, username, password, database } = config.get<DatabaseConfig>("database")
+			const { type, host, port, username, password, database, dropSchema, synchronize } =
+				config.get<DatabaseConfig>("database")
 			if (
 				_.isEmpty(type) ||
 				_.isEmpty(host) ||
@@ -26,7 +27,7 @@ export const registerDatabase = () => {
 				return null
 			}
 			logger.debug(
-				`连接数据库成功type:<${type}>host:<${host}>port:<${port}>username:<${username}>password:<${password}>database:<${database}>`,
+				`连接数据库成功type:<${type}>host:<${host}>port:<${port}>username:<${username}>password:<${password}>database:<${database}>dropSchema:<${dropSchema}>synchronize:<${synchronize}>`,
 			)
 			console.log(__dirname)
 			const entityDir = `${process.cwd()}/dist/**/admin/**/*-entity{.ts,.js}`
@@ -37,8 +38,8 @@ export const registerDatabase = () => {
 				username: username,
 				password: password,
 				database: database,
-				dropSchema: true,
-				synchronize: true,
+				dropSchema: dropSchema,
+				synchronize: synchronize,
 				logging: "all",
 				entities: [entityDir],
 				// 转换为蛇形命名
