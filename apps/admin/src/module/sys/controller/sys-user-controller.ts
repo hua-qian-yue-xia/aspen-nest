@@ -2,7 +2,7 @@ import { Controller, Param } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
-import { SysUserService } from "../service"
+import { SysUserService } from "apps/admin/src/module/sys/service"
 
 @Controller("sys/user")
 export class SysUserController {
@@ -12,8 +12,7 @@ export class SysUserController {
 		summary: "分页",
 		router: "/page",
 	})
-	async page(@Param("userId") userId: string) {
-		this.sysUserController.getByUserId(userId)
+	async page() {
 		R.success()
 	}
 
@@ -22,12 +21,11 @@ export class SysUserController {
 		description: "没有权限控制",
 		router: "/select",
 	})
-	async select(@Param("userId") userId: string) {
-		this.sysUserController.getByUserId(userId)
+	async select() {
 		R.success()
 	}
 
-	@router.get({
+	@router.patch({
 		summary: "根据用户id查询用户",
 		description: "有缓存",
 		router: "/get/:userId",

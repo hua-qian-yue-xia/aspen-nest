@@ -1,6 +1,6 @@
 app:
   name: nest快速开发平台
-  description: 一个node的快速开发平台
+  description: 一个node的快速开发平台,使用nestjs、typeorm、mysql、redis、swagger、jwt等技术栈开发
   version: 0.1.0
   prefix: /
   port: 7001

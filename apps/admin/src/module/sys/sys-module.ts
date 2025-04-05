@@ -1,5 +1,12 @@
 import { Module } from "@nestjs/common"
+import { TypeOrmModule } from "@nestjs/typeorm"
 
+import {
+	SysDeptEntity,
+	SysMenuEntity,
+	SysRoleEntity,
+	SysUserEntity,
+} from "apps/admin/src/module/sys/_gen/_entity/index"
 import {
 	SysDeptController,
 	SysMenuController,
@@ -9,7 +16,7 @@ import {
 import { SysDeptService, SysMenuService, SysRoleService, SysUserService } from "apps/admin/src/module/sys/service/index"
 
 @Module({
-	imports: [],
+	imports: [TypeOrmModule.forFeature([SysDeptEntity, SysMenuEntity, SysRoleEntity, SysUserEntity])],
 	controllers: [SysDeptController, SysMenuController, SysRoleController, SysUserController],
 	providers: [SysDeptService, SysMenuService, SysRoleService, SysUserService],
 })

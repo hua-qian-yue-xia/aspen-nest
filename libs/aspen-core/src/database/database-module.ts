@@ -26,7 +26,7 @@ export const registerDatabase = () => {
 			) {
 				return null
 			}
-			logger.debug(
+			logger.verbose(
 				`连接数据库成功type:<${type}>host:<${host}>port:<${port}>username:<${username}>password:<${password}>database:<${database}>dropSchema:<${dropSchema}>synchronize:<${synchronize}>`,
 			)
 			console.log(__dirname)

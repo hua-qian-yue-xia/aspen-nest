@@ -36,7 +36,12 @@ export { registerDatabase } from "@aspen/aspen-core/database/database-module"
 
 /******************** start 装饰器 start ********************/
 export * from "libs/aspen-core/src/constant/decorator-constant"
+export * from "@aspen/aspen-core/constant/group-constant"
 /******************** end 装饰器 end ********************/
+
+/******************** start 管道 start ********************/
+
+/******************** end 管道 end ********************/
 
 export const router = {
 	get: AspenGet,

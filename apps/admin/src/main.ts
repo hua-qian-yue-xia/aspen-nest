@@ -1,6 +1,6 @@
 import { NestFactory } from "@nestjs/core"
 import { ConfigService } from "@nestjs/config"
-import { ValidationPipe } from "@nestjs/common"
+import { ParseArrayPipe, ValidationPipe } from "@nestjs/common"
 
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify"
 
@@ -15,7 +15,7 @@ async function bootstrap() {
 	// 配置全局路由前缀
 	app.setGlobalPrefix(appConfig.prefix)
 	// 配置全局校验管道
-	app.useGlobalPipes(new ValidationPipe({ transform: true }))
+	app.useGlobalPipes(new ValidationPipe({ transform: true }), new ParseArrayPipe())
 	// 配置swagger文档
 	registerSwaggerDoc(app, { title: "aspen-nest后台服务文档" })
 	AppCtx.getInstance().setApp(app)

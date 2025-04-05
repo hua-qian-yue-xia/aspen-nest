@@ -1,4 +1,5 @@
 {
-    "editor.formatOnPaste": true,
-    "editor.formatOnSave": true
+	"editor.formatOnPaste": true,
+	"editor.formatOnSave": true,
+	"todo-tree.tree.showBadges": false
 }
