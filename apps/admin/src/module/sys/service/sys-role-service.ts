@@ -1,1 +1,4 @@
-export class SysRoleController {}
+import { Injectable } from "@nestjs/common"
+
+@Injectable()
+export class SysRoleService {}
