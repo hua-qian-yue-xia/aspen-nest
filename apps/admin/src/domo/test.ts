@@ -8,5 +8,5 @@ export class TestInjectable {
 
 	get() {
 		return this.request?.url
-	} 
+	}
 }

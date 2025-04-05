@@ -18,10 +18,20 @@ export class BaseAdminUser extends BaseRecordDb {
 	@Column({ type: "varchar", length: 128, unique: true, comment: "用户手机号" })
 	mobile: string
 
+	@Column({ type: "bit", default: true, comment: "是否启用" })
+	enable: boolean
+
 	/**
 	 * 是否是超级管理员
 	 */
 	isSuperAdmin(): boolean {
 		return false
+	}
+
+	/**
+	 * 是否启用
+	 */
+	isEnable(): boolean {
+		return this.enable
 	}
 }

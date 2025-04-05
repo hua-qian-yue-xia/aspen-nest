@@ -21,7 +21,7 @@ export class FramePluginEntity extends BaseRecordDb {
 	@Column({ type: "varchar", length: 256, comment: "插件描述" })
 	desc: string
 
-	@Column({ type: "bit", length: 1, comment: "是否启用" })
+	@Column({ type: "bit", comment: "是否启用" })
 	enable: boolean
 
 	@OneToMany(() => FramePluginTagEntity, (tag) => tag.plugin)

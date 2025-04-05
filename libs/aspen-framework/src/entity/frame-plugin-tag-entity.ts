@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 
 import { BaseRecordDb } from "@aspen/aspen-core"
 
@@ -13,5 +13,6 @@ export class FramePluginTagEntity extends BaseRecordDb {
 	name: string
 
 	@ManyToOne(() => FramePluginEntity, (plugin) => plugin.tagList)
+	@JoinTable({ name: "pluginId" })
 	plugin: FramePluginEntity
 }
