@@ -40,6 +40,11 @@ export * from "libs/aspen-core/src/constant/decorator-constant"
 export * from "libs/aspen-core/src/decorator/validator-decorator"
 /******************** end 装饰器 end ********************/
 
+/******************** start 异常 start ********************/
+export * from "@aspen/aspen-core/exception/filter/exception-filter"
+export * from "@aspen/aspen-core/exception/common-exception"
+/******************** end 异常 end ********************/
+
 /******************** start 管道 start ********************/
 
 /******************** end 管道 end ********************/

@@ -43,16 +43,16 @@ export class SysRoleController {
 		router: "",
 	})
 	async save(@Body() dto: SysRoleDto) {
-		await this.sysRoleService.save(dto)
-		return R.success()
+		const roleId = await this.sysRoleService.save(dto)
+		return R.success(roleId)
 	}
 
 	@router.put({
 		summary: "修改",
 		router: "",
 	})
-	async edit(@Body() roleIds: Array<number>) {
-		await this.sysRoleService.edit(roleIds)
+	async edit(@Body() dto: SysRoleDto) {
+		await this.sysRoleService.edit(dto)
 		return R.success()
 	}
 

@@ -4,7 +4,7 @@ import { ValidationPipe } from "@nestjs/common"
 
 import { FastifyAdapter, NestFastifyApplication } from "@nestjs/platform-fastify"
 
-import { AppConfig, Application, registerSwaggerDoc, AppCtx } from "@aspen/aspen-core"
+import { AppConfig, Application, registerSwaggerDoc, AppCtx, HttpExceptionFilter } from "@aspen/aspen-core"
 
 import { AppModule } from "./app-module"
 
@@ -16,6 +16,8 @@ async function bootstrap() {
 	app.setGlobalPrefix(appConfig.prefix)
 	// 配置全局校验管道
 	app.useGlobalPipes(new ValidationPipe({ transform: true }))
+	// 配置全局过滤器
+	app.useGlobalFilters(new HttpExceptionFilter())
 	// 配置swagger文档
 	registerSwaggerDoc(app, { title: "aspen-nest后台服务文档" })
 	AppCtx.getInstance().setApp(app)
