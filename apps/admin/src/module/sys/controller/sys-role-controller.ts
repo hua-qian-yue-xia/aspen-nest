@@ -3,7 +3,7 @@ import { Body, Controller, Param } from "@nestjs/common"
 import { R, router } from "@aspen/aspen-core"
 
 import { SysRoleService } from "apps/admin/src/module/sys/service"
-import { SysRoleDto } from "apps/admin/src/module/sys/dto"
+import { SysRoleSaveDto, SysRoleEditDto } from "apps/admin/src/module/sys/dto"
 
 @Controller("sys/role")
 export class SysRoleController {
@@ -42,7 +42,7 @@ export class SysRoleController {
 		summary: "新增",
 		router: "",
 	})
-	async save(@Body() dto: SysRoleDto) {
+	async save(@Body() dto: SysRoleSaveDto) {
 		const roleId = await this.sysRoleService.save(dto)
 		return R.success(roleId)
 	}
@@ -51,7 +51,7 @@ export class SysRoleController {
 		summary: "修改",
 		router: "",
 	})
-	async edit(@Body() dto: SysRoleDto) {
+	async edit(@Body() dto: SysRoleEditDto) {
 		await this.sysRoleService.edit(dto)
 		return R.success()
 	}

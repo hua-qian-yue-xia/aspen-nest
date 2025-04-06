@@ -5,6 +5,7 @@ import { AspenValidator, AspenRule, BaseRecordDb } from "@aspen/aspen-core"
 @Entity({ comment: "角色", name: "sys_role" })
 export class SysRoleEntity extends BaseRecordDb {
 	@PrimaryGeneratedColumn({ type: "bigint", comment: "角色id" })
+	@AspenValidator({ summary: "角色id", rule: AspenRule().isNotEmpty() })
 	roleId: number
 
 	@Column({ type: "varchar", length: 64, comment: "角色名" })

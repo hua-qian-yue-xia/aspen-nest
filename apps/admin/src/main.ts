@@ -15,7 +15,7 @@ async function bootstrap() {
 	// 配置全局路由前缀
 	app.setGlobalPrefix(appConfig.prefix)
 	// 配置全局校验管道
-	app.useGlobalPipes(new ValidationPipe({ transform: true }))
+	app.useGlobalPipes(new ValidationPipe({ transform: true, whitelist: true }))
 	// 配置全局过滤器
 	app.useGlobalFilters(new HttpExceptionFilter())
 	// 配置swagger文档

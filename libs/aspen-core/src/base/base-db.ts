@@ -1,6 +1,6 @@
 import { isEmpty } from "class-validator"
 
-import { BaseEntity, BeforeInsert, Column } from "typeorm"
+import { BaseEntity, BeforeInsert, BeforeUpdate, Column } from "typeorm"
 
 export class BaseDb extends BaseEntity {}
 
@@ -33,6 +33,13 @@ export class BaseRecordDb extends BaseDb {
 		}
 	}
 
-	@BeforeInsert()
-	beforeInsert() {}
+	@BeforeUpdate()
+	beforeUpdate() {
+		if (isEmpty(this.editBy)) {
+			this.editBy = "auto"
+		}
+		if (isEmpty(this.editTime)) {
+			this.editTime = new Date()
+		}
+	}
 }
