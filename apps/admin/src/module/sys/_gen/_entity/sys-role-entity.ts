@@ -1,7 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm"
-import { IsNotEmpty } from "class-validator"
 
-import { BaseRecordDb, GroupEnum } from "@aspen/aspen-core"
+import { AspenValidator, AspenRule, BaseRecordDb } from "@aspen/aspen-core"
 
 @Entity({ comment: "角色", name: "sys_role" })
 export class SysRoleEntity extends BaseRecordDb {
@@ -9,10 +8,10 @@ export class SysRoleEntity extends BaseRecordDb {
 	roleId: number
 
 	@Column({ type: "varchar", length: 64, comment: "角色名" })
-	@IsNotEmpty({ message: "角色名不能为空", groups: [GroupEnum.ADMIN_SAVE] })
+	@AspenValidator({ summary: "角色名", rule: AspenRule().isNotEmpty() })
 	roleName: string
 
 	@Column({ type: "varchar", length: 64, comment: "角色编码" })
-	@IsNotEmpty({ message: "角色编码不能为空", groups: [GroupEnum.ADMIN_SAVE] })
+	@AspenValidator({ summary: "角色编码", rule: AspenRule().isNotEmpty() })
 	roleCode: string
 }

@@ -15,7 +15,7 @@ export class SysRoleController {
 	})
 	async page() {
 		this.sysRoleService.scopePage()
-		R.success()
+		return R.success()
 	}
 
 	@router.get({
@@ -25,7 +25,7 @@ export class SysRoleController {
 	})
 	async select() {
 		this.sysRoleService.scopePage()
-		R.success()
+		return R.success()
 	}
 
 	@router.patch({
@@ -35,7 +35,7 @@ export class SysRoleController {
 	})
 	async getByRoleId(@Param("roleId") roleId: number) {
 		const roleDetail = await this.sysRoleService.getByRoleId(roleId)
-		R.success(roleDetail)
+		return R.success(roleDetail)
 	}
 
 	@router.post({
@@ -44,7 +44,7 @@ export class SysRoleController {
 	})
 	async save(@Body() dto: SysRoleDto) {
 		await this.sysRoleService.save(dto)
-		R.success()
+		return R.success()
 	}
 
 	@router.put({
@@ -53,7 +53,7 @@ export class SysRoleController {
 	})
 	async edit(@Body() roleIds: Array<number>) {
 		await this.sysRoleService.edit(roleIds)
-		R.success()
+		return R.success()
 	}
 
 	@router.delete({
