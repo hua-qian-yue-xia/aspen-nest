@@ -1,16 +1,9 @@
 {
-  "extends": "../../tsconfig.option.json",
-  "compilerOptions": {
-    "declaration": false,
-    "outDir": "../../dist/libs/aspen-core"
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test",
-    "**/*spec.ts"
-  ]
+	"extends": "../../tsconfig.option.json",
+	"compilerOptions": {
+		"declaration": false,
+		"outDir": "../../dist/libs/aspen-core"
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

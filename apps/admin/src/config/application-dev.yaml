@@ -8,4 +8,4 @@ database:
   password: root
   database: nest-admin
   dropSchema: false
-  synchronize: true
+  synchronize: false

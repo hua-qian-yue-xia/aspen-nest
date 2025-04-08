@@ -13,7 +13,9 @@ export class SysRoleService {
 	constructor(@InjectRepository(SysRoleEntity) private readonly sysRoleRep: Repository<SysRoleEntity>) {}
 
 	// 权限分页查询
-	async scopePage() {}
+	async scopePage() {
+		this.sysRoleRep.find()
+	}
 
 	// 根据角色id查询角色
 	async getByRoleId(roleId: number): Promise<SysRoleEntity | null> {
@@ -34,7 +36,6 @@ export class SysRoleService {
 
 	// 修改
 	async edit(dto: SysRoleEditDto): Promise<void> {
-		// 是否存在
 		const role = await this.getByRoleId(dto.roleId)
 		if (!role) {
 			throw new RuntimeException(`角色id"${dto.roleId}"不存在`)
