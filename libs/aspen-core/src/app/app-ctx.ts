@@ -32,6 +32,10 @@ export class AppCtx {
 		return AppCtx.getInstance().getApp().resolve(ClsService)
 	}
 
+	getRedisTool(): Promise<RedisTool> {
+		return AppCtx.getInstance().getApp().resolve(RedisTool)
+	}
+
 	/**
 	 * 获取当前分页
 	 * get请求默认从params中获取

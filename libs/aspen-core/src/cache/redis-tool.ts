@@ -1,8 +1,8 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable, Scope } from "@nestjs/common"
 import { RedisService } from "@liaoliaots/nestjs-redis"
 import Redis from "ioredis"
 
-@Injectable()
+@Injectable({ scope: Scope.DEFAULT })
 export class RedisTool {
 	private readonly redis: Redis
 

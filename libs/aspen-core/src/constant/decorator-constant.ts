@@ -22,17 +22,21 @@ export enum DecoratorKey {
 	/**
 	 * 日志记录
 	 */
-	Log = "log",
+	Log = "aspen_log",
 	/**
 	 * 重复提交
 	 */
-	RepeatSubmit = "repeat_submit",
+	RepeatSubmit = "aspen_repeat_submit",
 	/**
 	 * 限流
 	 */
-	RateLimit = "rate_limit",
+	RateLimit = "aspen_rate_limit",
 	/**
 	 * 免token鉴权
 	 */
-	NoToken = "no_token",
+	NoToken = "aspen_no_token",
+	/**
+	 * redis缓存
+	 */
+	Cache = "aspen_cache",
 }

@@ -32,8 +32,8 @@ export type {
 /******************** end config end ********************/
 
 /******************** start cache start ********************/
-export { registerRedis } from "@aspen/aspen-core/cache/redis-module"
-export { RedisTool } from "libs/aspen-core/src/cache/redis-tool"
+export * from "@aspen/aspen-core/cache/redis-module"
+export * from "libs/aspen-core/src/cache/redis-tool"
 /******************** end cache end ********************/
 
 /******************** start database start ********************/
@@ -43,6 +43,7 @@ export * from "@aspen/aspen-core/database/database-module"
 /******************** end database end ********************/
 
 /******************** start 装饰器 start ********************/
+export * from "@aspen/aspen-core/decorator/cache-decorator"
 export * from "libs/aspen-core/src/constant/group-constant"
 export * from "libs/aspen-core/src/constant/decorator-constant"
 export * from "libs/aspen-core/src/decorator/validator-decorator"
@@ -66,5 +67,8 @@ export const router = {
 }
 
 @Global()
-@Module({ providers: [NoTokenService, DiscoveryService, MetadataScanner], exports: [NoTokenService] })
+@Module({
+	providers: [NoTokenService, DiscoveryService, MetadataScanner],
+	exports: [NoTokenService],
+})
 export class AspenCoreModule {}

@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
-import { RuntimeException } from "@aspen/aspen-core"
+import { RuntimeException, AspenCacheable } from "@aspen/aspen-core"
 
 import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
 import { SysRoleSaveDto, SysRoleEditDto } from "apps/admin/src/module/sys/dto"
@@ -18,11 +18,13 @@ export class SysRoleService {
 	}
 
 	// 根据角色id查询角色
+	@AspenCacheable({ key: "sys:role:id", values: ["#p{0}"] })
 	async getByRoleId(roleId: number): Promise<SysRoleEntity | null> {
 		return this.sysRoleRep.findOneBy({ roleId: roleId })
 	}
 
 	// 新增
+	@AspenCacheable({ key: "", values: ["#r"] })
 	async save(dto: SysRoleSaveDto): Promise<number> {
 		if (await this.isRoleNameDuplicate(dto.roleName, null)) {
 			throw new RuntimeException(`角色名"${dto.roleName}"重复`)
@@ -51,6 +53,7 @@ export class SysRoleService {
 
 	// 删除
 	async delByIds(roleIds: Array<number>): Promise<number> {
+		// 删除缓存
 		const { affected } = await this.sysRoleRep.delete(roleIds)
 		return affected ?? 0
 	}
