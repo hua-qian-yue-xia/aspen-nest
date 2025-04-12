@@ -10,6 +10,7 @@ export type Application = {
 	app: AppConfig
 	redis: RedisConfig
 	database: DatabaseConfig
+	jwt: JwtConfig
 }
 
 export type AppConfig = {
@@ -102,6 +103,13 @@ export type DatabaseConfig = {
 }
 
 /******************** end type end ********************/
+
+export type JwtConfig = {
+	/**
+	 * 密钥
+	 */
+	secret?: string
+}
 
 const redisDefault = () => {
 	return {

@@ -22,7 +22,13 @@ export { registerSwaggerDoc } from "libs/aspen-core/src/doc/swagger"
 
 /******************** start config start ********************/
 export { readActiveYamlFile } from "libs/aspen-core/src/config/read-config"
-export type { Application, AppConfig, RedisConfig, DatabaseConfig } from "libs/aspen-core/src/config/read-config"
+export type {
+	Application,
+	AppConfig,
+	RedisConfig,
+	DatabaseConfig,
+	JwtConfig,
+} from "libs/aspen-core/src/config/read-config"
 /******************** end config end ********************/
 
 /******************** start cache start ********************/
@@ -31,7 +37,9 @@ export { RedisTool } from "libs/aspen-core/src/cache/redis-tool"
 /******************** end cache end ********************/
 
 /******************** start database start ********************/
-export { registerDatabase } from "@aspen/aspen-core/database/database-module"
+export * from "@aspen/aspen-core/database/common/common-column"
+export * from "@aspen/aspen-core/database/extend/type-orm-extend"
+export * from "@aspen/aspen-core/database/database-module"
 /******************** end database end ********************/
 
 /******************** start 装饰器 start ********************/

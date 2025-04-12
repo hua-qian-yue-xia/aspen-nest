@@ -14,7 +14,7 @@ export class SysRoleService {
 
 	// 权限分页查询
 	async scopePage() {
-		this.sysRoleRep.find()
+		return this.sysRoleRep.page()
 	}
 
 	// 根据角色id查询角色

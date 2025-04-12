@@ -14,8 +14,8 @@ export class SysRoleController {
 		router: "/page",
 	})
 	async page() {
-		this.sysRoleService.scopePage()
-		return R.success()
+		const list = await this.sysRoleService.scopePage()
+		return R.success(list)
 	}
 
 	@router.get({

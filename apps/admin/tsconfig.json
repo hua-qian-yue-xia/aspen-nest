@@ -1,15 +1,9 @@
 {
-  "extends": "../../tsconfig.option.json",
-  "compilerOptions": {
-    "declaration": false,
-    "outDir": "../../dist/apps/admin"
-  },
-  "include": [
-    "src/**/*",
-    "src/config/*.yaml"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist"
-  ]
+	"extends": "../../tsconfig.option.json",
+	"compilerOptions": {
+		"declaration": false,
+		"outDir": "../../dist/apps/admin"
+	},
+	"include": ["src/**/*", "src/config/*.yaml"],
+	"exclude": ["node_modules", "dist"]
 }

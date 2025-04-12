@@ -6,7 +6,7 @@ import { Logger } from "@nestjs/common"
 import { Application, DatabaseConfig } from "../index"
 import * as _ from "radash"
 
-export const DATABASE_TAG = "database"
+const DATABASE_TAG = "database"
 
 export const registerDatabase = () => {
 	return TypeOrmModule.forRootAsync({

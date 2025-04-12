@@ -1,6 +1,6 @@
 import { Entity, Column, PrimaryGeneratedColumn } from "typeorm"
 
-import { AspenValidator, AspenRule, BaseRecordDb } from "@aspen/aspen-core"
+import { AspenValidator, AspenRule, BaseRecordDb, SortColumn } from "@aspen/aspen-core"
 
 @Entity({ comment: "角色", name: "sys_role" })
 export class SysRoleEntity extends BaseRecordDb {
@@ -15,4 +15,7 @@ export class SysRoleEntity extends BaseRecordDb {
 	@Column({ type: "varchar", length: 64, comment: "角色编码" })
 	@AspenValidator({ summary: "角色编码", rule: AspenRule().isNotEmpty() })
 	roleCode: string
+
+	@Column(() => SortColumn, { prefix: false })
+	sort: SortColumn
 }

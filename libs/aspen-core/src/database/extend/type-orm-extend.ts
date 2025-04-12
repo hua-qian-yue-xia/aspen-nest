@@ -3,14 +3,12 @@ import { SelectQueryBuilder, Repository, FindManyOptions } from "typeorm"
 import { BasePageVo, AppCtx } from "@aspen/aspen-core/index"
 
 /******************** start 扩展SelectQueryBuilder start ********************/
-
 declare module "typeorm/query-builder/SelectQueryBuilder" {
 	interface SelectQueryBuilder<Entity> {
 		pageMany(this: SelectQueryBuilder<Entity>): Promise<BasePageVo<Entity>>
 		scopePageMany(this: SelectQueryBuilder<Entity>): Promise<BasePageVo<Entity>>
 	}
 }
-
 // 分页查询
 SelectQueryBuilder.prototype.pageMany = async function <Entity>(
 	this: SelectQueryBuilder<Entity>,
@@ -51,7 +49,6 @@ declare module "typeorm/repository/Repository" {
 		scopePage(this: Repository<Entity>, options?: FindManyOptions<Entity>): Promise<BasePageVo<Entity>>
 	}
 }
-
 // 分页查询
 Repository.prototype.page = async function <Entity>(
 	this: Repository<Entity>,

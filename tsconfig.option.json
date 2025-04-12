@@ -1,48 +1,32 @@
 {
-  "compilerOptions": {
-    "module": "commonjs",
-    "declaration": true,
-    "removeComments": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
-    "allowSyntheticDefaultImports": true,
-    "target": "es2017",
-    "sourceMap": true,
-    "paths": {
-      "apps/*": [
-        "./apps/*"
-      ],
-      "packages/*": [
-        "./packages/*"
-      ],
-      "@aspen/aspen-core": [
-        "libs/aspen-core/src"
-      ],
-      "@aspen/aspen-core/*": [
-        "libs/aspen-core/src/*"
-      ],
-      "@aspen/aspen-gen": [
-        "libs/aspen-gen/src"
-      ],
-      "@aspen/aspen-gen/*": [
-        "libs/aspen-gen/src/*"
-      ],
-      "@aspen/aspen-workflow": [
-        "libs/aspen-workflow/src"
-      ],
-      "@aspen/aspen-workflow/*": [
-        "libs/aspen-workflow/src/*"
-      ]
-    },
-    "outDir": "./dist",
-    "resolveJsonModule": true,
-    "baseUrl": "./",
-    "incremental": true,
-    "skipLibCheck": true,
-    "strictNullChecks": false,
-    "noImplicitAny": false,
-    "strictBindCallApply": false,
-    "forceConsistentCasingInFileNames": false,
-    "noFallthroughCasesInSwitch": false
-  }
+	"compilerOptions": {
+		"module": "commonjs",
+		"declaration": true,
+		"removeComments": true,
+		"emitDecoratorMetadata": true,
+		"experimentalDecorators": true,
+		"allowSyntheticDefaultImports": true,
+		"target": "es2017",
+		"sourceMap": true,
+		"paths": {
+			"apps/*": ["./apps/*"],
+			"packages/*": ["./packages/*"],
+			"@aspen/aspen-core": ["libs/aspen-core/src"],
+			"@aspen/aspen-core/*": ["libs/aspen-core/src/*"],
+			"@aspen/aspen-gen": ["libs/aspen-gen/src"],
+			"@aspen/aspen-gen/*": ["libs/aspen-gen/src/*"],
+			"@aspen/aspen-workflow": ["libs/aspen-workflow/src"],
+			"@aspen/aspen-workflow/*": ["libs/aspen-workflow/src/*"]
+		},
+		"outDir": "./dist",
+		"resolveJsonModule": true,
+		"baseUrl": "./",
+		"incremental": true,
+		"skipLibCheck": true,
+		"strictNullChecks": false,
+		"noImplicitAny": false,
+		"strictBindCallApply": false,
+		"forceConsistentCasingInFileNames": false,
+		"noFallthroughCasesInSwitch": false
+	}
 }

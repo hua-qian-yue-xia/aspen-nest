@@ -4,9 +4,9 @@ import { HttpCodeEnum } from "libs/aspen-core/src/constant/http-constant"
  * 响应结果
  */
 export class R<T> extends Map<string, any> {
-	code: HttpCodeEnum
-	msg: string
-	data: T
+	private code: HttpCodeEnum
+	private msg: string
+	private data: T
 
 	constructor(code: HttpCodeEnum, msg: string, data: T) {
 		super()
@@ -19,17 +19,14 @@ export class R<T> extends Map<string, any> {
 	 * 成功
 	 */
 	static success(): R<null>
-	static success<T>(data: T): R<T>
 	static success<T>(msg: string): R<T>
-	static success<T>(msg?: string, data?: T): R<T> | R<null> {
-		if (msg == undefined && data == undefined) {
-			return new R<null>(HttpCodeEnum.SUCCESS, "操作成功", null)
+	static success<T>(data: T): R<T>
+	static success<T>(data?: T, msg?: string): R<T> | R<null> {
+		if (msg != undefined && typeof msg == "string" && data == undefined) {
+			return new R<null>(HttpCodeEnum.SUCCESS, msg, null)
 		}
-		if (msg == undefined) {
+		if (data != undefined && msg == undefined) {
 			return new R<T>(HttpCodeEnum.SUCCESS, "操作成功", data)
-		}
-		if (data == undefined) {
-			return new R<T>(HttpCodeEnum.SUCCESS, msg, null)
 		}
 		return new R<T>(HttpCodeEnum.SUCCESS, msg, data)
 	}
