@@ -6,6 +6,7 @@ import {
 	NestInterceptor,
 	SetMetadata,
 } from "@nestjs/common"
+import { FastifyRequest, FastifyReply } from "fastify"
 import { Reflector } from "@nestjs/core"
 import { catchError, finalize, Observable, tap, throwError } from "rxjs"
 import { DataSource } from "typeorm"
@@ -40,7 +41,8 @@ export type LogOption = {
 
 /******************** end type end ********************/
 
-export const AspenLog = (option: LogOption) => SetMetadata(DecoratorKey.Log, option)
+export const AspenLog = (option: LogOption) =>
+	SetMetadata(DecoratorKey.Log, { ...option, isSaveRequestData: true, isSaveResponseData: true })
 
 @Injectable()
 export class AspenLogInterceptor implements NestInterceptor {
@@ -50,16 +52,17 @@ export class AspenLogInterceptor implements NestInterceptor {
 	) {}
 
 	intercept(ctx: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-		const logOption = this.reflector.getAllAndOverride<LogOption>(DecoratorKey.Log, [ctx.getHandler(), ctx.getClass()])
+		const logOption = this.reflector.get<LogOption>(DecoratorKey.Log, ctx.getHandler())
 		if (_.isEmpty(logOption)) return next.handle()
 		// 开始处理日志拦截器
 		const now = Date.now()
 		const coreLog = new CoreLogEntity()
 		const { summary, tag, isSaveRequestData, isSaveResponseData } = logOption
-		const request = ctx.switchToHttp().getRequest()
-		const { method, url, headers, params, body } = request
+		const request = ctx.switchToHttp().getRequest<FastifyRequest>()
+		const { method, url, headers, params, body, ip } = request
 		coreLog.tag = tag
 		coreLog.summary = summary
+		coreLog.ip = ip
 		coreLog.uri = url
 		coreLog.uriMethod = method
 		coreLog.userAgent = headers["user-agent"]
@@ -80,7 +83,9 @@ export class AspenLogInterceptor implements NestInterceptor {
 				return throwError(() => new BadGatewayException())
 			}),
 			finalize(async () => {
+				const { statusCode } = ctx.switchToHttp().getResponse<FastifyReply>()
 				coreLog.cost = Date.now() - now
+				coreLog.httpCode = statusCode
 				await this.dataSource.getRepository(CoreLogEntity).save(coreLog)
 			}),
 		)

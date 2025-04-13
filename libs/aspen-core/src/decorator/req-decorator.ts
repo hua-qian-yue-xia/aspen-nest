@@ -1,5 +1,7 @@
 import { applyDecorators } from "@nestjs/common"
 
+import * as _ from "radash"
+
 import { ReqMethod, ReqMethodMap } from "libs/aspen-core/src/constant/decorator-constant"
 import { AspenLog, LogOption } from "libs/aspen-core/src/decorator/log-decorator"
 import { AspenRateLimit, RateLimitOption } from "libs/aspen-core/src/decorator/repeat-submit-decorator"
@@ -34,7 +36,7 @@ type CreateReqOptions = {
 	rateLimit?: RateLimitOption
 }
 
-export type MethodReqOptions = Omit<CreateReqOptions, "method">
+type MethodReqOptions = Omit<CreateReqOptions, "method">
 
 /******************** end type end ********************/
 
@@ -43,7 +45,7 @@ function createReqDecorators(options: CreateReqOptions) {
 	const decorators = [ReqMethodMap[method](router)]
 	const swagger = [ApiOperation({ summary: summary, description: description })]
 	decorators.push(...swagger)
-	if (log) {
+	if (!_.isEmpty(log)) {
 		const logOptions: LogOption = {
 			summary,
 			...log,
@@ -56,22 +58,30 @@ function createReqDecorators(options: CreateReqOptions) {
 	return applyDecorators(...decorators)
 }
 
-export const AspenGet = (options: MethodReqOptions) => {
+const AspenGet = (options: MethodReqOptions) => {
 	return createReqDecorators({ ...options, method: ReqMethod.Get })
 }
 
-export const AspenPost = (options: MethodReqOptions) => {
+const AspenPost = (options: MethodReqOptions) => {
 	return createReqDecorators({ ...options, method: ReqMethod.Post })
 }
 
-export const AspenPut = (options: MethodReqOptions) => {
+const AspenPut = (options: MethodReqOptions) => {
 	return createReqDecorators({ ...options, method: ReqMethod.Put })
 }
 
-export const AspenDelete = (options: MethodReqOptions) => {
+const AspenDelete = (options: MethodReqOptions) => {
 	return createReqDecorators({ ...options, method: ReqMethod.Delete })
 }
 
-export const AspenPatch = (options: MethodReqOptions) => {
+const AspenPatch = (options: MethodReqOptions) => {
 	return createReqDecorators({ ...options, method: ReqMethod.Patch })
+}
+
+export const router = {
+	get: AspenGet,
+	post: AspenPost,
+	put: AspenPut,
+	delete: AspenDelete,
+	patch: AspenPatch,
 }

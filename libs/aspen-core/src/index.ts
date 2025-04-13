@@ -1,8 +1,7 @@
-import { Global, Module } from "@nestjs/common"
+import { Module } from "@nestjs/common"
 import { APP_INTERCEPTOR, DiscoveryService, MetadataScanner } from "@nestjs/core"
 import { TypeOrmModule } from "@nestjs/typeorm"
 
-import { AspenGet, AspenPost, AspenPut, AspenDelete, AspenPatch } from "./decorator/req-decorator"
 import { NoTokenService } from "./decorator/no-token-decorator"
 import { AspenLogInterceptor } from "./decorator/log-decorator"
 
@@ -50,9 +49,11 @@ export * from "@aspen/aspen-core/database/database-module"
 
 /******************** start 装饰器 start ********************/
 export * from "@aspen/aspen-core/decorator/cache-decorator"
-export * from "libs/aspen-core/src/constant/group-constant"
-export * from "libs/aspen-core/src/constant/decorator-constant"
-export * from "libs/aspen-core/src/decorator/validator-decorator"
+export * from "@aspen/aspen-core/decorator/log-decorator"
+export * from "@aspen/aspen-core/decorator/req-decorator"
+export * from "@aspen/aspen-core/constant/group-constant"
+export * from "@aspen/aspen-core/constant/decorator-constant"
+export * from "@aspen/aspen-core/decorator/validator-decorator"
 /******************** end 装饰器 end ********************/
 
 /******************** start 异常 start ********************/
@@ -64,15 +65,6 @@ export * from "@aspen/aspen-core/exception/common-exception"
 
 /******************** end 管道 end ********************/
 
-export const router = {
-	get: AspenGet,
-	post: AspenPost,
-	put: AspenPut,
-	delete: AspenDelete,
-	patch: AspenPatch,
-}
-
-@Global()
 @Module({
 	imports: [TypeOrmModule],
 	providers: [

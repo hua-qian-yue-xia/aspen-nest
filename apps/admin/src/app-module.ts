@@ -3,11 +3,11 @@ import { ConfigModule } from "@nestjs/config"
 
 import {
 	AppClsModule,
-	AspenCoreModule,
 	readActiveYamlFile,
 	registerRedis,
 	registerDatabase,
 	RedisTool,
+	AspenCoreModule,
 } from "@aspen/aspen-core"
 
 import { SysModule } from "apps/admin/src/module/sys/sys-module"
