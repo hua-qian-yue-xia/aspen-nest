@@ -43,8 +43,8 @@ export class SysRoleController {
 		router: "",
 	})
 	async save(@Body() dto: SysRoleSaveDto) {
-		const roleId = await this.sysRoleService.save(dto)
-		return R.success(roleId)
+		const roleDetail = await this.sysRoleService.save(dto)
+		return R.success(roleDetail.roleId)
 	}
 
 	@router.put({
