@@ -1,7 +1,18 @@
-import { CallHandler, ExecutionContext, Injectable, NestInterceptor, SetMetadata } from "@nestjs/common"
+import {
+	BadGatewayException,
+	CallHandler,
+	ExecutionContext,
+	Injectable,
+	NestInterceptor,
+	SetMetadata,
+} from "@nestjs/common"
+import { Reflector } from "@nestjs/core"
+import { catchError, finalize, Observable, tap, throwError } from "rxjs"
+import { DataSource } from "typeorm"
 
-import { DecoratorKey, ReqTag } from "libs/aspen-core/src/constant/decorator-constant"
-import { Observable } from "rxjs"
+import * as _ from "radash"
+
+import { DecoratorKey, ReqTag, CoreLogEntity } from "@aspen/aspen-core"
 
 /******************** start type start ********************/
 
@@ -32,8 +43,46 @@ export type LogOption = {
 export const AspenLog = (option: LogOption) => SetMetadata(DecoratorKey.Log, option)
 
 @Injectable()
-export class LogInterceptor implements NestInterceptor {
+export class AspenLogInterceptor implements NestInterceptor {
+	constructor(
+		private readonly dataSource: DataSource,
+		private readonly reflector: Reflector,
+	) {}
+
 	intercept(ctx: ExecutionContext, next: CallHandler<any>): Observable<any> | Promise<Observable<any>> {
-		return next.handle()
+		const logOption = this.reflector.getAllAndOverride<LogOption>(DecoratorKey.Log, [ctx.getHandler(), ctx.getClass()])
+		if (_.isEmpty(logOption)) return next.handle()
+		// 开始处理日志拦截器
+		const now = Date.now()
+		const coreLog = new CoreLogEntity()
+		const { summary, tag, isSaveRequestData, isSaveResponseData } = logOption
+		const request = ctx.switchToHttp().getRequest()
+		const { method, url, headers, params, body } = request
+		coreLog.tag = tag
+		coreLog.summary = summary
+		coreLog.uri = url
+		coreLog.uriMethod = method
+		coreLog.userAgent = headers["user-agent"]
+		if (isSaveRequestData) {
+			coreLog.reqParams = JSON.stringify(params)?.substring(0, 2000)
+			coreLog.reqBody = JSON.stringify(body)?.substring(0, 2000)
+		}
+		return next.handle().pipe(
+			tap((res) => {
+				if (isSaveResponseData) {
+					coreLog.resBody = JSON.stringify(res)?.substring(0, 2000)
+				}
+				return res
+			}),
+			catchError((error) => {
+				coreLog.errorMsg = error.message
+				coreLog.errorSatck = JSON.stringify(error.stack)?.substring(0, 2000)
+				return throwError(() => new BadGatewayException())
+			}),
+			finalize(async () => {
+				coreLog.cost = Date.now() - now
+				await this.dataSource.getRepository(CoreLogEntity).save(coreLog)
+			}),
+		)
 	}
 }

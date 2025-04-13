@@ -7,5 +7,5 @@ database:
   username: root
   password: root
   database: nest-admin
-  dropSchema: false
+  dropSchema: true
   synchronize: true

@@ -1,8 +1,10 @@
 import { Global, Module } from "@nestjs/common"
-import { DiscoveryService, MetadataScanner } from "@nestjs/core"
+import { APP_INTERCEPTOR, DiscoveryService, MetadataScanner } from "@nestjs/core"
+import { TypeOrmModule } from "@nestjs/typeorm"
 
-import { AspenGet, AspenPost, AspenPut, AspenDelete, AspenPatch } from "libs/aspen-core/src/decorator/req-decorator"
-import { NoTokenService } from "libs/aspen-core/src/decorator/no-token-decorator"
+import { AspenGet, AspenPost, AspenPut, AspenDelete, AspenPatch } from "./decorator/req-decorator"
+import { NoTokenService } from "./decorator/no-token-decorator"
+import { AspenLogInterceptor } from "./decorator/log-decorator"
 
 /******************** start app start ********************/
 export { AppCtx } from "libs/aspen-core/src/app/app-ctx"
@@ -19,6 +21,10 @@ export { BaseAdminUser } from "libs/aspen-core/src/base/base-user"
 /******************** start doc start ********************/
 export { registerSwaggerDoc } from "libs/aspen-core/src/doc/swagger"
 /******************** end doc end ********************/
+
+/******************** start entity start ********************/
+export * from "libs/aspen-core/src/entity"
+/******************** end entity end ********************/
 
 /******************** start config start ********************/
 export { readActiveYamlFile } from "libs/aspen-core/src/config/read-config"
@@ -68,7 +74,16 @@ export const router = {
 
 @Global()
 @Module({
-	providers: [NoTokenService, DiscoveryService, MetadataScanner],
-	exports: [NoTokenService],
+	imports: [TypeOrmModule],
+	providers: [
+		NoTokenService,
+		DiscoveryService,
+		MetadataScanner,
+		{
+			provide: APP_INTERCEPTOR,
+			useClass: AspenLogInterceptor,
+		},
+	],
+	exports: [NoTokenService, TypeOrmModule],
 })
 export class AspenCoreModule {}

@@ -11,6 +11,7 @@ import {
 } from "@aspen/aspen-core"
 
 import { SysModule } from "apps/admin/src/module/sys/sys-module"
+import { CoreModule } from "apps/admin/src/module/core/core-module"
 
 @Module({
 	imports: [
@@ -20,6 +21,7 @@ import { SysModule } from "apps/admin/src/module/sys/sys-module"
 		AspenCoreModule,
 		AppClsModule,
 		SysModule,
+		CoreModule,
 	],
 	providers: [RedisTool],
 	controllers: [],

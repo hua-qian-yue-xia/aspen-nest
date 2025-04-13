@@ -29,8 +29,7 @@ export const registerDatabase = () => {
 			logger.verbose(
 				`连接数据库成功type:<${type}>host:<${host}>port:<${port}>username:<${username}>password:<${password}>database:<${database}>dropSchema:<${dropSchema}>synchronize:<${synchronize}>`,
 			)
-			console.log(__dirname)
-			const entityDir = `${process.cwd()}/dist/**/admin/**/*-entity{.ts,.js}`
+			const entityDir = `${process.cwd()}/dist/**/*-entity{.ts,.js}`
 			return {
 				type: type,
 				host: host,

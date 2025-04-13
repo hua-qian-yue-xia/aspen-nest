@@ -1,9 +1,9 @@
 import { Column, Entity, ManyToOne, PrimaryColumn } from "typeorm"
 import { GenTableEntity } from "libs/aspen-gen/src/entity/gen-table-entity"
 
-@Entity({ comment: "列" })
-export class GenColumnEntity {
-	@PrimaryColumn({ type: "bigint", length: 20, comment: "列id" })
+@Entity({ comment: "列", name: "gen_col" })
+export class GenColEntity {
+	@PrimaryColumn({ type: "bigint", comment: "列id" })
 	columnId: number
 
 	@PrimaryColumn({ type: "varchar", length: 32, unique: true, comment: "列名" })
@@ -21,7 +21,7 @@ export class GenColumnEntity {
 	@PrimaryColumn({ type: "varchar", length: 128, comment: "列描述" })
 	comment: string
 
-	@Column({ type: "int", length: 8, comment: "列排序" })
+	@Column({ type: "int", comment: "列排序" })
 	sort: number
 
 	@ManyToOne(() => GenTableEntity, (genTable) => genTable.columnList)

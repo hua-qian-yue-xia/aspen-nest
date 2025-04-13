@@ -32,6 +32,9 @@ export class SysRoleController {
 		summary: "根据角色id查询角色",
 		description: "有缓存",
 		router: "/get/:roleId",
+		log: {
+			tag: "OTHER",
+		},
 	})
 	async getByRoleId(@Param("roleId") roleId: number) {
 		const roleDetail = await this.sysRoleService.getByRoleId(roleId)

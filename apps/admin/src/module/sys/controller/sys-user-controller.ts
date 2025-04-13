@@ -13,7 +13,7 @@ export class SysUserController {
 		router: "/page",
 	})
 	async page() {
-		R.success()
+		return R.success()
 	}
 
 	@router.get({
@@ -22,7 +22,7 @@ export class SysUserController {
 		router: "/select",
 	})
 	async select() {
-		R.success()
+		return R.success()
 	}
 
 	@router.patch({
@@ -32,6 +32,6 @@ export class SysUserController {
 	})
 	async getByUserId(@Param("userId") userId: string) {
 		this.sysUserController.getByUserId(userId)
-		R.success()
+		return R.success()
 	}
 }
