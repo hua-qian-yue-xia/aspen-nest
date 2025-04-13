@@ -75,7 +75,6 @@ export class AspenLogInterceptor implements NestInterceptor {
 				if (isSaveResponseData) {
 					coreLog.resBody = JSON.stringify(res)?.substring(0, 2000)
 				}
-				return res
 			}),
 			catchError((error) => {
 				coreLog.errorMsg = error.message

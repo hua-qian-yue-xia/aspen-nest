@@ -1,6 +1,6 @@
 import { Body, Controller, Param } from "@nestjs/common"
 
-import { R, router, AspenLog } from "@aspen/aspen-core"
+import { R, router } from "@aspen/aspen-core"
 
 import { SysRoleService } from "apps/admin/src/module/sys/service"
 import { SysRoleSaveDto, SysRoleEditDto } from "apps/admin/src/module/sys/dto"
@@ -28,14 +28,13 @@ export class SysRoleController {
 		return R.success()
 	}
 
-	@AspenLog({
-		summary: "根据角色id查询角色",
-		tag: "OTHER",
-	})
 	@router.patch({
 		summary: "根据角色id查询角色",
 		description: "有缓存",
 		router: "/get/:roleId",
+		log: {
+			tag: "OTHER",
+		},
 	})
 	async getByRoleId(@Param("roleId") roleId: number) {
 		const roleDetail = await this.sysRoleService.getByRoleId(roleId)

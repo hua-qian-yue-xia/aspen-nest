@@ -134,6 +134,7 @@ function AspenCacheable(cacheables: CacheableOption | Array<CacheableOption>) {
 			}
 			// 执行方法,获取结果
 			const result = await originalMethod.apply(this, args)
+			if (result == undefined) return result
 			// 异步缓存结果
 			const asyncList = cacheList.filter((i) => i.async)
 			if (asyncList.length > 0) {
@@ -167,6 +168,7 @@ function AspenCachePut(cachePuts: CachePutOption | Array<CachePutOption>) {
 			const cacheList: Array<Omit<CachePutOption, "value">> = []
 			// 执行方法,获取结果
 			const result = await originalMethod.apply(this, args)
+			if (result == undefined) return result
 			for (let i = 0; i < list.length; i++) {
 				const v = list[i]
 				const cacheValue = parseCacheKeyExpressions(v.values, args, result)
