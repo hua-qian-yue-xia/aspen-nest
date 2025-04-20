@@ -1,4 +1,4 @@
-import { Controller } from "@nestjs/common"
+import { router } from "@aspen/aspen-core"
 
-@Controller("sys/menu")
+@router.controller({ prefix: "sys/menu", summary: "菜单管理" })
 export class SysMenuController {}

@@ -1,11 +1,11 @@
-import { applyDecorators } from "@nestjs/common"
+import { applyDecorators, Controller } from "@nestjs/common"
 
 import * as _ from "radash"
 
 import { ReqMethod, ReqMethodMap } from "libs/aspen-core/src/constant/decorator-constant"
 import { AspenLog, LogOption } from "libs/aspen-core/src/decorator/log-decorator"
 import { AspenRateLimit, RateLimitOption } from "libs/aspen-core/src/decorator/repeat-submit-decorator"
-import { ApiOperation } from "@nestjs/swagger"
+import { ApiOperation, ApiTags } from "@nestjs/swagger"
 
 /******************** start type start ********************/
 
@@ -34,6 +34,17 @@ type CreateReqOptions = {
 	 * 限流配置信息
 	 */
 	rateLimit?: RateLimitOption
+}
+
+type AspenControllerOptions = {
+	/**
+	 * 控制器作用描述
+	 */
+	summary: string
+	/**
+	 * 控制器路由path前缀
+	 */
+	prefix: string | string[]
 }
 
 type MethodReqOptions = Omit<CreateReqOptions, "method">
@@ -78,7 +89,14 @@ const AspenPatch = (options: MethodReqOptions) => {
 	return createReqDecorators({ ...options, method: ReqMethod.Patch })
 }
 
+const AspenController = (options: AspenControllerOptions) => {
+	const { summary, prefix } = options
+	const decorators = [Controller(prefix), ApiTags(summary)]
+	return applyDecorators(...decorators)
+}
+
 export const router = {
+	controller: AspenController,
 	get: AspenGet,
 	post: AspenPost,
 	put: AspenPut,

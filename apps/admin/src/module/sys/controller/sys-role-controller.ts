@@ -1,11 +1,11 @@
-import { Body, Controller, Param } from "@nestjs/common"
+import { Body, Param } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
 import { SysRoleService } from "apps/admin/src/module/sys/service"
 import { SysRoleSaveDto, SysRoleEditDto } from "apps/admin/src/module/sys/dto"
 
-@Controller("sys/role")
+@router.controller({ prefix: "sys/role", summary: "角色管理" })
 export class SysRoleController {
 	constructor(private readonly sysRoleService: SysRoleService) {}
 

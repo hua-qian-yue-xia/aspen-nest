@@ -1,10 +1,10 @@
-import { Controller, Param } from "@nestjs/common"
+import { Param } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
 import { SysUserService } from "apps/admin/src/module/sys/service"
 
-@Controller("sys/user")
+@router.controller({ prefix: "sys/user", summary: "用户管理" })
 export class SysUserController {
 	constructor(private readonly sysUserController: SysUserService) {}
 
