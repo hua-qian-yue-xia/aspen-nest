@@ -23,6 +23,11 @@ export class SysRoleService {
 		return this.sysRoleRep.findOneBy({ roleId: roleId })
 	}
 
+	@cache.able({ key: "sys:role:code", values: ["#p{0}"], expiresIn: "2h" })
+	getByRoleCode(roleCode: string) {
+		return this.sysRoleRep.findOneBy({ roleCode: roleCode })
+	}
+
 	// 新增
 	@cache.put({ key: "sys:role:id", values: ["#r{roleId}"] })
 	async save(dto: SysRoleSaveDto): Promise<SysRoleEntity> {

@@ -1,4 +1,20 @@
 import { Injectable } from "@nestjs/common"
+import { InjectRepository } from "@nestjs/typeorm"
+import { Repository } from "typeorm"
+
+import { SysDeptEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
 
 @Injectable()
-export class SysDeptService {}
+export class SysDeptService {
+	constructor(@InjectRepository(SysDeptEntity) private readonly sysDeptRep: Repository<SysDeptEntity>) {}
+
+	// 权限分页查询
+	async scopePage() {
+		return this.sysDeptRep.page()
+	}
+
+	// 根据部门id查询部门
+	async getByDeptId(deptId: number): Promise<SysDeptEntity | null> {
+		return this.sysDeptRep.findOneBy({ deptId: deptId })
+	}
+}

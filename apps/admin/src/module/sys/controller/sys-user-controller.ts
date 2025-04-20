@@ -28,7 +28,7 @@ export class SysUserController {
 	@router.patch({
 		summary: "根据用户id查询用户",
 		description: "有缓存",
-		router: "/get/:userId",
+		router: "/id/:userId",
 	})
 	async getByUserId(@Param("userId") userId: string) {
 		this.sysUserController.getByUserId(userId)

@@ -19,25 +19,35 @@ export class SysRoleController {
 	}
 
 	@router.get({
-		summary: "下拉",
-		description: "没有权限控制",
+		summary: "下拉(没有权限控制)",
 		router: "/select",
 	})
 	async select() {
-		this.sysRoleService.scopePage()
-		return R.success()
+		const list = await this.sysRoleService.scopePage()
+		return R.success(list)
 	}
 
 	@router.patch({
-		summary: "根据角色id查询角色",
-		description: "有缓存",
-		router: "/get/:roleId",
+		summary: "根据角色id查询角色(有缓存)",
+		router: "/id/:roleId",
 		log: {
 			tag: "OTHER",
 		},
 	})
 	async getByRoleId(@Param("roleId") roleId: number) {
 		const roleDetail = await this.sysRoleService.getByRoleId(roleId)
+		return R.success(roleDetail)
+	}
+
+	@router.patch({
+		summary: "根据角色code查询角色(有缓存)",
+		router: "/code/:roleCode",
+		log: {
+			tag: "OTHER",
+		},
+	})
+	async getByRoleCode(@Param("roleCode") roleCode: string) {
+		const roleDetail = await this.sysRoleService.getByRoleCode(roleCode)
 		return R.success(roleDetail)
 	}
 
