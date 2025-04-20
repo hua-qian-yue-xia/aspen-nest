@@ -41,8 +41,12 @@ export type LogOption = {
 
 /******************** end type end ********************/
 
-export const AspenLog = (option: LogOption) =>
-	SetMetadata(DecoratorKey.Log, { ...option, isSaveRequestData: true, isSaveResponseData: true })
+const defaultLogOption: Pick<LogOption, "isSaveRequestData" | "isSaveResponseData"> = {
+	isSaveRequestData: true,
+	isSaveResponseData: true,
+}
+
+export const AspenLog = (option: LogOption) => SetMetadata(DecoratorKey.Log, { ...defaultLogOption, ...option })
 
 @Injectable()
 export class AspenLogInterceptor implements NestInterceptor {

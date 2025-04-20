@@ -1,7 +1,7 @@
 import * as _ from "radash"
 import * as ms from "ms"
 
-import { AppCtx } from "@aspen/aspen-core"
+import { AppCtx, RedisTool } from "@aspen/aspen-core"
 
 type CacheKeyExpression = `#p{${number}${string}}` | `#r` | `#r{${string}}`
 
@@ -101,6 +101,15 @@ function parseExpiresIn(expiresIn?: number | ms.StringValue): number {
 	return msValue <= 0 ? -1 : msValue / 1000
 }
 
+const getRedisTool = async (): Promise<RedisTool> => {
+	try {
+		return await AppCtx.getInstance().getRedisTool()
+	} catch (error) {
+		console.error("获取RedisTool失败", error)
+		return null
+	}
+}
+
 /**
  * 根据方法对其返回结果进行缓存，下次请求时，如果缓存存在，则直接读取缓存数据返回；如果缓存不存在，则执行方法，并把返回的结果存入缓存中
  * 一般用在查询方法上
@@ -111,7 +120,8 @@ function AspenCacheable(cacheables: CacheableOption | Array<CacheableOption>) {
 		descriptor.value = async function (...args: Array<any>) {
 			if (_.isEmpty(cacheables)) return originalMethod.apply(this, args)
 			// 处理缓存流程
-			const redisTool = await AppCtx.getInstance().getRedisTool()
+			const redisTool = await getRedisTool()
+			if (!redisTool) return originalMethod.apply(this, args)
 			const list = Array.isArray(cacheables) ? cacheables : [cacheables]
 			// 同步
 			const cacheList: Array<Omit<CacheableOption, "value">> = []
@@ -163,7 +173,8 @@ function AspenCachePut(cachePuts: CachePutOption | Array<CachePutOption>) {
 		descriptor.value = async function (...args: Array<any>) {
 			if (_.isEmpty(cachePuts)) return originalMethod.apply(this, args)
 			// 处理缓存流程
-			const redisTool = await AppCtx.getInstance().getRedisTool()
+			const redisTool = await getRedisTool()
+			if (!redisTool) return originalMethod.apply(this, args)
 			const list = Array.isArray(cachePuts) ? cachePuts : [cachePuts]
 			const cacheList: Array<Omit<CachePutOption, "value">> = []
 			// 执行方法,获取结果
@@ -201,7 +212,8 @@ function AspenCacheEvict(cacheEvicts: CacheEvictOption | Array<CacheEvictOption>
 		descriptor.value = async function (...args: Array<any>) {
 			if (_.isEmpty(cacheEvicts)) return originalMethod.apply(this, args)
 			// 处理缓存流程
-			const redisTool = await AppCtx.getInstance().getRedisTool()
+			const redisTool = await getRedisTool()
+			if (!redisTool) return originalMethod.apply(this, args)
 			const list = Array.isArray(cacheEvicts) ? cacheEvicts : [cacheEvicts]
 			const cacheList: Array<Omit<CacheEvictOption, "value">> = []
 			for (let i = 0; i < list.length; i++) {
