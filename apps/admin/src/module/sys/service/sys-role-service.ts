@@ -23,6 +23,7 @@ export class SysRoleService {
 		return this.sysRoleRep.findOneBy({ roleId: roleId })
 	}
 
+	// 根据角色code查询角色
 	@cache.able({ key: "sys:role:code", values: ["#p{0}"], expiresIn: "2h" })
 	getByRoleCode(roleCode: string) {
 		return this.sysRoleRep.findOneBy({ roleCode: roleCode })

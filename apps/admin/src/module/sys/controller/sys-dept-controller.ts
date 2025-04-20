@@ -1,7 +1,8 @@
 import { R, router } from "@aspen/aspen-core"
-import { Param } from "@nestjs/common"
+import { Body, Param } from "@nestjs/common"
 
 import { SysDeptService } from "apps/admin/src/module/sys/service"
+import { SysDeptSaveDto, SysDeptEditDto } from "apps/admin/src/module/sys/dto/index"
 
 @router.controller({ prefix: "sys/dept", summary: "部门管理" })
 export class SysDeptController {
@@ -36,5 +37,23 @@ export class SysDeptController {
 	async getByRoleId(@Param("deptId") deptId: number) {
 		const deptDetail = await this.sysDeptService.getByDeptId(deptId)
 		return R.success(deptDetail)
+	}
+
+	@router.post({
+		summary: "新增",
+		router: "",
+	})
+	async save(@Body() dto: SysDeptSaveDto) {
+		const roleDetail = await this.sysDeptService.save(dto)
+		return R.success(roleDetail.deptId)
+	}
+
+	@router.put({
+		summary: "修改",
+		router: "",
+	})
+	async edit(@Body() dto: SysDeptEditDto) {
+		await this.sysDeptService.update(dto)
+		return R.success()
 	}
 }

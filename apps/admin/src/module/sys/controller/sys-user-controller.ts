@@ -30,7 +30,7 @@ export class SysUserController {
 		description: "有缓存",
 		router: "/id/:userId",
 	})
-	async getByUserId(@Param("userId") userId: string) {
+	async getByUserId(@Param("userId") userId: number) {
 		this.sysUserController.getByUserId(userId)
 		return R.success()
 	}

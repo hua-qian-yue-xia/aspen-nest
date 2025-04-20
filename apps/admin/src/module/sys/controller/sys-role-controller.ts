@@ -64,7 +64,7 @@ export class SysRoleController {
 		summary: "修改",
 		router: "",
 	})
-	async edit(@Body() dto: SysRoleEditDto) {
+	async update(@Body() dto: SysRoleEditDto) {
 		await this.sysRoleService.edit(dto)
 		return R.success()
 	}
