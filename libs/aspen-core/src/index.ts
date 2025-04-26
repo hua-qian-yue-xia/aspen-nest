@@ -44,6 +44,7 @@ export * from "libs/aspen-core/src/cache/redis-tool"
 /******************** start database start ********************/
 export * from "@aspen/aspen-core/database/common/common-column"
 export * from "@aspen/aspen-core/database/extend/type-orm-extend"
+export * from "@aspen/aspen-core/database/tool/orm-query-tool"
 export * from "@aspen/aspen-core/database/database-module"
 /******************** end database end ********************/
 

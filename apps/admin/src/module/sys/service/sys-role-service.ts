@@ -6,14 +6,15 @@ import { plainToInstance } from "class-transformer"
 import { RuntimeException, cache } from "@aspen/aspen-core"
 
 import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
-import { SysRoleSaveDto, SysRoleEditDto } from "apps/admin/src/module/sys/dto"
+import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto } from "apps/admin/src/module/sys/dto"
 
 @Injectable()
 export class SysRoleService {
 	constructor(@InjectRepository(SysRoleEntity) private readonly sysRoleRep: Repository<SysRoleEntity>) {}
 
 	// 权限分页查询
-	async scopePage() {
+	async scopePage(pa: SysRolePaDto) {
+		console.log(pa)
 		return this.sysRoleRep.page()
 	}
 

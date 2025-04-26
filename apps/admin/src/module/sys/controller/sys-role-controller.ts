@@ -3,7 +3,7 @@ import { Body, Param } from "@nestjs/common"
 import { R, router } from "@aspen/aspen-core"
 
 import { SysRoleService } from "apps/admin/src/module/sys/service"
-import { SysRoleSaveDto, SysRoleEditDto } from "apps/admin/src/module/sys/dto"
+import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto } from "apps/admin/src/module/sys/dto"
 
 @router.controller({ prefix: "sys/role", summary: "角色管理" })
 export class SysRoleController {
@@ -13,8 +13,8 @@ export class SysRoleController {
 		summary: "分页",
 		router: "/page",
 	})
-	async page() {
-		const list = await this.sysRoleService.scopePage()
+	async page(@Param() pa: SysRolePaDto) {
+		const list = await this.sysRoleService.scopePage(pa)
 		return R.success(list)
 	}
 
@@ -22,8 +22,8 @@ export class SysRoleController {
 		summary: "下拉(没有权限控制)",
 		router: "/select",
 	})
-	async select() {
-		const list = await this.sysRoleService.scopePage()
+	async select(@Param() pa: SysRolePaDto) {
+		const list = await this.sysRoleService.scopePage(pa)
 		return R.success(list)
 	}
 
