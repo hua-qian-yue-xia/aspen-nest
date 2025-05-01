@@ -1,6 +1,6 @@
 import { Delete, Get, Patch, Post, Put } from "@nestjs/common"
 
-export type ReqTag = "OTHER" | "INSERT" | "UPDATE" | "DELETE" | "GRANT" | "EXPORT" | "IMPORT" | "GENERATE" | "CLEAN"
+export type ReqTag = "OTHER" | "INSERT" | "UPDATE" | "DELETE" | "GRANT" | "EXPORT" | "IMPORT" | "GENERATE" | "ADMIN"
 
 export enum ReqMethod {
 	Get = "GET",

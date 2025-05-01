@@ -20,7 +20,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		private readonly jwtService: JwtService,
 		private readonly redisTool: RedisTool,
 	) {
-		const { secret } = config.get<JwtConfig>("database")
+		const { secret = "123" } = config.get<JwtConfig>("database")
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: false,

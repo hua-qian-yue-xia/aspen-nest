@@ -39,7 +39,11 @@ export class SysUserController {
 
 	@router.post({
 		summary: "admin登录",
+		description: "admin登录,会校验用户名、密码、用户是否启用、用户是否有权限登录管理后台",
 		router: "/admin/login",
+		log: {
+			tag: "ADMIN",
+		},
 	})
 	async adminLogin(@Body() dto: SysUserAdminLoginDto) {
 		await this.sysUserService.adminLogin(dto)
@@ -48,10 +52,14 @@ export class SysUserController {
 
 	@router.get({
 		summary: "admin登出",
+		description: "用户手动退出时调用,会清空redis中的token,用户下次需要重新登录",
 		router: "/admin/logout",
+		log: {
+			tag: "ADMIN",
+		},
 	})
 	async adminLogout() {
-		this.sysUserService.adminLogout()
+		await this.sysUserService.adminLogout()
 		return R.success()
 	}
 }

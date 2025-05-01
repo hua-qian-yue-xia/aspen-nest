@@ -3,7 +3,7 @@ import { INestApplication } from "@nestjs/common"
 import { ClsService } from "nestjs-cls"
 import * as _ from "radash"
 
-import { BaseAdminUser, RedisTool, BasePage } from "../index"
+import { BaseUser, RedisTool, BasePage } from "../index"
 
 export class AppCtx {
 	private static instance: AppCtx
@@ -53,7 +53,7 @@ export class AppCtx {
 	 *
 	 * @returns BaseUser?
 	 */
-	async getLoginAdminUser(): Promise<BaseAdminUser | null> {
+	async getLoginAdminUser(): Promise<BaseUser | null> {
 		const clsService = await AppCtx.getInstance().getClsService()
 		const token = clsService.get<string | undefined>("token")
 		if (_.isEmpty(token)) return null
@@ -61,7 +61,7 @@ export class AppCtx {
 		const redisTool = await AppCtx.getInstance().getApp().resolve(RedisTool)
 		const userJson = await redisTool.get(token)
 		if (_.isEmpty(userJson)) return null
-		return JSON.parse(userJson) as BaseAdminUser
+		return JSON.parse(userJson) as BaseUser
 	}
 
 	/**
