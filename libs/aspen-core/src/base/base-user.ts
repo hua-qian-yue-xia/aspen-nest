@@ -2,7 +2,7 @@ import { Column, PrimaryGeneratedColumn } from "typeorm"
 
 import { BaseRecordDb } from "../index"
 
-export class BaseAdminUser extends BaseRecordDb {
+export class BaseUser extends BaseRecordDb {
 	@PrimaryGeneratedColumn({ type: "bigint", comment: "用户id" })
 	userId: number
 
@@ -33,5 +33,26 @@ export class BaseAdminUser extends BaseRecordDb {
 	 */
 	isEnable(): boolean {
 		return this.enable
+	}
+
+	/**
+	 * 密码是否正确
+	 */
+	checkPassword(password: string): boolean {
+		return this.password === password
+	}
+
+	/**
+	 * 密码加密
+	 */
+	encryptPassword(password: string): string {
+		return password
+	}
+
+	/**
+	 * 密码解密
+	 */
+	decryptPassword(password: string): string {
+		return password
 	}
 }

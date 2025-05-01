@@ -1,10 +1,10 @@
 import { Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne } from "typeorm"
 
-import { BaseAdminUser } from "@aspen/aspen-core"
+import { BaseUser } from "@aspen/aspen-core"
 import { SysDeptEntity, SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity"
 
 @Entity({ comment: "用户", name: "sys_user" })
-export class SysUserEntity extends BaseAdminUser {
+export class SysUserEntity extends BaseUser {
 	@ManyToMany(() => SysRoleEntity)
 	@JoinTable({ name: "sys_user_role", joinColumn: { name: "user_id" }, inverseJoinColumn: { name: "role_id" } })
 	roles: Array<SysRoleEntity>

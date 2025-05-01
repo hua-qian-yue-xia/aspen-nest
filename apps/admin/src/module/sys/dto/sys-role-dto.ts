@@ -13,5 +13,6 @@ export class SysRoleEditDto extends SysRoleEntity {}
 // 查询角色
 export class SysRolePaDto extends DataBaseQuery(SysRoleEntity, {
 	eq: { roleId: null, roleCode: null },
+	ne: { roleId: null },
 	like: { roleName: null },
 }) {}

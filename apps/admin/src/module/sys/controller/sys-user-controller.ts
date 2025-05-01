@@ -1,19 +1,21 @@
-import { Param } from "@nestjs/common"
+import { Body, Param } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
 import { SysUserService } from "apps/admin/src/module/sys/service"
+import { SysUserAdminLoginDto } from "apps/admin/src/module/sys/dto/sys-user-dto"
 
 @router.controller({ prefix: "sys/user", summary: "用户管理" })
 export class SysUserController {
-	constructor(private readonly sysUserController: SysUserService) {}
+	constructor(private readonly sysUserService: SysUserService) {}
 
 	@router.get({
 		summary: "分页",
 		router: "/page",
 	})
 	async page() {
-		return R.success()
+		const list = await this.sysUserService.scopePage()
+		return R.success(list)
 	}
 
 	@router.get({
@@ -31,7 +33,25 @@ export class SysUserController {
 		router: "/id/:userId",
 	})
 	async getByUserId(@Param("userId") userId: number) {
-		this.sysUserController.getByUserId(userId)
+		this.sysUserService.getByUserId(userId)
+		return R.success()
+	}
+
+	@router.post({
+		summary: "admin登录",
+		router: "/admin/login",
+	})
+	async adminLogin(@Body() dto: SysUserAdminLoginDto) {
+		await this.sysUserService.adminLogin(dto)
+		return R.success()
+	}
+
+	@router.get({
+		summary: "admin登出",
+		router: "/admin/logout",
+	})
+	async adminLogout() {
+		this.sysUserService.adminLogout()
 		return R.success()
 	}
 }
