@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
-import { RuntimeException, cache } from "@aspen/aspen-core"
+import { OrmQuery, RuntimeException, cache } from "@aspen/aspen-core"
 
 import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
 import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto } from "apps/admin/src/module/sys/dto"
@@ -14,8 +14,9 @@ export class SysRoleService {
 
 	// 权限分页查询
 	async scopePage(pa: SysRolePaDto) {
-		console.log(pa)
-		return this.sysRoleRep.page()
+		console.log("权限分页查询:", pa)
+		const where = OrmQuery.getWhereOptions(pa)
+		return this.sysRoleRep.page({ where: where })
 	}
 
 	// 根据角色id查询角色

@@ -9,20 +9,20 @@ import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto } from "apps/admin/src/mod
 export class SysRoleController {
 	constructor(private readonly sysRoleService: SysRoleService) {}
 
-	@router.get({
+	@router.post({
 		summary: "分页",
 		router: "/page",
 	})
-	async page(@Param() pa: SysRolePaDto) {
+	async page(@Body() pa: SysRolePaDto) {
 		const list = await this.sysRoleService.scopePage(pa)
 		return R.success(list)
 	}
 
-	@router.get({
+	@router.post({
 		summary: "下拉(没有权限控制)",
 		router: "/select",
 	})
-	async select(@Param() pa: SysRolePaDto) {
+	async select(@Body() pa: SysRolePaDto) {
 		const list = await this.sysRoleService.scopePage(pa)
 		return R.success(list)
 	}

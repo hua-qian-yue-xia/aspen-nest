@@ -17,7 +17,7 @@ export class SysUserService {
 
 	// 分页
 	async scopePage() {
-		return this.sysUserEntity.page()
+		return this.sysUserEntity.find()
 	}
 
 	// 根据用户id查询用户

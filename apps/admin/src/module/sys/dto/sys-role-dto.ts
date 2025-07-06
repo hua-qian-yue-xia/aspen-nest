@@ -1,6 +1,6 @@
 import { OmitType } from "@nestjs/swagger"
 
-import { DataBaseQuery } from "@aspen/aspen-core"
+import { OrmQuery } from "@aspen/aspen-core"
 
 import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
 
@@ -11,8 +11,4 @@ export class SysRoleSaveDto extends OmitType(SysRoleEntity, ["roleId"]) {}
 export class SysRoleEditDto extends SysRoleEntity {}
 
 // 查询角色
-export class SysRolePaDto extends DataBaseQuery(SysRoleEntity, {
-	eq: { roleId: null, roleCode: null },
-	ne: { roleId: null },
-	like: { roleName: null },
-}) {}
+export class SysRolePaDto extends OrmQuery.DataBaseQuery(SysRoleEntity, ["eq-roleId", "like-roleName"]) {}

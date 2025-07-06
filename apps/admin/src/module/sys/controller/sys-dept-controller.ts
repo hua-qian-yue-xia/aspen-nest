@@ -12,7 +12,8 @@ export class SysDeptController {
 		summary: "分页",
 		router: "/page",
 	})
-	async page() {
+	async page(@Body() body: SysDeptSaveDto) {
+		console.log(body)
 		const list = await this.sysDeptService.scopePage()
 		return R.success(list)
 	}

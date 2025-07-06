@@ -33,7 +33,7 @@ export class SysUserController {
 		router: "/id/:userId",
 	})
 	async getByUserId(@Param("userId") userId: number) {
-		this.sysUserService.getByUserId(userId)
+		await this.sysUserService.getByUserId(userId)
 		return R.success()
 	}
 
