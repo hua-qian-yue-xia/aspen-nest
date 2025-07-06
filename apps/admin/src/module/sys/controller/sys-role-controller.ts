@@ -52,8 +52,14 @@ export class SysRoleController {
 	}
 
 	@router.post({
-		summary: "新增",
+		summary: "新增角色",
 		router: "",
+		log: {
+			tag: "INSERT",
+		},
+		rateLimit: {
+			limitType: "IP",
+		},
 	})
 	async save(@Body() dto: SysRoleSaveDto) {
 		const roleDetail = await this.sysRoleService.save(dto)
@@ -61,7 +67,7 @@ export class SysRoleController {
 	}
 
 	@router.put({
-		summary: "修改",
+		summary: "修改角色",
 		router: "",
 	})
 	async update(@Body() dto: SysRoleEditDto) {

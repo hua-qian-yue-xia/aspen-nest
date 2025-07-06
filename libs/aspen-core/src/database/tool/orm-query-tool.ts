@@ -99,13 +99,14 @@ export abstract class OrmQuery {
 		return DataBaseQueryClass as unknown as Type<QueryConditionType<T, KEY>>
 	}
 
+	// 获取typeorm的where条件
 	static getWhereOptions<T>(target: any): FindOptionsWhere<T> {
 		if (!target) return
 		const where: FindOptionsWhere<T> = {}
 		for (const i of CONDITION_LIST) {
 			for (const key in target) {
 				const [operator, field] = (key as string).split("-")
-				if (i.key === operator && target[key] != undefined) {
+				if (i.key === operator && target[key] != undefined && target[key] != "") {
 					where[field] = i.fn(target[key])
 				}
 			}

@@ -1,6 +1,6 @@
 import { SetMetadata } from "@nestjs/common"
 
-import { HttpLimitEnum } from "libs/aspen-core/src/constant/http-constant"
+import { HttpLimit } from "libs/aspen-core/src/constant/http-constant"
 import { DecoratorKey } from "libs/aspen-core/src/constant/decorator-constant"
 
 /******************** start type start ********************/
@@ -18,10 +18,10 @@ export type RateLimitOption = {
 	count?: number
 	/**
 	 * 限流类型
-	 * @see HttpLimitEnum
+	 * @see HttpLimit
 	 * @default DEFAULT
 	 */
-	limitType?: HttpLimitEnum
+	limitType?: HttpLimit
 }
 
 /******************** end type end ********************/
@@ -29,7 +29,7 @@ export type RateLimitOption = {
 const defaultRateLimitOption: RateLimitOption = {
 	time: 60,
 	count: 100,
-	limitType: HttpLimitEnum.DEFAULT,
+	limitType: "DEFAULT",
 }
 
 export const AspenRateLimit = (option?: RateLimitOption) => {

@@ -1,11 +1,4 @@
-import {
-	BadGatewayException,
-	CallHandler,
-	ExecutionContext,
-	Injectable,
-	NestInterceptor,
-	SetMetadata,
-} from "@nestjs/common"
+import { CallHandler, ExecutionContext, Injectable, NestInterceptor, SetMetadata } from "@nestjs/common"
 import { FastifyRequest, FastifyReply } from "fastify"
 import { Reflector } from "@nestjs/core"
 import { catchError, finalize, Observable, tap, throwError } from "rxjs"
@@ -83,7 +76,7 @@ export class AspenLogInterceptor implements NestInterceptor {
 			catchError((error) => {
 				coreLog.errorMsg = error.message
 				coreLog.errorSatck = JSON.stringify(error.stack)?.substring(0, 2000)
-				return throwError(() => new BadGatewayException())
+				return throwError(() => error)
 			}),
 			finalize(async () => {
 				const { statusCode } = ctx.switchToHttp().getResponse<FastifyReply>()

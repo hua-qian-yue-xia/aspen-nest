@@ -1,16 +1,9 @@
 /**
  * 限流策略
+ * - DEFAULT 默认策略全局限流
+ * - IP 根据请求者IP进行限流
  */
-export enum HttpLimitEnum {
-	/**
-	 * 默认策略全局限流
-	 */
-	DEFAULT = "DEFAULT",
-	/**
-	 * 根据请求者IP进行限流
-	 */
-	IP = "IP",
-}
+export type HttpLimit = "DEFAULT" | "IP"
 
 /**
  * 返回状态码
