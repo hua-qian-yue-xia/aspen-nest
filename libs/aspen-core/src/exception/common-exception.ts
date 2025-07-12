@@ -2,9 +2,9 @@ import { HttpException, HttpStatus } from "@nestjs/common"
 
 /**
  * 运行时异常
- * 代码执行错误、如用户不存在等
+ * 代码执行错误、意外的错误
  */
-export class RuntimeException extends HttpException {
+class RuntimeException extends HttpException {
 	constructor(msg?: string) {
 		super(msg, HttpStatus.INTERNAL_SERVER_ERROR)
 	}
@@ -12,10 +12,15 @@ export class RuntimeException extends HttpException {
 
 /**
  * 校验错误
- * 参数校验失败等
+ * 参数校验失败等、如数据不存在、数据重复等
  */
-export class ValidatorException extends HttpException {
+class ValidatorException extends HttpException {
 	constructor(msg?: string) {
 		super(msg, HttpStatus.NOT_FOUND)
 	}
+}
+
+export default {
+	runtime: RuntimeException,
+	validator: ValidatorException,
 }

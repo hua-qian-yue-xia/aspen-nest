@@ -3,18 +3,18 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
-import { OrmQuery, RuntimeException, cache } from "@aspen/aspen-core"
+import { OrmQuery, Exception, cache } from "@aspen/aspen-core"
 
 import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
-import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto } from "apps/admin/src/module/sys/dto"
+import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto as SysRoleDto } from "apps/admin/src/module/sys/dto"
 
 @Injectable()
 export class SysRoleService {
 	constructor(@InjectRepository(SysRoleEntity) private readonly sysRoleRep: Repository<SysRoleEntity>) {}
 
 	// 权限分页查询
-	async scopePage(pa: SysRolePaDto) {
-		const where = OrmQuery.getWhereOptions(pa)
+	async scopePage(dto: SysRoleDto) {
+		const where = OrmQuery.getWhereOptions(dto)
 		return this.sysRoleRep.page({ where: where })
 	}
 
@@ -34,10 +34,10 @@ export class SysRoleService {
 	@cache.put({ key: "sys:role:id", values: ["#r{roleId}"] })
 	async save(dto: SysRoleSaveDto): Promise<SysRoleEntity> {
 		if (await this.isRoleNameDuplicate(dto.roleName, null)) {
-			throw new RuntimeException(`角色名"${dto.roleName}"重复`)
+			throw new Exception.validator(`角色名"${dto.roleName}"重复`)
 		}
 		if (await this.isRoleCodeDuplicate(dto.roleCode, null)) {
-			throw new RuntimeException(`角色code"${dto.roleCode}"重复`)
+			throw new Exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
 		const saveObj = await this.sysRoleRep.save(plainToInstance(SysRoleEntity, dto))
 		return saveObj
@@ -47,21 +47,19 @@ export class SysRoleService {
 	async edit(dto: SysRoleEditDto): Promise<void> {
 		const role = await this.getByRoleId(dto.roleId)
 		if (!role) {
-			throw new RuntimeException(`角色id"${dto.roleId}"不存在`)
+			throw new Exception.validator(`角色id"${dto.roleId}"不存在`)
 		}
 		if (await this.isRoleNameDuplicate(dto.roleName, dto.roleId)) {
-			throw new RuntimeException(`角色名"${dto.roleName}"重复`)
+			throw new Exception.validator(`角色名"${dto.roleName}"重复`)
 		}
 		if (await this.isRoleCodeDuplicate(dto.roleCode, dto.roleId)) {
-			throw new RuntimeException(`角色code"${dto.roleCode}"重复`)
+			throw new Exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
 		await this.sysRoleRep.update({ roleId: dto.roleId }, plainToInstance(SysRoleEntity, dto))
 	}
 
 	// 删除
 	async delByIds(roleIds: Array<number>): Promise<number> {
-		// 检查是否分配
-		this.sysRoleRep.find()
 		// 删除缓存
 		const { affected } = await this.sysRoleRep.delete(roleIds)
 		return affected ?? 0

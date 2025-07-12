@@ -13,8 +13,8 @@ export class SysRoleController {
 		summary: "分页",
 		router: "/page",
 	})
-	async page(@Body() pa: SysRolePaDto) {
-		const list = await this.sysRoleService.scopePage(pa)
+	async page(@Body() dto: SysRolePaDto) {
+		const list = await this.sysRoleService.scopePage(dto)
 		return R.success(list)
 	}
 
@@ -52,7 +52,7 @@ export class SysRoleController {
 	}
 
 	@router.post({
-		summary: "新增角色",
+		summary: "新增角色(限流、日志)",
 		router: "",
 		log: {
 			tag: "INSERT",
@@ -67,7 +67,7 @@ export class SysRoleController {
 	}
 
 	@router.put({
-		summary: "修改角色",
+		summary: "修改角色(限流、日志)",
 		router: "",
 	})
 	async update(@Body() dto: SysRoleEditDto) {

@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 
-import { cache, RuntimeException } from "@aspen/aspen-core"
+import { cache, Exception } from "@aspen/aspen-core"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
 import { SysUserEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
@@ -32,11 +32,11 @@ export class SysUserService {
 		// 1.1 校验用户是否存在、密码是否正确
 		const user = await this.sysUserEntity.findOneBy({ username: username })
 		if (!user || !user.checkPassword(password)) {
-			return new RuntimeException("用户名或密码错误")
+			throw new Exception.validator("用户名或密码错误")
 		}
 		// 1.2 校验用户是否启用
 		if (!user.isEnable()) {
-			return new RuntimeException("用户已被禁用")
+			throw new Exception.validator("用户已被禁用")
 		}
 		// 1.3 校验用户是否可以登录管理后台
 

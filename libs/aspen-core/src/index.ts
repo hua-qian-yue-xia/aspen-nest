@@ -59,7 +59,7 @@ export * from "@aspen/aspen-core/decorator/validator-decorator"
 
 /******************** start 异常 start ********************/
 export * from "@aspen/aspen-core/exception/filter/exception-filter"
-export * from "@aspen/aspen-core/exception/common-exception"
+export { default as Exception } from "@aspen/aspen-core/exception/common-exception"
 /******************** end 异常 end ********************/
 
 /******************** start 管道 start ********************/

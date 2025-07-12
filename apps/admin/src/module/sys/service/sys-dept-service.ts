@@ -5,7 +5,7 @@ import { plainToInstance } from "class-transformer"
 
 import { SysDeptEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
 import { SysDeptSaveDto, SysDeptEditDto } from "apps/admin/src/module/sys/dto/index"
-import { RuntimeException } from "@aspen/aspen-core"
+import { Exception } from "@aspen/aspen-core"
 
 @Injectable()
 export class SysDeptService {
@@ -31,7 +31,7 @@ export class SysDeptService {
 	async update(dto: SysDeptEditDto): Promise<void> {
 		const role = await this.getByDeptId(dto.deptId)
 		if (!role) {
-			throw new RuntimeException(`部门id"${dto.deptId}"不存在`)
+			throw new Exception.validator(`部门id"${dto.deptId}"不存在`)
 		}
 		await this.sysDeptRep.update({ deptId: dto.deptId }, plainToInstance(SysDeptEntity, dto))
 	}

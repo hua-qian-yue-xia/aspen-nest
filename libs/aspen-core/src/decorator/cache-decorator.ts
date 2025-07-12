@@ -29,6 +29,8 @@ type CacheableOption = {
 	 * @default -1
 	 */
 	expiresIn?: number | ms.StringValue
+
+	valueFc?: <P, R>(params: P, result: R) => Array<CacheKeyExpression>
 } & CacheBase
 
 type CachePutOption = {
