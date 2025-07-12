@@ -3,14 +3,14 @@ import { PassportModule } from "@nestjs/passport"
 import { registerAuthJwt } from "./auth-jwt-module"
 import { JwtStrategy } from "./auth-jwt-strategy"
 
-import { RedisTool } from "@aspen/aspen-core"
+import { RedisTool, registerRedis } from "@aspen/aspen-core"
 
 export * from "./auth-jwt-strategy"
 
 @Global()
 @Module({
-	imports: [PassportModule, registerAuthJwt()],
+	imports: [PassportModule, registerAuthJwt(), registerRedis()],
 	providers: [JwtStrategy, RedisTool],
-	exports: [JwtStrategy],
+	exports: [JwtStrategy, RedisTool],
 })
 export class AspenFrameworkJwtStrategyModule {}

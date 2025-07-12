@@ -3,14 +3,17 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
-import { OrmQuery, Exception, cache } from "@aspen/aspen-core"
+import { OrmQuery, Exception, cache, RedisTool } from "@aspen/aspen-core"
 
 import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
 import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto as SysRoleDto } from "apps/admin/src/module/sys/dto"
 
 @Injectable()
 export class SysRoleService {
-	constructor(@InjectRepository(SysRoleEntity) private readonly sysRoleRep: Repository<SysRoleEntity>) {}
+	constructor(
+		@InjectRepository(SysRoleEntity) private readonly sysRoleRep: Repository<SysRoleEntity>,
+		private readonly redisTool: RedisTool,
+	) {}
 
 	// 权限分页查询
 	async scopePage(dto: SysRoleDto) {
@@ -19,19 +22,19 @@ export class SysRoleService {
 	}
 
 	// 根据角色id查询角色
-	@cache.able({ key: "sys:role:id", values: ["#p{0}"], expiresIn: "2h" })
+	@cache.able({ key: "sys:role:id", value: ([roleId]) => `${roleId}`, expiresIn: "2h" })
 	async getByRoleId(roleId: number): Promise<SysRoleEntity | null> {
 		return this.sysRoleRep.findOneBy({ roleId: roleId })
 	}
 
 	// 根据角色code查询角色
-	@cache.able({ key: "sys:role:code", values: ["#p{0}"], expiresIn: "2h" })
+	@cache.able({ key: "sys:role:code", value: ([roleId]) => `${roleId}`, expiresIn: "2h" })
 	getByRoleCode(roleCode: string) {
 		return this.sysRoleRep.findOneBy({ roleCode: roleCode })
 	}
 
 	// 新增
-	@cache.put({ key: "sys:role:id", values: ["#r{roleId}"] })
+	@cache.put({ key: "sys:role:id", value: (_, result) => `${result.roleId}`, expiresIn: "1h" })
 	async save(dto: SysRoleSaveDto): Promise<SysRoleEntity> {
 		if (await this.isRoleNameDuplicate(dto.roleName, null)) {
 			throw new Exception.validator(`角色名"${dto.roleName}"重复`)
@@ -44,6 +47,7 @@ export class SysRoleService {
 	}
 
 	// 修改
+	@cache.evict({ key: "sys:role:id", value: ([dto]) => `${dto.roleId}` })
 	async edit(dto: SysRoleEditDto): Promise<void> {
 		const role = await this.getByRoleId(dto.roleId)
 		if (!role) {
@@ -60,8 +64,10 @@ export class SysRoleService {
 
 	// 删除
 	async delByIds(roleIds: Array<number>): Promise<number> {
-		// 删除缓存
+		// 删除数据
 		const { affected } = await this.sysRoleRep.delete(roleIds)
+		// 删除缓存
+		this.redisTool.del(roleIds.map((v) => `sys:role:id:${v}`))
 		return affected ?? 0
 	}
 

@@ -1,4 +1,4 @@
-import { Body, Param } from "@nestjs/common"
+import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
@@ -79,7 +79,10 @@ export class SysRoleController {
 		summary: "根据角色ids删除角色",
 		router: "/delete/:roleIds",
 	})
-	async delByIds(@Param("roleIds") roleIds: Array<number>) {
+	async delByIds(
+		@Param("roleIds", new ParseArrayPipe({ items: Number, separator: "," }))
+		roleIds: Array<number>,
+	) {
 		const delCount = await this.sysRoleService.delByIds(roleIds)
 		return R.success(delCount)
 	}

@@ -21,7 +21,7 @@ export class SysUserService {
 	}
 
 	// 根据用户id查询用户
-	@cache.able({ key: "sys:user:id", values: ["#p{0}"], expiresIn: "2h" })
+	@cache.able({ key: "sys:user:id", value: ([userId]) => `${userId}`, expiresIn: "2h" })
 	async getByUserId(userId: number) {
 		return this.sysUserEntity.findOneBy({ userId: userId })
 	}

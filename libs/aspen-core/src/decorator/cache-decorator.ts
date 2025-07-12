@@ -3,9 +3,15 @@ import * as ms from "ms"
 
 import { AppCtx, RedisTool } from "@aspen/aspen-core"
 
-type CacheKeyExpression = `#p{${number}${string}}` | `#r` | `#r{${string}}`
+// 工具类型：如果 T 是 Promise 包裹的类型，则提取内部类型，否则返回 T
+type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 
-type CacheBase = {
+// 修改后的 ReturnType，自动去掉 Promise 包裹
+type UnwrappedReturnType<T extends (...args: any[]) => any> = UnwrapPromise<ReturnType<T>>
+
+type CacheBaseValue<T extends (...args: any[]) => any> = (args: Parameters<T>, result: UnwrappedReturnType<T>) => string
+
+type CacheBase<T extends (...args: any[]) => any> = {
 	/**
 	 * 缓存名,它指定了你的缓存存放在哪块命名空间
 	 */
@@ -13,10 +19,10 @@ type CacheBase = {
 	/**
 	 * 自定义缓存的key
 	 */
-	values?: Array<CacheKeyExpression>
+	value?: CacheBaseValue<T> | string
 }
 
-type CacheableOption = {
+type CacheableOption<T extends (...args: any[]) => any> = {
 	/**
 	 * 是否使用异步模式
 	 * true: 异步模式
@@ -29,19 +35,17 @@ type CacheableOption = {
 	 * @default -1
 	 */
 	expiresIn?: number | ms.StringValue
+} & CacheBase<T>
 
-	valueFc?: <P, R>(params: P, result: R) => Array<CacheKeyExpression>
-} & CacheBase
-
-type CachePutOption = {
+type CachePutOption<T extends (...args: any[]) => any> = {
 	/**
 	 * 过期时间
 	 * @default -1
 	 */
 	expiresIn?: number | ms.StringValue
-} & CacheBase
+} & CacheBase<T>
 
-type CacheEvictOption = {
+type CacheEvictOption<T extends (...args: any[]) => any> = {
 	/**
 	 * 是否删除所有value的缓存
 	 * true: 删除所有value的缓存
@@ -56,41 +60,22 @@ type CacheEvictOption = {
 	 * @default false
 	 */
 	beforeInvocation?: boolean
-} & CacheBase
+} & CacheBase<T>
 
-// 解析缓存键表达式
-function parseCacheKeyExpression(expression: CacheKeyExpression, args: Array<any>, result?: any): string | null {
-	// 解析 #r
-	if (expression === "#r") {
-		if (_.isEmpty(result)) return null
-		return result
-	}
-	// 解析 #r{user.name}
-	if (expression.startsWith("#r{")) {
-		const propertyMatch = expression.match(/#r{(.+)}/)
-		if (!propertyMatch || !result) return null
-		const property = propertyMatch[1]
-		const value = property.split(".").reduce((obj, prop) => obj && obj[prop], result)
-		return _.isEmpty(value) ? null : value
-	}
-	// 解析 #p{user.name}
-	if (expression.startsWith("#p{")) {
-		const propertyMatch = expression.match(/#p{(.+)}/)
-		if (!propertyMatch || _.isEmpty(args)) return null
-		const property = propertyMatch[1]
-		const value = property.split(".").reduce((obj, prop) => obj && obj[prop], args)
-		return _.isEmpty(value) ? null : value
-	}
-	return null
-}
-
-function parseCacheKeyExpressions(
-	expressions: Array<CacheKeyExpression>,
-	args: Array<any>,
-	result?: any,
+function parseCacheKeyExpressions<T extends (...args: any[]) => any>(
+	expressions: CacheBaseValue<T> | string,
+	args: Parameters<T>,
+	result: UnwrappedReturnType<T>,
 ): string | null {
 	if (_.isEmpty(expressions)) return null
-	return expressions.map((i) => parseCacheKeyExpression(i, args, result))?.join("|")
+	if (typeof expressions == "string") return expressions
+	try {
+		const key = expressions(args, result)
+		return key
+	} catch (error) {
+		console.error("解析缓存key表达式失败", error)
+		return null
+	}
 }
 
 // 解析缓存过期时间
@@ -116,20 +101,20 @@ const getRedisTool = async (): Promise<RedisTool> => {
  * 根据方法对其返回结果进行缓存，下次请求时，如果缓存存在，则直接读取缓存数据返回；如果缓存不存在，则执行方法，并把返回的结果存入缓存中
  * 一般用在查询方法上
  */
-function AspenCacheable(cacheables: CacheableOption | Array<CacheableOption>) {
-	return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+function AspenCacheable<T extends (...args: any[]) => any>(cacheables: CacheableOption<T> | Array<CacheableOption<T>>) {
+	return function (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<T>) {
 		const originalMethod = descriptor.value
-		descriptor.value = async function (...args: Array<any>) {
+		descriptor.value = async function (...args: Parameters<T>) {
 			if (_.isEmpty(cacheables)) return originalMethod.apply(this, args)
 			// 处理缓存流程
 			const redisTool = await getRedisTool()
 			if (!redisTool) return originalMethod.apply(this, args)
 			const list = Array.isArray(cacheables) ? cacheables : [cacheables]
 			// 同步
-			const cacheList: Array<Omit<CacheableOption, "value">> = []
+			const cacheList: Array<Omit<CacheableOption<T>, "value">> = []
 			for (let i = 0; i < list.length; i++) {
 				const v = list[i]
-				const cacheValue = parseCacheKeyExpressions(v.values, args, {})
+				const cacheValue = parseCacheKeyExpressions(v.value, args, {} as UnwrappedReturnType<T>)
 				if (_.isEmpty(cacheValue)) continue
 				const fullPath = v.key == undefined ? cacheValue : `${v.key}:${cacheValue}`
 				// 处理过期时间
@@ -160,7 +145,7 @@ function AspenCacheable(cacheables: CacheableOption | Array<CacheableOption>) {
 				)
 			}
 			return result
-		}
+		} as T
 		return descriptor
 	}
 }
@@ -169,22 +154,22 @@ function AspenCacheable(cacheables: CacheableOption | Array<CacheableOption>) {
  * 使用该注解标志的方法，每次都会执行，并将结果存入指定的缓存中。其他方法可以直接从响应的缓存中读取缓存数据，而不需要再去查询数据库
  * 一般用在新增方法上
  */
-function AspenCachePut(cachePuts: CachePutOption | Array<CachePutOption>) {
-	return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+function AspenCachePut<T extends (...args: any[]) => any>(cachePuts: CachePutOption<T> | Array<CachePutOption<T>>) {
+	return function (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<T>) {
 		const originalMethod = descriptor.value
-		descriptor.value = async function (...args: Array<any>) {
+		descriptor.value = async function (...args: Parameters<T>) {
 			if (_.isEmpty(cachePuts)) return originalMethod.apply(this, args)
 			// 处理缓存流程
 			const redisTool = await getRedisTool()
 			if (!redisTool) return originalMethod.apply(this, args)
 			const list = Array.isArray(cachePuts) ? cachePuts : [cachePuts]
-			const cacheList: Array<Omit<CachePutOption, "value">> = []
+			const cacheList: Array<Omit<CachePutOption<T>, "value">> = []
 			// 执行方法,获取结果
 			const result = await originalMethod.apply(this, args)
 			if (result == undefined) return result
 			for (let i = 0; i < list.length; i++) {
 				const v = list[i]
-				const cacheValue = parseCacheKeyExpressions(v.values, args, result)
+				const cacheValue = parseCacheKeyExpressions(v.value, args, result as UnwrappedReturnType<T>)
 				if (_.isEmpty(cacheValue)) continue
 				const fullPath = v.key == undefined ? cacheValue : `${v.key}:${cacheValue}`
 				// 处理过期时间
@@ -199,7 +184,7 @@ function AspenCachePut(cachePuts: CachePutOption | Array<CachePutOption>) {
 				}),
 			)
 			return result
-		}
+		} as T
 		return descriptor
 	}
 }
@@ -208,19 +193,21 @@ function AspenCachePut(cachePuts: CachePutOption | Array<CachePutOption>) {
  * 使用该注解标志的方法，会清空指定的缓存
  * 一般用在更新或者删除方法上
  */
-function AspenCacheEvict(cacheEvicts: CacheEvictOption | Array<CacheEvictOption>) {
-	return function (target: any, propertyKey: string, descriptor: PropertyDescriptor) {
+function AspenCacheEvict<T extends (...args: any[]) => any>(
+	cacheEvicts: CacheEvictOption<T> | Array<CacheEvictOption<T>>,
+) {
+	return function (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<T>) {
 		const originalMethod = descriptor.value
-		descriptor.value = async function (...args: Array<any>) {
+		descriptor.value = async function (...args: Parameters<T>) {
 			if (_.isEmpty(cacheEvicts)) return originalMethod.apply(this, args)
 			// 处理缓存流程
 			const redisTool = await getRedisTool()
 			if (!redisTool) return originalMethod.apply(this, args)
 			const list = Array.isArray(cacheEvicts) ? cacheEvicts : [cacheEvicts]
-			const cacheList: Array<Omit<CacheEvictOption, "value">> = []
+			const cacheList: Array<Omit<CacheEvictOption<T>, "value">> = []
 			for (let i = 0; i < list.length; i++) {
 				const v = list[i]
-				const cacheValue = parseCacheKeyExpressions(v.values, args, {})
+				const cacheValue = parseCacheKeyExpressions(v.value, args, {} as UnwrappedReturnType<T>)
 				if (_.isEmpty(cacheValue)) continue
 				let fullPath = v.key == undefined ? cacheValue : `${v.key}:${cacheValue}`
 				// 是否全部删除
@@ -242,7 +229,7 @@ function AspenCacheEvict(cacheEvicts: CacheEvictOption | Array<CacheEvictOption>
 				await Promise.allSettled(afterList.map((i) => redisTool.del(i.key)))
 			}
 			return result
-		}
+		} as T
 		return descriptor
 	}
 }

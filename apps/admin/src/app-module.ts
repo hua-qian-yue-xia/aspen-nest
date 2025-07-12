@@ -1,14 +1,7 @@
 import { Module } from "@nestjs/common"
 import { ConfigModule } from "@nestjs/config"
 
-import {
-	AppClsModule,
-	readActiveYamlFile,
-	registerRedis,
-	registerDatabase,
-	RedisTool,
-	AspenCoreModule,
-} from "@aspen/aspen-core"
+import { AppClsModule, readActiveYamlFile, registerRedis, registerDatabase, AspenCoreModule } from "@aspen/aspen-core"
 
 import { SysModule } from "apps/admin/src/module/sys/sys-module"
 import { CoreModule } from "apps/admin/src/module/core/core-module"
@@ -23,7 +16,7 @@ import { CoreModule } from "apps/admin/src/module/core/core-module"
 		SysModule,
 		CoreModule,
 	],
-	providers: [RedisTool],
+	providers: [],
 	controllers: [],
 })
 export class AppModule {}
