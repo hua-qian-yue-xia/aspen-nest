@@ -2,10 +2,12 @@ import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 
-import { cache, Exception } from "@aspen/aspen-core"
+import { exception } from "@aspen/aspen-core"
+import { cache } from "@aspen/aspen-framework"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
 import { SysUserEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
+
 import { SysUserAdminLoginDto } from "apps/admin/src/module/sys/dto/sys-user-dto"
 
 @Injectable()
@@ -28,15 +30,17 @@ export class SysUserService {
 
 	// admin登录
 	async adminLogin(dto: SysUserAdminLoginDto) {
+		// console.log(sysUserStatusEnum)
+
 		const { username, password } = dto
 		// 1.1 校验用户是否存在、密码是否正确
 		const user = await this.sysUserEntity.findOneBy({ username: username })
 		if (!user || !user.checkPassword(password)) {
-			throw new Exception.validator("用户名或密码错误")
+			throw new exception.validator("用户名或密码错误")
 		}
 		// 1.2 校验用户是否启用
 		if (!user.isEnable()) {
-			throw new Exception.validator("用户已被禁用")
+			throw new exception.validator("用户已被禁用")
 		}
 		// 1.3 校验用户是否可以登录管理后台
 

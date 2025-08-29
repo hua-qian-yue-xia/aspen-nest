@@ -5,7 +5,7 @@ import { plainToInstance } from "class-transformer"
 
 import { SysDeptEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
 import { SysDeptSaveDto, SysDeptEditDto } from "apps/admin/src/module/sys/dto/index"
-import { Exception } from "@aspen/aspen-core"
+import { exception } from "@aspen/aspen-core"
 
 @Injectable()
 export class SysDeptService {
@@ -13,7 +13,7 @@ export class SysDeptService {
 
 	// 权限分页查询
 	async scopePage() {
-		return this.sysDeptRep.page()
+		return null
 	}
 
 	// 根据部门id查询部门
@@ -31,7 +31,7 @@ export class SysDeptService {
 	async update(dto: SysDeptEditDto): Promise<void> {
 		const role = await this.getByDeptId(dto.deptId)
 		if (!role) {
-			throw new Exception.validator(`部门id"${dto.deptId}"不存在`)
+			throw new exception.validator(`部门id"${dto.deptId}"不存在`)
 		}
 		await this.sysDeptRep.update({ deptId: dto.deptId }, plainToInstance(SysDeptEntity, dto))
 	}

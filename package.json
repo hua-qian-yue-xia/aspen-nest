@@ -4,10 +4,10 @@
   "description": "nest多模块快速开发系统",
   "private": true,
   "scripts": {
-    "start:admin:dev": "nest start @aspen/admin --debug --watch",
-    "build:admin": "nest build @aspen/admin",
-    "start:app:dev": "nest start @aspen/app --debug --watch",
-    "build:app": "nest build @aspen/app"
+    "admin:dev": "nest start @aspen/admin --debug --watch",
+    "admin:build": "nest build @aspen/admin",
+    "app:dev": "nest start @aspen/app --debug --watch",
+    "app:build": "nest build @aspen/app"
   },
   "author": "",
   "license": "MIT",
@@ -26,7 +26,7 @@
     "@nestjs/jwt": "^11.0.0",
     "@nestjs/mapped-types": "^2.1.0",
     "@nestjs/passport": "^11.0.5",
-    "@nestjs/platform-fastify": "^10.4.15",
+    "@nestjs/platform-fastify": "10.4.20",
     "@nestjs/swagger": "11.2.0",
     "@nestjs/typeorm": "^11.0.0",
     "@temporalio/activity": "^1.11.7",
@@ -36,6 +36,7 @@
     "class-transformer": "^0.5.1",
     "class-validator": "^0.14.1",
     "fastify": "^5.2.1",
+    "glob": "^11.0.3",
     "ioredis": "^5.4.2",
     "js-yaml": "^4.1.0",
     "ms": "^2.1.3",

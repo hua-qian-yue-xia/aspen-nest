@@ -1,7 +1,8 @@
 import { Injectable, OnModuleInit, SetMetadata } from "@nestjs/common"
-import { DecoratorKey } from "../index"
 import { DiscoveryService, MetadataScanner, Reflector } from "@nestjs/core"
 import { PATH_METADATA } from "@nestjs/common/constants"
+
+import { DecoratorKey } from "../../constant/decorator-constant"
 
 export const NoToken = () => SetMetadata(DecoratorKey.NoToken, true)
 

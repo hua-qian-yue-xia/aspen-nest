@@ -9,7 +9,7 @@ export class CoreLogService {
 	constructor(@InjectRepository(CoreLogEntity) private readonly coreLogEntity: Repository<CoreLogEntity>) {}
 
 	scopePage() {
-		return this.coreLogEntity.page()
+		return null
 	}
 
 	// 根据接口id查询接口(有缓存)

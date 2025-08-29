@@ -1,6 +1,16 @@
 import { HttpException, HttpStatus } from "@nestjs/common"
 
 /**
+ * 核心异常
+ * aspen-core等报错
+ */
+class CoreException extends HttpException {
+	constructor(msg?: string) {
+		super(msg, HttpStatus.INTERNAL_SERVER_ERROR)
+	}
+}
+
+/**
  * 运行时异常
  * 代码执行错误、意外的错误
  */
@@ -20,7 +30,8 @@ class ValidatorException extends HttpException {
 	}
 }
 
-export default {
+export const exception = {
+	core: CoreException,
 	runtime: RuntimeException,
 	validator: ValidatorException,
 }

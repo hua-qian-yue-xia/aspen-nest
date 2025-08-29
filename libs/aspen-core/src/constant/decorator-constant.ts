@@ -39,4 +39,8 @@ export enum DecoratorKey {
 	 * redis缓存
 	 */
 	Cache = "aspen_cache",
+	/**
+	 * 生成字典
+	 */
+	GenDict = "gen_dict",
 }

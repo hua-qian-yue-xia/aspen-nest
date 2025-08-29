@@ -3,8 +3,8 @@ import { applyDecorators, Controller } from "@nestjs/common"
 import * as _ from "radash"
 
 import { ReqMethod, ReqMethodMap } from "libs/aspen-core/src/constant/decorator-constant"
-import { AspenLog, LogOption } from "libs/aspen-core/src/decorator/log-decorator"
-import { AspenRateLimit, RateLimitOption } from "libs/aspen-core/src/decorator/repeat-submit-decorator"
+import { AspenLog, LogOption } from "@aspen/aspen-core/decorator/log/log-decorator"
+import { AspenRateLimit, RateLimitOption } from "@aspen/aspen-core/decorator/repeat-submit/repeat-submit-decorator"
 import { ApiOperation, ApiTags } from "@nestjs/swagger"
 
 /******************** start type start ********************/

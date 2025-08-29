@@ -3,7 +3,8 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { In, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
-import { OrmQuery, Exception, cache, RedisTool } from "@aspen/aspen-core"
+import { OrmQuery, exception, RedisTool } from "@aspen/aspen-core"
+import { cache } from "@aspen/aspen-framework"
 
 import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
 import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto as SysRoleDto } from "apps/admin/src/module/sys/dto"
@@ -18,7 +19,8 @@ export class SysRoleService {
 	// 权限分页查询
 	async scopePage(dto: SysRoleDto) {
 		const where = OrmQuery.getWhereOptions(dto)
-		return this.sysRoleRep.page({ where: where })
+		console.log(where)
+		return null
 	}
 
 	// 根据角色id查询角色
@@ -37,10 +39,10 @@ export class SysRoleService {
 	@cache.put({ key: "sys:role:id", value: (_, result) => `${result.roleId}`, expiresIn: "1h" })
 	async save(dto: SysRoleSaveDto): Promise<SysRoleEntity> {
 		if (await this.isRoleNameDuplicate(dto.roleName, null)) {
-			throw new Exception.validator(`角色名"${dto.roleName}"重复`)
+			throw new exception.validator(`角色名"${dto.roleName}"重复`)
 		}
 		if (await this.isRoleCodeDuplicate(dto.roleCode, null)) {
-			throw new Exception.validator(`角色code"${dto.roleCode}"重复`)
+			throw new exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
 		const saveObj = await this.sysRoleRep.save(plainToInstance(SysRoleEntity, dto))
 		return saveObj
@@ -51,13 +53,13 @@ export class SysRoleService {
 	async edit(dto: SysRoleEditDto): Promise<void> {
 		const role = await this.getByRoleId(dto.roleId)
 		if (!role) {
-			throw new Exception.validator(`角色id"${dto.roleId}"不存在`)
+			throw new exception.validator(`角色id"${dto.roleId}"不存在`)
 		}
 		if (await this.isRoleNameDuplicate(dto.roleName, dto.roleId)) {
-			throw new Exception.validator(`角色名"${dto.roleName}"重复`)
+			throw new exception.validator(`角色名"${dto.roleName}"重复`)
 		}
 		if (await this.isRoleCodeDuplicate(dto.roleCode, dto.roleId)) {
-			throw new Exception.validator(`角色code"${dto.roleCode}"重复`)
+			throw new exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
 		await this.sysRoleRep.update({ roleId: dto.roleId }, plainToInstance(SysRoleEntity, dto))
 	}

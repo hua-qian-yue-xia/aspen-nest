@@ -1,18 +1,44 @@
-interface BaseEnumInterface {
+type BaseEnumOptions = {
+	/**
+	 * 枚举值
+	 */
 	code: string
-	desc: string
+	/**
+	 * 枚举描述
+	 */
+	summary: string
+	/**
+	 * 枚举排序
+	 * @default 0
+	 */
+	order?: number
 }
 
-export class BaseEnum implements BaseEnumInterface {
-	code: string
-	desc: string
+export class BaseEnum {
+	readonly [key: string]: BaseEnumOptions
 
-	private constructor(code: string, desc: string) {
-		this.code = code
-		this.desc = desc
+	// @ts-ignore
+	getAll(): Array<BaseEnumOptions> {
+		return Object.values(this)
 	}
 
-	static of(code: string, desc: string): BaseEnum {
-		return new BaseEnum(code, desc)
+	// @ts-ignore
+	getByCode(code: string): BaseEnumOptions | null {
+		return this.getAll().find((item) => item.code === code) ?? null
+	}
+
+	// @ts-ignore
+	getByCodes(codes: Array<string>): Array<BaseEnumOptions> {
+		return this.getAll().filter((item) => codes.includes(item.code))
+	}
+
+	// @ts-ignore
+	getBySummary(summary: string): BaseEnumOptions | null {
+		return this.getAll().find((item) => item.summary === summary) ?? null
+	}
+
+	// @ts-ignore
+	getBySummarys(summaries: Array<string>): Array<BaseEnumOptions> {
+		return this.getAll().filter((item) => summaries.includes(item.summary))
 	}
 }

@@ -10,7 +10,7 @@ export class SysMenuService {
 
 	// 权限分页查询
 	async scopePage() {
-		return await this.sysMenuEntity.page()
+		return null
 	}
 
 	// 根据部门id查询部门

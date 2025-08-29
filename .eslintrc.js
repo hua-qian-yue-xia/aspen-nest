@@ -5,7 +5,7 @@ module.exports = {
 	 */
 	root: true,
 	/**
-	 * // 默认情况下，Eslint使用其内置的 Espree 解析器，该解析器与标准 JavaScript 运行时和版本兼容，
+	 * 默认情况下，Eslint使用其内置的 Espree 解析器，该解析器与标准 JavaScript 运行时和版本兼容，
 	 * 而我们需要将ts代码解析为eslint兼容的AST，所以此处我们使用 @typescript-eslint/parser。
 	 */
 	parser: "@typescript-eslint/parser",
@@ -26,5 +26,6 @@ module.exports = {
 		"arrow-body-style": "off",
 		"prefer-arrow-callback": "off",
 		"@typescript-eslint/no-explicit-any": "off",
+		"@typescript-eslint/ban-ts-comment": "off", // 新增：禁用 ban-ts-comment 规则
 	},
 }

@@ -1,7 +1,7 @@
 import * as _ from "radash"
 import * as ms from "ms"
 
-import { AppCtx, RedisTool } from "@aspen/aspen-core"
+import { AppCtx, RedisTool, exception } from "@aspen/aspen-core"
 
 // 工具类型：如果 T 是 Promise 包裹的类型，则提取内部类型，否则返回 T
 type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
@@ -92,8 +92,7 @@ const getRedisTool = async (): Promise<RedisTool> => {
 	try {
 		return await AppCtx.getInstance().getRedisTool()
 	} catch (error) {
-		console.error("获取RedisTool失败", error)
-		return null
+		throw new exception.core(`获取RedisTool失败error:|${error}|`)
 	}
 }
 
@@ -101,7 +100,9 @@ const getRedisTool = async (): Promise<RedisTool> => {
  * 根据方法对其返回结果进行缓存，下次请求时，如果缓存存在，则直接读取缓存数据返回；如果缓存不存在，则执行方法，并把返回的结果存入缓存中
  * 一般用在查询方法上
  */
-function AspenCacheable<T extends (...args: any[]) => any>(cacheables: CacheableOption<T> | Array<CacheableOption<T>>) {
+export function AspenCacheable<T extends (...args: any[]) => any>(
+	cacheables: CacheableOption<T> | Array<CacheableOption<T>>,
+) {
 	return function (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<T>) {
 		const originalMethod = descriptor.value
 		descriptor.value = async function (...args: Parameters<T>) {
@@ -154,7 +155,9 @@ function AspenCacheable<T extends (...args: any[]) => any>(cacheables: Cacheable
  * 使用该注解标志的方法，每次都会执行，并将结果存入指定的缓存中。其他方法可以直接从响应的缓存中读取缓存数据，而不需要再去查询数据库
  * 一般用在新增方法上
  */
-function AspenCachePut<T extends (...args: any[]) => any>(cachePuts: CachePutOption<T> | Array<CachePutOption<T>>) {
+export function AspenCachePut<T extends (...args: any[]) => any>(
+	cachePuts: CachePutOption<T> | Array<CachePutOption<T>>,
+) {
 	return function (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<T>) {
 		const originalMethod = descriptor.value
 		descriptor.value = async function (...args: Parameters<T>) {
@@ -193,7 +196,7 @@ function AspenCachePut<T extends (...args: any[]) => any>(cachePuts: CachePutOpt
  * 使用该注解标志的方法，会清空指定的缓存
  * 一般用在更新或者删除方法上
  */
-function AspenCacheEvict<T extends (...args: any[]) => any>(
+export function AspenCacheEvict<T extends (...args: any[]) => any>(
 	cacheEvicts: CacheEvictOption<T> | Array<CacheEvictOption<T>>,
 ) {
 	return function (target: any, propertyKey: string, descriptor: TypedPropertyDescriptor<T>) {
@@ -232,10 +235,4 @@ function AspenCacheEvict<T extends (...args: any[]) => any>(
 		} as T
 		return descriptor
 	}
-}
-
-export const cache = {
-	able: AspenCacheable,
-	put: AspenCachePut,
-	evict: AspenCacheEvict,
 }

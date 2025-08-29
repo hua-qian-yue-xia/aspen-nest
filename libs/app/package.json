@@ -1,7 +1,0 @@
-{
-  "name": "@aspen-app/app",
-  "version": "1.0.0",
-  "description": "aspen移动端服务",
-  "dependencies": {
-  }
-}

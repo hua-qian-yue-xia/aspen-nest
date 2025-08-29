@@ -9,7 +9,7 @@ export class CoreApiService {
 	constructor(@InjectRepository(CoreApiEntity) private readonly coreApiEntity: Repository<CoreApiEntity>) {}
 
 	async scopePage() {
-		return this.coreApiEntity.page()
+		return null
 	}
 
 	// 根据接口id查询接口(有缓存)

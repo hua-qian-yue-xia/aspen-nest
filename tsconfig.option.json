@@ -13,6 +13,8 @@
 			"packages/*": ["./packages/*"],
 			"@aspen/aspen-core": ["libs/aspen-core/src"],
 			"@aspen/aspen-core/*": ["libs/aspen-core/src/*"],
+			"@aspen/aspen-framework": ["libs/aspen-framework/src"],
+			"@aspen/aspen-framework/*": ["libs/aspen-framework/src/*"],
 			"@aspen/aspen-gen": ["libs/aspen-gen/src"],
 			"@aspen/aspen-gen/*": ["libs/aspen-gen/src/*"],
 			"@aspen/aspen-workflow": ["libs/aspen-workflow/src"],
