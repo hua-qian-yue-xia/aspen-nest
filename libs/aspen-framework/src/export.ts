@@ -13,6 +13,6 @@ export const cache = {
 	evict: AspenCacheEvict,
 }
 
-export const module = {
+export const frameworkModule = {
 	genDict: GenDictModule,
 }

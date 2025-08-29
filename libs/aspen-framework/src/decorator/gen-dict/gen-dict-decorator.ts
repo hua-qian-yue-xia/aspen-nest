@@ -2,11 +2,14 @@ import * as glob from "glob"
 import * as path from "path"
 
 import { Injectable, OnModuleInit, SetMetadata, Type, Inject } from "@nestjs/common"
+import { DataSource } from "typeorm"
 
-import { DecoratorKey, tool } from "@aspen/aspen-core"
+import { DecoratorKey, tool, BaseEnum } from "@aspen/aspen-core"
 import { GEN_DICT_MODULE_OPTIONS, GenDictModuleOptions } from "./gen-dict-module"
 
 import { GenDictRegistry } from "./gen-dict-share"
+import { FrameDictEntity } from "@aspen/aspen-framework/entity/frame-dict-entity"
+import { FrameDictItemEntity } from "@aspen/aspen-framework/entity/frame-dict-item-entity"
 
 /******************** start type start ********************/
 
@@ -41,7 +44,10 @@ export const GenDict = (options: GenDictOptions) => {
 
 @Injectable()
 export class GenDictService implements OnModuleInit {
-	constructor(@Inject(GEN_DICT_MODULE_OPTIONS) private readonly options: GenDictModuleOptions) {}
+	constructor(
+		@Inject(GEN_DICT_MODULE_OPTIONS) private readonly options: GenDictModuleOptions,
+		private readonly dataSource: DataSource,
+	) {}
 
 	onModuleInit(): void {
 		this.getEnumList()
@@ -52,8 +58,6 @@ export class GenDictService implements OnModuleInit {
 		const list = glob.sync(this.options.scanPatterns, {
 			ignore: this.options.excludePatterns,
 		})
-		console.log(list)
-
 		for (const v of list) {
 			await tool.file.autoImport(path.resolve(v))
 		}
@@ -61,10 +65,40 @@ export class GenDictService implements OnModuleInit {
 		const genDictRegistry = GenDictRegistry.getInstance()
 		const keys = genDictRegistry.getKeys()
 		if (!keys.length) return
+		const dictList: Array<FrameDictEntity> = []
 		for (const key of keys) {
 			const matedata = genDictRegistry.get(key)
-			const property = Object.getOwnPropertyDescriptors(new key())
+			const instance = new key()
+			const property = Object.getOwnPropertyDescriptors(instance)
 			if (!matedata || !property) continue
+
+			// 判断是否继承自 BaseEnum
+			if (instance instanceof BaseEnum) {
+				// 处理 BaseEnum 类型的枚举
+				const enumValues = instance.getAll()
+				// 创建字典实体对象，只设置必要的属性
+				const dictEntity = new FrameDictEntity()
+				dictEntity.code = matedata.key
+				dictEntity.summary = matedata.summary
+				dictEntity.genType = "1"
+				dictEntity.enable = true
+				dictEntity.sort = {
+					sort: matedata.order,
+				}
+				dictEntity.dictList = enumValues.map((item) => {
+					const dictItemEntity = new FrameDictItemEntity()
+					dictItemEntity.code = item.code
+					dictItemEntity.summary = item.summary
+					dictItemEntity.sort = {
+						sort: item.order,
+					}
+					return dictItemEntity
+				})
+				dictList.push(dictEntity)
+			}
 		}
+		const repository = this.dataSource.getRepository(FrameDictEntity)
+		await repository.delete({ genType: "1" })
+		await repository.save(dictList)
 	}
 }

@@ -1,1 +1,1 @@
-export * from "./sys-user-enum.gen"
+export * from "./sys-user.enum-gen"

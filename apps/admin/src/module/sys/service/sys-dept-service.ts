@@ -23,7 +23,9 @@ export class SysDeptService {
 
 	// 新增
 	async save(dto: SysDeptSaveDto): Promise<SysDeptEntity> {
-		const saveObj = await this.sysDeptRep.save(plainToInstance(SysDeptEntity, dto))
+		// 使用 repository.create() 创建实体，这样可以确保 @BeforeInsert() 钩子正常执行
+		const entity = this.sysDeptRep.create(dto)
+		const saveObj = await this.sysDeptRep.save(entity)
 		return saveObj
 	}
 

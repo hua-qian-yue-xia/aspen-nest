@@ -44,7 +44,9 @@ export class SysRoleService {
 		if (await this.isRoleCodeDuplicate(dto.roleCode, null)) {
 			throw new exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
-		const saveObj = await this.sysRoleRep.save(plainToInstance(SysRoleEntity, dto))
+		// 使用 repository.create() 创建实体，这样可以确保 @BeforeInsert() 钩子正常执行
+		const entity = this.sysRoleRep.create(dto)
+		const saveObj = await this.sysRoleRep.save(entity)
 		return saveObj
 	}
 

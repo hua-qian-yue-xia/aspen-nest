@@ -30,8 +30,6 @@ export type GenDictModuleOptions = {
 /**
  * GenDict 动态模块
  */
-
-// **/dist/**/*.enum-gen.js
 @Global()
 @Module({})
 export class GenDictModule {
@@ -46,7 +44,7 @@ export class GenDictModule {
 				},
 				GenDictService,
 			],
-			exports: [GenDictService, GEN_DICT_MODULE_OPTIONS],
+			exports: [GEN_DICT_MODULE_OPTIONS],
 		}
 	}
 }
