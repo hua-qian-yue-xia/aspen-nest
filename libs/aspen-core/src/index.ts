@@ -5,8 +5,9 @@ export { AppClsModule } from "@aspen/aspen-core/app/app-cls-module"
 
 /******************** start base start ********************/
 export { BaseDb, BaseRecordDb } from "libs/aspen-core/src/base/base-db"
-export { BaseEnum } from "@aspen/aspen-core/base/base-enum"
+export { BaseEnum } from "libs/aspen-core/src/base/base-enum"
 export { BasePage, BasePageVo, BasePageTool } from "libs/aspen-core/src/base/base-page"
+export { BaseRepo } from "libs/aspen-core/src/base/base-repo"
 export { R } from "libs/aspen-core/src/base/base-result"
 export { BaseUser } from "libs/aspen-core/src/base/base-user"
 /******************** end base end ********************/

@@ -8,6 +8,6 @@ database:
   password: root
   database: nest-admin
   # 自动删除实体
-  dropSchema: false
+  dropSchema: true
   # 自动同步实体到数据库
   synchronize: true

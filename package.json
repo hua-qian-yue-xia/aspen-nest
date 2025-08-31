@@ -44,6 +44,7 @@
     "nestjs-cls": "^5.4.1",
     "passport": "^0.7.0",
     "passport-jwt": "^4.0.1",
+    "pinyin": "4.0.0",
     "radash": "^12.1.0",
     "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
