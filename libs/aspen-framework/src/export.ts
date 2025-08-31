@@ -3,6 +3,8 @@ import { GenDictModule } from "./decorator/gen-dict/gen-dict-module"
 
 import { AspenCacheable, AspenCacheEvict, AspenCachePut } from "./decorator/cache/cache-decorator"
 
+import { JwtStrategyModule } from "./guard/jwt/index"
+
 export const gen = {
 	dict: GenDict,
 }
@@ -15,4 +17,5 @@ export const cache = {
 
 export const frameworkModule = {
 	genDict: GenDictModule,
+	jwtStrategy: JwtStrategyModule,
 }

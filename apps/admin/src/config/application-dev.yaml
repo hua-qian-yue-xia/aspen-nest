@@ -7,5 +7,7 @@ database:
   username: root
   password: root
   database: nest-admin
+  # 自动删除实体
   dropSchema: false
+  # 自动同步实体到数据库
   synchronize: true

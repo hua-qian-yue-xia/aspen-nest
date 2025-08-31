@@ -1,6 +1,8 @@
 import { ConfigFileSuffixConstant } from "libs/aspen-core/src/constant/config-constant"
 import * as path from "node:path"
 import * as fs from "node:fs"
+
+import * as ms from "ms"
 import * as yaml from "js-yaml"
 import * as _ from "radash"
 
@@ -108,7 +110,13 @@ export type JwtConfig = {
 	/**
 	 * 密钥
 	 */
-	secret?: string
+	secret: string
+	/**
+	 * token过期时间,默认一天过期
+	 * @see https://www.npmjs.com/package/ms
+	 * @default '1D'
+	 */
+	expiresIn?: ms.StringValue
 }
 
 const redisDefault = () => {

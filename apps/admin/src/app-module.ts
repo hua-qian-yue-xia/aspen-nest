@@ -16,6 +16,7 @@ import { CoreModule } from "apps/admin/src/module/core/core-module"
 		coreModule.noToken.forRoot({ isGlobal: true }),
 		coreModule.appCls.forRoot({ isGlobal: true }),
 		frameworkModule.genDict.forRoot({ isGlobal: true, scanPatterns: ["**/dist/**/*.enum-gen.js"] }),
+		frameworkModule.jwtStrategy.forRoot(),
 		SysModule,
 		CoreModule,
 	],

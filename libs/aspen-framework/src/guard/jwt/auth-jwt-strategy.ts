@@ -6,7 +6,11 @@ import { PassportStrategy } from "@nestjs/passport"
 import { ExtractJwt, Strategy } from "passport-jwt"
 import { JwtService } from "@nestjs/jwt"
 
-import { JwtConfig, BaseUser, RedisTool } from "@aspen/aspen-core"
+import * as _ from "radash"
+
+import { JwtConfig, BaseUser, RedisTool, exception } from "@aspen/aspen-core"
+
+import { JwtError } from "./common/error"
 
 type JwtUserPayload = {
 	uuid: string
@@ -20,7 +24,8 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		private readonly jwtService: JwtService,
 		private readonly redisTool: RedisTool,
 	) {
-		const { secret = "123" } = config.get<JwtConfig>("database")
+		const { secret } = config.get<JwtConfig>("jwt")
+		if (_.isEmpty(secret)) throw new exception.core(JwtError.JWT_SECRET_NOT_FOUND)
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
 			ignoreExpiration: false,

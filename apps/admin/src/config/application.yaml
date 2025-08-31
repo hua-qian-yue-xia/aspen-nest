@@ -5,3 +5,8 @@ app:
   prefix: /
   port: 7001
   platformHeader: platform
+jwt:
+  # token 密钥
+  secret: DFmCuCzt6GEMtdd0tfgPhtdyUElG1TTW
+  # token 过期时间
+  expiresIn: 2D

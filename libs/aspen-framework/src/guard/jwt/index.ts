@@ -8,9 +8,15 @@ import { RedisTool } from "@aspen/aspen-core"
 export * from "./auth-jwt-strategy"
 
 @Global()
-@Module({
-	imports: [PassportModule, registerAuthJwt()],
-	providers: [JwtStrategy, RedisTool],
-	exports: [JwtStrategy, RedisTool],
-})
-export class AspenFrameworkJwtStrategyModule {}
+@Module({})
+export class JwtStrategyModule {
+	static forRoot() {
+		return {
+			module: JwtStrategyModule,
+			global: true,
+			imports: [PassportModule, registerAuthJwt()],
+			providers: [JwtStrategy, RedisTool],
+			exports: [JwtStrategy, RedisTool],
+		}
+	}
+}

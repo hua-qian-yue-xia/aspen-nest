@@ -1,8 +1,6 @@
 import { Module } from "@nestjs/common"
 import { TypeOrmModule } from "@nestjs/typeorm"
 
-import { AspenFrameworkJwtStrategyModule } from "libs/aspen-framework/src/guard/jwt"
-
 import {
 	SysDeptEntity,
 	SysMenuEntity,
@@ -18,10 +16,7 @@ import {
 import { SysDeptService, SysMenuService, SysRoleService, SysUserService } from "apps/admin/src/module/sys/service/index"
 
 @Module({
-	imports: [
-		TypeOrmModule.forFeature([SysDeptEntity, SysMenuEntity, SysRoleEntity, SysUserEntity]),
-		AspenFrameworkJwtStrategyModule,
-	],
+	imports: [TypeOrmModule.forFeature([SysDeptEntity, SysMenuEntity, SysRoleEntity, SysUserEntity])],
 	controllers: [SysDeptController, SysMenuController, SysRoleController, SysUserController],
 	providers: [SysDeptService, SysMenuService, SysRoleService, SysUserService],
 })
