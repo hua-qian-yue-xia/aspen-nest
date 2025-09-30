@@ -1,38 +1,40 @@
 import { Injectable } from "@nestjs/common"
-import { InjectRepository } from "@nestjs/typeorm"
-import { In, Repository } from "typeorm"
+import { In } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
 import { OrmQuery, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
 import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
+import { SysRoleRepo } from "apps/admin/src/module/sys/repo"
 import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto as SysRoleDto } from "apps/admin/src/module/sys/dto"
+import { InjectRepository } from "@nestjs/typeorm"
 
 @Injectable()
 export class SysRoleService {
 	constructor(
-		@InjectRepository(SysRoleEntity) private readonly sysRoleRep: Repository<SysRoleEntity>,
+		@InjectRepository(SysRoleEntity)
+		private readonly sysRoleRepo: SysRoleRepo,
 		private readonly redisTool: RedisTool,
 	) {}
 
 	// 权限分页查询
 	async scopePage(dto: SysRoleDto) {
 		const where = OrmQuery.getWhereOptions(dto)
-		console.log(where)
-		return null
+
+		return this.sysRoleRepo.findPage(where)
 	}
 
 	// 根据角色id查询角色
 	@cache.able({ key: "sys:role:id", value: ([roleId]) => `${roleId}`, expiresIn: "2h" })
 	async getByRoleId(roleId: number): Promise<SysRoleEntity | null> {
-		return this.sysRoleRep.findOneBy({ roleId: roleId })
+		return this.sysRoleRepo.findOneBy({ roleId: roleId })
 	}
 
 	// 根据角色code查询角色
 	@cache.able({ key: "sys:role:code", value: ([roleId]) => `${roleId}`, expiresIn: "2h" })
 	getByRoleCode(roleCode: string) {
-		return this.sysRoleRep.findOneBy({ roleCode: roleCode })
+		return this.sysRoleRepo.findOneBy({ roleCode: roleCode })
 	}
 
 	// 新增
@@ -44,9 +46,7 @@ export class SysRoleService {
 		if (await this.isRoleCodeDuplicate(dto.roleCode, null)) {
 			throw new exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
-		// 使用 repository.create() 创建实体，这样可以确保 @BeforeInsert() 钩子正常执行
-		const entity = this.sysRoleRep.create(dto)
-		const saveObj = await this.sysRoleRep.save(entity)
+		const saveObj = await this.sysRoleRepo.save(dto)
 		return saveObj
 	}
 
@@ -63,16 +63,16 @@ export class SysRoleService {
 		if (await this.isRoleCodeDuplicate(dto.roleCode, dto.roleId)) {
 			throw new exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
-		await this.sysRoleRep.update({ roleId: dto.roleId }, plainToInstance(SysRoleEntity, dto))
+		await this.sysRoleRepo.update({ roleId: dto.roleId }, plainToInstance(SysRoleEntity, dto))
 	}
 
 	// 删除
 	async delByIds(roleIds: Array<number>): Promise<number> {
 		// 查询存不存在
-		const roleList = await this.sysRoleRep.findBy({ roleId: In(roleIds) })
+		const roleList = await this.sysRoleRepo.find({ where: { roleId: In(roleIds) } })
 		if (!roleList.length) return 0
 		// 删除数据
-		const { affected } = await this.sysRoleRep.delete(roleIds)
+		const { affected } = await this.sysRoleRepo.delete(roleIds)
 		// 删除缓存
 		this.redisTool.del(roleIds.map((v) => `sys:role:id:${v}`))
 		return affected ?? 0
@@ -80,7 +80,7 @@ export class SysRoleService {
 
 	// 角色名是否重复
 	async isRoleNameDuplicate(roleName: string, roleId?: number): Promise<boolean> {
-		const queryBuilder = this.sysRoleRep.createQueryBuilder("role").where("role.roleName = :roleName", { roleName })
+		const queryBuilder = this.sysRoleRepo.createQueryBuilder("role").where("role.roleName = :roleName", { roleName })
 		if (roleId) {
 			queryBuilder.andWhere("role.roleId != :roleId", { roleId })
 		}
@@ -90,7 +90,7 @@ export class SysRoleService {
 
 	// 角色code是否重复
 	async isRoleCodeDuplicate(roleCode: string, roleId?: number): Promise<boolean> {
-		const queryBuilder = this.sysRoleRep.createQueryBuilder("role").where("role.roleCode = :roleCode", { roleCode })
+		const queryBuilder = this.sysRoleRepo.createQueryBuilder("role").where("role.roleCode = :roleCode", { roleCode })
 		if (roleId) {
 			queryBuilder.andWhere("role.roleId != :roleId", { roleId })
 		}

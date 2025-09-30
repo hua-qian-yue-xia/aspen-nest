@@ -5,7 +5,7 @@ import { CoreApiService } from "apps/admin/src/module/core/service"
 
 @router.controller({ prefix: "core/api", summary: "api管理" })
 export class CoreApiController {
-	constructor(private readonly coreApiService: CoreApiService) {}
+	constructor(private readonly coreApiService: CoreApiService) { }
 
 	@router.get({
 		summary: "分页",

@@ -1,4 +1,4 @@
-import { INestApplication } from "@nestjs/common"
+import { INestApplication, Type } from "@nestjs/common"
 
 import { ClsService } from "nestjs-cls"
 import * as _ from "radash"
@@ -28,6 +28,10 @@ export class AppCtx {
 		return AppCtx.app
 	}
 
+	get<T>(typeOrToken: any): Promise<T> {
+		return AppCtx.getInstance().getApp().resolve(typeOrToken)
+	}
+
 	getClsService(): Promise<ClsService> {
 		return AppCtx.getInstance().getApp().resolve(ClsService)
 	}
@@ -50,7 +54,6 @@ export class AppCtx {
 
 	/**
 	 * 获取当前登录用户
-	 *
 	 * @returns BaseUser?
 	 */
 	async getLoginAdminUser(): Promise<BaseUser | null> {

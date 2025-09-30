@@ -30,8 +30,6 @@ export class SysUserService {
 
 	// admin登录
 	async adminLogin(dto: SysUserAdminLoginDto) {
-		// console.log(sysUserStatusEnum)
-
 		const { username, password } = dto
 		// 1.1 校验用户是否存在、密码是否正确
 		const user = await this.sysUserEntity.findOneBy({ username: username })
@@ -42,11 +40,9 @@ export class SysUserService {
 		if (!user.isEnable()) {
 			throw new exception.validator("用户已被禁用")
 		}
-		// 1.3 校验用户是否可以登录管理后台
-
 		// 2.1 生成token
-		const token = await this.jwtStrategy.generateToken(user)
-		return { token }
+		const token = await this.jwtStrategy.generateToken(user, { platform: "admin" })
+		return token
 	}
 
 	// admin登出

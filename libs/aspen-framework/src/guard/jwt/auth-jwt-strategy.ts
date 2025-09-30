@@ -6,6 +6,8 @@ import { PassportStrategy } from "@nestjs/passport"
 import { ExtractJwt, Strategy } from "passport-jwt"
 import { JwtService } from "@nestjs/jwt"
 
+import ms from "ms"
+import dayjs from "dayjs"
 import * as _ from "radash"
 
 import { JwtConfig, BaseUser, RedisTool, exception } from "@aspen/aspen-core"
@@ -15,7 +17,36 @@ import { JwtError } from "./common/error"
 type JwtUserPayload = {
 	uuid: string
 	userId: string
+	platform: string
 }
+
+type GenerateTokenOptions = {
+	/**
+	 * 平台
+	 * @default admin
+	 */
+	platform?: string
+}
+
+type GenerateTokenVo = {
+	/**
+	 * token
+	 */
+	token: string
+	/**
+	 * 过期时间（秒）
+	 */
+	expiresIn: number
+	/**
+	 * 过期时间
+	 * YYYY-MM-DD HH:mm:ss 格式
+	 */
+	expiresTime: string
+}
+
+type LoginUserInfo = {
+	baseUser: BaseUser
+} & GenerateTokenVo
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
@@ -25,6 +56,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		private readonly redisTool: RedisTool,
 	) {
 		const { secret } = config.get<JwtConfig>("jwt")
+		// ymal配置jwt.secret为空
 		if (_.isEmpty(secret)) throw new exception.core(JwtError.JWT_SECRET_NOT_FOUND)
 		super({
 			jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
@@ -43,22 +75,46 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	/**
 	 * 生成token
 	 */
-	async generateToken(baseUser: BaseUser): Promise<string> {
-		const payload = this.generatePayload(baseUser)
+	async generateToken(baseUser: BaseUser, options?: GenerateTokenOptions): Promise<GenerateTokenVo> {
+		const { platform = "admin" } = options || {}
+		const { expiresIn } = this.config.get<JwtConfig>("jwt")
+		// 过期时间秒
+		const expiresInSecond = Math.floor(ms(expiresIn) / 1000)
+		const payload = this.generatePayload(baseUser, platform)
 		const token = this.jwtService.sign(payload)
 		// 存入redis
-		await this.redisTool.set(`auth:admin:${payload}`, JSON.stringify(baseUser))
-		return token
+		const redisKey = `auth:${platform}:${baseUser.userId}-${payload}`
+		const loginUserInfo: LoginUserInfo = {
+			baseUser,
+			token,
+			expiresIn: expiresInSecond,
+			expiresTime: dayjs().add(expiresInSecond, "second").format("YYYY-MM-DD HH:mm:ss"),
+		}
+		await this.redisTool.set(redisKey, JSON.stringify(loginUserInfo), expiresInSecond)
+		return {
+			token,
+			expiresIn: expiresInSecond,
+			expiresTime: loginUserInfo.expiresTime,
+		}
 	}
 
 	/**
 	 * 生成payload
 	 */
-	private generatePayload(baseUser: BaseUser): string {
+	private generatePayload(baseUser: BaseUser, platform: string): string {
 		const userPayload: JwtUserPayload = {
 			uuid: crypto.randomUUID(),
 			userId: String(baseUser.userId),
+			platform: platform,
 		}
-		return `${userPayload.userId}|${userPayload.userId}`
+		return `${userPayload.userId}|${userPayload.uuid}|${userPayload.platform}`
+	}
+
+	/**
+	 * 解析payload
+	 */
+	parsePayload(payload: string): JwtUserPayload {
+		const [userId, uuid, platform] = payload.split("|")
+		return { userId, uuid, platform }
 	}
 }
