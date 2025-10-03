@@ -63,6 +63,17 @@ export class DatabaseModule {
 							entities: [options.entityPattern],
 							// 转换为蛇形命名
 							namingStrategy: new SnakeNamingStrategy(),
+							// 全局类型转换：将 MySQL BIT(1) 转为 boolean
+							extra: {
+								typeCast: (field: any, next: () => any) => {
+									const value: any = next()
+									// 将单字节 Buffer 按 0/1 转换为 boolean
+									if (Buffer.isBuffer(value) && field.type === "BIT" && value.length === 1) {
+										return value[0] === 1
+									}
+									return value
+								},
+							},
 						}
 					},
 				}),

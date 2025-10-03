@@ -19,7 +19,7 @@ export class FrameDictItemController {
 	}
 
 	@router.patch({
-		summary: "根据dictItemId查询字典项",
+		summary: "根据dictItemId查询字典项(有缓存)",
 		router: "/id/:dictId",
 	})
 	async getByDictItemId(@Param("deptId") dictId: number) {
@@ -28,7 +28,7 @@ export class FrameDictItemController {
 	}
 
 	@router.patch({
-		summary: "根据dictItemCode查询字典项",
+		summary: "根据dictItemCode查询字典项(有缓存)",
 		router: "/code/:deptCode",
 	})
 	async getByDictItemCode(@Param("deptCode") deptCode: string) {
