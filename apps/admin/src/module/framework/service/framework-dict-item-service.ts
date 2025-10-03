@@ -30,15 +30,32 @@ export class FrameDictItemService {
 		return dictDetail
 	}
 
+	// 根据dictItemCode查询字典项
+	@cache.able({ key: "frame:dict-item:code", value: ([deptCode]) => `${deptCode}`, expiresIn: "2h" })
+	async getByDictItemCode(deptCode: string) {
+		const dictDetail = await this.frameDictItemRep.findOne({
+			where: {
+				code: deptCode,
+			},
+		})
+		return dictDetail
+	}
+
 	// 新增字典项
-	@cache.put({ key: "frame:dict-item:id", value: (_, result) => `${result.id}`, expiresIn: "2h" })
+	@cache.put([
+		{ key: "frame:dict-item:id", value: (_, result) => `${result.id}`, expiresIn: "2h" },
+		{ key: "frame:dict-item:code", value: (_, result) => `${result.code}`, expiresIn: "2h" },
+	])
 	async save(body: FrameDictItemSaveDto) {
 		const saveObj = await this.frameDictItemRep.save(plainToInstance(FrameDictItemEntity, body))
 		return saveObj
 	}
 
 	// 修改字典项
-	@cache.evict({ key: "frame:dict-item:id", value: ([dto]) => `${dto.id}` })
+	@cache.evict([
+		{ key: "frame:dict-item:id", value: ([dto]) => `${dto.id}` },
+		{ key: "frame:dict-item:code", value: ([dto]) => `${dto.code}` },
+	])
 	async edit(body: FrameDictItemEditDto) {
 		await this.frameDictItemRep.update({ id: body.id }, plainToInstance(FrameDictItemEntity, body))
 	}
@@ -51,7 +68,8 @@ export class FrameDictItemService {
 		// 删除数据
 		const { affected } = await this.frameDictItemRep.delete(dictIds)
 		// 删除缓存
-		this.redisTool.del(dictIds.map((v) => `frame:dict-item:id:${v}`))
+		this.redisTool.del(roleList.map((v) => `frame:dict-item:id:${v.id}`))
+		this.redisTool.del(roleList.map((v) => `frame:dict-item:code:${v.code}`))
 		return affected ?? 0
 	}
 }

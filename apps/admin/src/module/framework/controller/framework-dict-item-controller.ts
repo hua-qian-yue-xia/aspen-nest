@@ -20,10 +20,19 @@ export class FrameDictItemController {
 
 	@router.patch({
 		summary: "根据dictItemId查询字典项",
-		router: "/:dictId",
+		router: "/id/:dictId",
 	})
 	async getByDictItemId(@Param("deptId") dictId: number) {
 		const deptDetail = await this.frameDictItemService.getByDictItemId(dictId)
+		return R.success(deptDetail)
+	}
+
+	@router.patch({
+		summary: "根据dictItemCode查询字典项",
+		router: "/code/:deptCode",
+	})
+	async getByDictItemCode(@Param("deptCode") deptCode: string) {
+		const deptDetail = await this.frameDictItemService.getByDictItemCode(deptCode)
 		return R.success(deptDetail)
 	}
 

@@ -63,7 +63,7 @@ export class FrameDictService {
 		// 删除数据
 		const { affected } = await this.frameDictRep.delete(dictIds)
 		// 删除缓存
-		this.redisTool.del(dictIds.map((v) => `frame:dict:id:${v}`))
+		this.redisTool.del(roleList.map((v) => `frame:dict:id:${v.id}`))
 		return affected ?? 0
 	}
 
