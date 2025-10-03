@@ -1,21 +1,11 @@
-import { FindManyOptions, BaseEntity, Repository, EntityTarget } from "typeorm"
-import { Injectable, Inject } from "@nestjs/common"
-import { getRepositoryToken } from "@nestjs/typeorm"
-import { ModuleRef } from "@nestjs/core"
+import { FindManyOptions, BaseEntity, Repository } from "typeorm"
+import { Injectable } from "@nestjs/common"
 
 import { AppCtx, BasePage } from "@aspen/aspen-core"
 
 @Injectable()
 export abstract class BaseRepo<T extends BaseEntity> {
 	protected repository: Repository<T>
-
-	constructor(
-		@Inject(ModuleRef) private readonly moduleRef: ModuleRef,
-		private readonly entityClass: EntityTarget<T>,
-	) {
-		// 自动获取对应实体的Repository
-		this.repository = this.moduleRef.get(getRepositoryToken(this.entityClass as any), { strict: false })
-	}
 
 	/**
 	 * 获取当前req传入的分页参数

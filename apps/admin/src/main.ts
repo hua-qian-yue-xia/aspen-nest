@@ -19,7 +19,10 @@ async function bootstrap() {
 	// 配置全局过滤器
 	app.useGlobalFilters(new HttpExceptionFilter())
 	// 配置swagger文档
-	registerSwaggerDoc(app, { title: "aspen-nest后台服务文档" })
+	registerSwaggerDoc(app, {
+		address: `127.0.0.1:${appConfig.port}${appConfig.prefix}`,
+		title: "aspen-nest后台服务文档",
+	})
 	AppCtx.getInstance().setApp(app)
 	await app.listen(appConfig.port)
 }

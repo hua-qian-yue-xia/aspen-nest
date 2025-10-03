@@ -1,3 +1,3 @@
-export * from "./frame-plugin-entity"
-export * from "./frame-plugin-entity"
-export * from "./frame-plugin-tag-entity"
+export * from "./frame-api-entity"
+export * from "./frame-dict-entity"
+export * from "./frame-dict-item-entity"

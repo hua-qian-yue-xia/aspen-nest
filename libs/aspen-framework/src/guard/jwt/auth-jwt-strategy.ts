@@ -6,7 +6,7 @@ import { PassportStrategy } from "@nestjs/passport"
 import { ExtractJwt, Strategy } from "passport-jwt"
 import { JwtService } from "@nestjs/jwt"
 
-import ms from "ms"
+import * as ms from "ms"
 import dayjs from "dayjs"
 import * as _ from "radash"
 
@@ -80,6 +80,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		const { expiresIn } = this.config.get<JwtConfig>("jwt")
 		// 过期时间秒
 		const expiresInSecond = Math.floor(ms(expiresIn) / 1000)
+		const expiresInTime = dayjs().add(expiresInSecond, "second").format("YYYY-MM-DD HH:mm:ss")
 		const payload = this.generatePayload(baseUser, platform)
 		const token = this.jwtService.sign(payload)
 		// 存入redis
@@ -88,13 +89,13 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 			baseUser,
 			token,
 			expiresIn: expiresInSecond,
-			expiresTime: dayjs().add(expiresInSecond, "second").format("YYYY-MM-DD HH:mm:ss"),
+			expiresTime: expiresInTime,
 		}
 		await this.redisTool.set(redisKey, JSON.stringify(loginUserInfo), expiresInSecond)
 		return {
 			token,
 			expiresIn: expiresInSecond,
-			expiresTime: loginUserInfo.expiresTime,
+			expiresTime: expiresInTime,
 		}
 	}
 

@@ -5,6 +5,10 @@ import { INestApplication } from "@nestjs/common"
 
 export type SwaggerOptions = {
 	/**
+	 * swagger地址
+	 */
+	address?: string
+	/**
 	 * 标题
 	 */
 	title: string
@@ -46,4 +50,7 @@ export const registerSwaggerDoc = (app: INestApplication, option: SwaggerOptions
 		extraModels: [],
 	})
 	SwaggerModule.setup(pathPrefix, app, document)
+	console.table({
+		swagger地址: `${option.address}${pathPrefix}`,
+	})
 }

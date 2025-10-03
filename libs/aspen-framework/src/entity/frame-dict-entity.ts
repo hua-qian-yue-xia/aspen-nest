@@ -4,10 +4,10 @@ import { BaseRecordDb, SortColumn } from "@aspen/aspen-core"
 
 import { FrameDictItemEntity } from "./frame-dict-item-entity"
 
-@Entity({ comment: "字典" })
+@Entity({ comment: "字典", name: "frame_dict" })
 export class FrameDictEntity extends BaseRecordDb {
 	@PrimaryGeneratedColumn({ type: "bigint", comment: "字典id" })
-	id: string
+	id: number
 
 	@Column({ type: "varchar", length: 64, comment: "字典code" })
 	code: string

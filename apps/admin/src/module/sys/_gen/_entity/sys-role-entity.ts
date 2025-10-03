@@ -9,6 +9,10 @@ export class SysRoleEntity extends BaseRecordDb {
 	@AspenValidator({ summary: "角色id", rule: AspenRule().isNotEmpty() })
 	roleId: number
 
+	@Column({ type: "bigint", comment: "父角色id" })
+	@AspenValidator({ summary: "父角色id", rule: AspenRule().isNotEmpty() })
+	parentRoleId: number
+
 	@Column({ type: "varchar", length: 64, comment: "角色名" })
 	@AspenValidator({ summary: "角色名", rule: AspenRule().isNotEmpty() })
 	roleName: string

@@ -4,10 +4,14 @@ import { BaseRecordDb, SortColumn } from "@aspen/aspen-core"
 
 import { FrameDictEntity } from "./frame-dict-entity"
 
-@Entity({ comment: "字典项" })
+@Entity({ comment: "字典项", name: "frame_dict_item" })
 export class FrameDictItemEntity extends BaseRecordDb {
 	@PrimaryGeneratedColumn({ type: "bigint", comment: "字典项id" })
-	id: string
+	id: number
+
+	@ManyToOne(() => FrameDictEntity, (dict) => dict.dictList, { onDelete: "CASCADE" })
+	@JoinTable({ name: "dictId" })
+	dict: FrameDictEntity
 
 	@Column({ type: "varchar", length: 64, comment: "字典code" })
 	code: string
@@ -17,10 +21,6 @@ export class FrameDictItemEntity extends BaseRecordDb {
 
 	@Column(() => SortColumn, { prefix: false })
 	sort: SortColumn
-
-	@ManyToOne(() => FrameDictEntity, (dict) => dict.dictList, { onDelete: "CASCADE" })
-	@JoinTable({ name: "dictId" })
-	dict: FrameDictEntity
 
 	override props(): Array<keyof FrameDictItemEntity> {
 		return ["code", "summary", "sort"]
