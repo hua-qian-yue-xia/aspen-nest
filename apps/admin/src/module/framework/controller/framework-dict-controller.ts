@@ -20,7 +20,7 @@ export class FrameDictController {
 
 	@router.patch({
 		summary: "根据dictId查询字典",
-		router: "/{dictId}",
+		router: "/:dictId",
 	})
 	async getByDictId(@Param("deptId") dictId: number) {
 		const deptDetail = await this.frameDictService.getByDictId(dictId)
@@ -47,10 +47,10 @@ export class FrameDictController {
 
 	@router.delete({
 		summary: "删除字典",
-		router: "/{dictIds}",
+		router: "/:dictIds",
 	})
 	async delete(
-		@Param("roleIds", new ParseArrayPipe({ items: Number, separator: "," }))
+		@Param("dictIds", new ParseArrayPipe({ items: Number, separator: "," }))
 		dictIds: Array<number>,
 	) {
 		const delCount = await this.frameDictService.delByIds(dictIds)
