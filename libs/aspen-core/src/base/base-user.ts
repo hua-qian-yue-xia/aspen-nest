@@ -1,3 +1,5 @@
+import * as bcrypt from "bcrypt"
+
 import { BaseRecordDb } from "../index"
 
 export class BaseUser extends BaseRecordDb {
@@ -37,13 +39,13 @@ export class BaseUser extends BaseRecordDb {
 	 * 密码是否正确
 	 */
 	checkPassword(password: string): boolean {
-		return this.password === password
+		return bcrypt.compareSync(password, this.password)
 	}
 
 	/**
 	 * 密码加密
 	 */
-	encryptPassword(password: string): string {
-		return password
+	encryptPassword(password: string, rounds = 10): string {
+		return bcrypt.hashSync(password, bcrypt.genSaltSync(rounds))
 	}
 }

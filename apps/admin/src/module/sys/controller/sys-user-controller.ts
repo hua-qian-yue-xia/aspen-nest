@@ -1,9 +1,11 @@
-import { Body, Param } from "@nestjs/common"
+import { Body, Param, Query } from "@nestjs/common"
 
-import { R, router } from "@aspen/aspen-core"
+import { BasePage, R, router } from "@aspen/aspen-core"
 
 import { SysUserService } from "apps/admin/src/module/sys/service"
-import { SysUserAdminLoginDto } from "apps/admin/src/module/sys/dto/sys-user-dto"
+import { SysUserAdminLoginDto, SysUserEditDto, SysUserSaveDto } from "apps/admin/src/module/sys/dto/sys-user-dto"
+
+import { SysUserEntity } from "../_gen/_entity"
 
 @router.controller({ prefix: "sys/user", summary: "用户管理" })
 export class SysUserController {
@@ -13,7 +15,7 @@ export class SysUserController {
 		summary: "分页",
 		router: "/page",
 	})
-	async page() {
+	async page(@Query() page: BasePage): Promise<R<Array<SysUserEntity>>> {
 		const list = await this.sysUserService.scopePage()
 		return R.success(list)
 	}
@@ -38,6 +40,26 @@ export class SysUserController {
 	}
 
 	@router.post({
+		summary: "新增用户",
+		description: "有缓存",
+		router: "/",
+	})
+	async save(@Body() dto: SysUserSaveDto) {
+		await this.sysUserService.save(dto)
+		return R.success()
+	}
+
+	@router.put({
+		summary: "修改用户",
+		description: "有缓存",
+		router: "/",
+	})
+	async edit(@Body() dto: SysUserEditDto) {
+		await this.sysUserService.edit(dto)
+		return R.success()
+	}
+
+	@router.post({
 		summary: "admin登录",
 		description: "admin登录,会校验用户名、密码、用户是否启用、用户是否有权限登录管理后台",
 		router: "/admin/login",
@@ -46,8 +68,8 @@ export class SysUserController {
 		},
 	})
 	async adminLogin(@Body() dto: SysUserAdminLoginDto) {
-		await this.sysUserService.adminLogin(dto)
-		return R.success()
+		const result = await this.sysUserService.adminLogin(dto)
+		return R.success(result)
 	}
 
 	@router.get({

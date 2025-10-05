@@ -51,6 +51,7 @@ export const registerSwaggerDoc = (app: INestApplication, option: SwaggerOptions
 	})
 	SwaggerModule.setup(pathPrefix, app, document)
 	console.table({
-		swagger地址: `${option.address}${pathPrefix}`,
+		"swagger 文档 地址": `${option.address}${pathPrefix}`,
+		"swagger json 地址": `${option.address}${pathPrefix}-json`,
 	})
 }

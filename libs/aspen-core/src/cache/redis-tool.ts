@@ -35,4 +35,11 @@ export class RedisTool {
 		if (typeof keys === "string") keys = [keys]
 		return this.redis.del(...keys)
 	}
+
+	/**
+	 * 清空所有缓存
+	 */
+	async clear() {
+		return this.redis.flushdb()
+	}
 }

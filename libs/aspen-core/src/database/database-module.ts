@@ -63,7 +63,7 @@ export class DatabaseModule {
 							entities: [options.entityPattern],
 							// 转换为蛇形命名
 							namingStrategy: new SnakeNamingStrategy(),
-							// 全局类型转换：将 MySQL BIT(1) 转为 boolean
+							// 全局类型转换
 							extra: {
 								typeCast: (field: any, next: () => any) => {
 									const value: any = next()

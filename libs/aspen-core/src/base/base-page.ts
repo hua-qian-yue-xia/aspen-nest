@@ -1,3 +1,5 @@
+import { ApiProperty } from "@nestjs/swagger"
+
 import { FastifyRequest } from "fastify"
 
 export class BasePage {
@@ -7,12 +9,23 @@ export class BasePage {
 	static MAX_PAGE_SIZE: number = 100
 
 	/**
-	 * 分页大小
-	 */
-	page: number = BasePage.DEFAULT_PAGE
-	/**
 	 * 当前页码
 	 */
+	@ApiProperty({
+		description: "当前页码",
+		default: BasePage.DEFAULT_PAGE,
+		example: BasePage.DEFAULT_PAGE,
+	})
+	page: number = BasePage.DEFAULT_PAGE
+
+	/**
+	 * 分页大小
+	 */
+	@ApiProperty({
+		description: "分页大小",
+		default: BasePage.DEFAULT_PAGE_SIZE,
+		example: BasePage.DEFAULT_PAGE_SIZE,
+	})
 	pageSize: number = BasePage.DEFAULT_PAGE_SIZE
 
 	static default(): BasePage {

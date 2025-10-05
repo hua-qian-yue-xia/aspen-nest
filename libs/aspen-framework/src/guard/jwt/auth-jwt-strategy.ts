@@ -28,7 +28,7 @@ type GenerateTokenOptions = {
 	platform?: string
 }
 
-type GenerateTokenVo = {
+export type GenerateTokenVo = {
 	/**
 	 * token
 	 */
