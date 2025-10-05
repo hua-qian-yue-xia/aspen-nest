@@ -13,6 +13,7 @@ export class SysUserEntity extends BaseUser {
 	override username: string
 
 	@Column({ type: "varchar", length: 64, comment: "用户昵称" })
+	@AspenValidator({ summary: "用户昵称", rule: AspenRule().isNotEmpty() })
 	override userNickname: string
 
 	@Column({ type: "varchar", length: 128, comment: "用户密码" })
@@ -20,9 +21,11 @@ export class SysUserEntity extends BaseUser {
 	override password: string
 
 	@Column({ type: "varchar", length: 128, unique: true, comment: "用户手机号" })
+	@AspenValidator({ summary: "用户手机号", rule: AspenRule().isNotEmpty() })
 	override mobile: string
 
 	@Column({ type: "bit", default: true, comment: "是否启用" })
+	@AspenValidator({ summary: "是否启用", rule: AspenRule() })
 	override enable: boolean
 
 	@ManyToMany(() => SysRoleEntity)

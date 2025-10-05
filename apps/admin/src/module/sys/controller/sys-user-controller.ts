@@ -14,8 +14,12 @@ export class SysUserController {
 	@router.get({
 		summary: "分页",
 		router: "/page",
+		resType: {
+			type: SysUserEntity,
+			wrapper: "page",
+		},
 	})
-	async page(@Query() page: BasePage): Promise<R<Array<SysUserEntity>>> {
+	async page(@Query() page: BasePage) {
 		const list = await this.sysUserService.scopePage()
 		return R.success(list)
 	}
@@ -24,6 +28,10 @@ export class SysUserController {
 		summary: "下拉",
 		description: "没有权限控制",
 		router: "/select",
+		resType: {
+			type: SysUserEntity,
+			wrapper: "list",
+		},
 	})
 	async select() {
 		return R.success()
@@ -33,10 +41,13 @@ export class SysUserController {
 		summary: "根据用户id查询用户",
 		description: "有缓存",
 		router: "/id/:userId",
+		resType: {
+			type: SysUserEntity,
+		},
 	})
 	async getByUserId(@Param("userId") userId: number) {
-		await this.sysUserService.getByUserId(userId)
-		return R.success()
+		const detail = await this.sysUserService.getByUserId(userId)
+		return R.success(detail)
 	}
 
 	@router.post({

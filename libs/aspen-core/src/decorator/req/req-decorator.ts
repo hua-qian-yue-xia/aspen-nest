@@ -1,11 +1,12 @@
-import { applyDecorators, Controller } from "@nestjs/common"
+import { applyDecorators, Controller, Type } from "@nestjs/common"
 
 import * as _ from "radash"
 
 import { ReqMethod, ReqMethodMap } from "libs/aspen-core/src/constant/decorator-constant"
 import { AspenLog, LogOption } from "@aspen/aspen-core/decorator/log/log-decorator"
 import { AspenRateLimit, RateLimitOption } from "@aspen/aspen-core/decorator/repeat-submit/repeat-submit-decorator"
-import { ApiOperation, ApiTags } from "@nestjs/swagger"
+import { ApiOperation, ApiTags, ApiOkResponse, ApiExtraModels, getSchemaPath } from "@nestjs/swagger"
+import { BasePageVo } from "@aspen/aspen-core/base/base-page"
 
 /******************** start type start ********************/
 
@@ -18,6 +19,20 @@ type CreateReqOptions = {
 	 * 接口作用详细描述
 	 */
 	description?: string
+	/**
+	 * 接口返回值描述
+	 */
+	resType?: {
+		/**
+		 * 接口返回值类型
+		 */
+		type: Type<unknown>
+		/**
+		 * 返回包装类型
+		 * @default "none"
+		 */
+		wrapper?: "none" | "list" | "page"
+	}
 	/**
 	 * 接口路由地址
 	 */
@@ -52,9 +67,37 @@ type MethodReqOptions = Omit<CreateReqOptions, "method">
 /******************** end type end ********************/
 
 function createReqDecorators(options: CreateReqOptions) {
-	const { summary, description, router, method, log, rateLimit } = options
+	const { summary, description, router, resType, method, log, rateLimit } = options
+	const { type, wrapper = "none" } = resType ?? {}
+
 	const decorators = [ReqMethodMap[method](router)]
 	const swagger = [ApiOperation({ summary: summary, description: description })]
+	if (type) {
+		if (wrapper === "page") {
+			swagger.push(
+				...[
+					ApiExtraModels(type, BasePageVo),
+					ApiOkResponse({
+						schema: {
+							allOf: [
+								{ $ref: getSchemaPath(BasePageVo) },
+								{
+									properties: {
+										records: {
+											type: "array",
+											items: { $ref: getSchemaPath(type) },
+										},
+									},
+								},
+							],
+						},
+					}),
+				],
+			)
+		} else {
+			swagger.push(ApiOkResponse({ type: type, isArray: wrapper === "list" }))
+		}
+	}
 	decorators.push(...swagger)
 	if (!_.isEmpty(log)) {
 		const logOptions: LogOption = {

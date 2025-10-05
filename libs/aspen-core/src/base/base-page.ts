@@ -14,7 +14,6 @@ export class BasePage {
 	@ApiProperty({
 		description: "当前页码",
 		default: BasePage.DEFAULT_PAGE,
-		example: BasePage.DEFAULT_PAGE,
 	})
 	page: number = BasePage.DEFAULT_PAGE
 
@@ -24,7 +23,6 @@ export class BasePage {
 	@ApiProperty({
 		description: "分页大小",
 		default: BasePage.DEFAULT_PAGE_SIZE,
-		example: BasePage.DEFAULT_PAGE_SIZE,
 	})
 	pageSize: number = BasePage.DEFAULT_PAGE_SIZE
 
@@ -36,19 +34,27 @@ export class BasePage {
 	}
 }
 
-export class BasePageVo<T> extends BasePage {
+export class BasePageVo extends BasePage {
 	/**
 	 * 总页数
 	 */
+	@ApiProperty({
+		description: "总页数",
+		default: 0,
+	})
 	totalPage: number = 0
 	/**
 	 * 总记录数
 	 */
+	@ApiProperty({
+		description: "总记录数",
+		default: 0,
+	})
 	totalRecord: number = 0
 	/**
 	 * 数据列表
 	 */
-	records: Array<T> = []
+	records: Array<any> = []
 }
 
 export class BasePageTool {

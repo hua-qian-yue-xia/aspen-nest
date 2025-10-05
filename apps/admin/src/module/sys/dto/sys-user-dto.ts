@@ -11,4 +11,10 @@ export class SysUserAdminLoginDto extends PickType(SysUserEntity, ["username", "
 export class SysUserSaveDto extends PickType(SysUserEntity, ["username", "userNickname", "mobile"]) {}
 
 // 修改用户
-export class SysUserEditDto extends PickType(SysUserEntity, ["userId", "username", "userNickname", "mobile"]) {}
+export class SysUserEditDto extends PickType(SysUserEntity, [
+	"userId",
+	"username",
+	"userNickname",
+	"mobile",
+	"enable",
+]) {}
