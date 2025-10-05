@@ -74,11 +74,11 @@ function setupValidatorDecorator(ruleList: Array<RuleItem>, options: SetupValida
 	return decorators
 }
 
-export type AspenValidatorOptions = {
+export type AspenSummaryOptions = {
 	/**
 	 * 校验规则
 	 */
-	rule: Rule
+	rule?: Rule
 	/**
 	 * 字段描述
 	 */
@@ -93,17 +93,17 @@ export type AspenValidatorOptions = {
 	groups?: Array<GroupEnum>
 }
 
-type SetupValidatorDecoratorOptions = Omit<AspenValidatorOptions, "rule">
+type SetupValidatorDecoratorOptions = Omit<AspenSummaryOptions, "rule">
 
 type RuleItem = {
 	key: string
 	value: any
 }
 
-export function AspenValidator(options: AspenValidatorOptions): PropertyDecorator {
+export function AspenSummary(options: AspenSummaryOptions): PropertyDecorator {
 	const { summary, description, groups } = options
 	// 校验注解
-	const ruleDecorators = setupValidatorDecorator(options.rule.ruleList, {
+	const ruleDecorators = setupValidatorDecorator(options.rule?.ruleList ?? [], {
 		summary: summary,
 		description: description,
 		groups: groups,

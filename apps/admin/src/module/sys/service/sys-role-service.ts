@@ -1,20 +1,18 @@
 import { Injectable } from "@nestjs/common"
-import { In } from "typeorm"
+import { In, Repository } from "typeorm"
+import { InjectRepository } from "@nestjs/typeorm"
 import { plainToInstance } from "class-transformer"
 
 import { OrmQuery, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
 import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
-import { SysRoleRepo } from "apps/admin/src/module/sys/repo"
 import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto as SysRoleDto } from "apps/admin/src/module/sys/dto"
-import { InjectRepository } from "@nestjs/typeorm"
 
 @Injectable()
 export class SysRoleService {
 	constructor(
-		@InjectRepository(SysRoleEntity)
-		private readonly sysRoleRepo: SysRoleRepo,
+		@InjectRepository(SysRoleEntity) private readonly sysRoleRepo: Repository<SysRoleEntity>,
 		private readonly redisTool: RedisTool,
 	) {}
 
@@ -22,7 +20,7 @@ export class SysRoleService {
 	async scopePage(dto: SysRoleDto) {
 		const where = OrmQuery.getWhereOptions(dto)
 
-		return this.sysRoleRepo.findPage(where)
+		return this.sysRoleRepo.page(where)
 	}
 
 	// 根据角色id查询角色

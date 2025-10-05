@@ -1,3 +1,4 @@
+import { DataSource, EntityTarget } from "typeorm"
 import { Injectable } from "@nestjs/common"
 
 import { BaseRepo } from "@aspen/aspen-core"

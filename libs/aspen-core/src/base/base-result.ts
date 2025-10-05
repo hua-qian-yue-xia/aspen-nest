@@ -1,11 +1,23 @@
+import { ApiProperty } from "@nestjs/swagger"
 import { HttpCodeEnum } from "libs/aspen-core/src/constant/http-constant"
 
 /**
  * 响应结果
  */
 export class R<T> extends Map<string, any> {
+	@ApiProperty({
+		description: "状态码",
+	})
 	private code: HttpCodeEnum
+
+	@ApiProperty({
+		description: "状态描述",
+	})
 	private msg: string
+
+	@ApiProperty({
+		description: "数据",
+	})
 	private data: T
 
 	constructor(code: HttpCodeEnum, msg: string, data: T) {

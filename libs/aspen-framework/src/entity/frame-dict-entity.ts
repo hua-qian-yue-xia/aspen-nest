@@ -1,6 +1,6 @@
 import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 
-import { AspenRule, AspenValidator, BaseRecordDb, SortColumn } from "@aspen/aspen-core"
+import { AspenRule, AspenSummary, BaseRecordDb, SortColumn } from "@aspen/aspen-core"
 
 import { FrameDictItemEntity } from "./frame-dict-item-entity"
 
@@ -10,11 +10,11 @@ export class FrameDictEntity extends BaseRecordDb {
 	id: number
 
 	@Column({ type: "varchar", length: 64, comment: "字典code" })
-	@AspenValidator({ summary: "字典code", rule: AspenRule().isNotEmpty() })
+	@AspenSummary({ summary: "字典code", rule: AspenRule().isNotEmpty() })
 	code: string
 
 	@Column({ type: "varchar", length: 256, comment: "字典摘要" })
-	@AspenValidator({ summary: "字典摘要", rule: AspenRule().isNotEmpty() })
+	@AspenSummary({ summary: "字典摘要", rule: AspenRule().isNotEmpty() })
 	summary: string
 
 	@Column({ type: "varchar", length: 32, default: "1", comment: "字典类型(1:自动生成,2:用户创建)" })

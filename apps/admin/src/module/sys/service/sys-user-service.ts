@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common"
-import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
+import { InjectRepository } from "@nestjs/typeorm"
 import { plainToInstance } from "class-transformer"
 
-import { exception } from "@aspen/aspen-core"
+import { BasePageVo, exception } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
@@ -18,9 +18,9 @@ export class SysUserService {
 		private readonly jwtStrategy: JwtStrategy,
 	) {}
 
-	// 分页
-	async scopePage(): Promise<Array<SysUserEntity>> {
-		return this.sysUserRepo.find()
+	// 分页查询用户
+	async scopePage(): Promise<BasePageVo<SysUserEntity>> {
+		return this.sysUserRepo.page()
 	}
 
 	// 根据用户id查询用户

@@ -7,6 +7,7 @@ import { AspenLog, LogOption } from "@aspen/aspen-core/decorator/log/log-decorat
 import { AspenRateLimit, RateLimitOption } from "@aspen/aspen-core/decorator/repeat-submit/repeat-submit-decorator"
 import { ApiOperation, ApiTags, ApiOkResponse, ApiExtraModels, getSchemaPath } from "@nestjs/swagger"
 import { BasePageVo } from "@aspen/aspen-core/base/base-page"
+import { R } from "@aspen/aspen-core/base/base-result"
 
 /******************** start type start ********************/
 
@@ -76,16 +77,26 @@ function createReqDecorators(options: CreateReqOptions) {
 		if (wrapper === "page") {
 			swagger.push(
 				...[
-					ApiExtraModels(type, BasePageVo),
+					ApiExtraModels(type, BasePageVo, R),
 					ApiOkResponse({
 						schema: {
 							allOf: [
-								{ $ref: getSchemaPath(BasePageVo) },
+								{ $ref: getSchemaPath(R) },
 								{
 									properties: {
-										records: {
-											type: "array",
-											items: { $ref: getSchemaPath(type) },
+										data: {
+											type: "object",
+											allOf: [
+												{ $ref: getSchemaPath(BasePageVo) },
+												{
+													properties: {
+														records: {
+															type: "array",
+															items: { $ref: getSchemaPath(type) },
+														},
+													},
+												},
+											],
 										},
 									},
 								},
@@ -95,7 +106,26 @@ function createReqDecorators(options: CreateReqOptions) {
 				],
 			)
 		} else {
-			swagger.push(ApiOkResponse({ type: type, isArray: wrapper === "list" }))
+			swagger.push(
+				...[
+					ApiExtraModels(type, R),
+					ApiOkResponse({
+						schema: {
+							allOf: [
+								{ $ref: getSchemaPath(R) },
+								{
+									properties: {
+										data: {
+											type: "object",
+											allOf: [{ $ref: getSchemaPath(type) }],
+										},
+									},
+								},
+							],
+						},
+					}),
+				],
+			)
 		}
 	}
 	decorators.push(...swagger)

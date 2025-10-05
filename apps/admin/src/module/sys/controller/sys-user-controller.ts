@@ -20,8 +20,8 @@ export class SysUserController {
 		},
 	})
 	async page(@Query() page: BasePage) {
-		const list = await this.sysUserService.scopePage()
-		return R.success(list)
+		const pageList = await this.sysUserService.scopePage()
+		return R.success(pageList)
 	}
 
 	@router.get({

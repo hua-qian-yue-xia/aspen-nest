@@ -27,5 +27,7 @@ module.exports = {
 		"prefer-arrow-callback": "off",
 		"@typescript-eslint/no-explicit-any": "off",
 		"@typescript-eslint/ban-ts-comment": "off", // 新增：禁用 ban-ts-comment 规则
+		"@typescript-eslint/no-unused-vars": "off",
+		"no-unused-vars": "off",
 	},
 }

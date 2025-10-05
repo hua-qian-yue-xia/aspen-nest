@@ -34,7 +34,7 @@ export class BasePage {
 	}
 }
 
-export class BasePageVo extends BasePage {
+export class BasePageVo<T> extends BasePage {
 	/**
 	 * 总页数
 	 */
@@ -54,7 +54,7 @@ export class BasePageVo extends BasePage {
 	/**
 	 * 数据列表
 	 */
-	records: Array<any> = []
+	records: Array<T> = []
 }
 
 export class BasePageTool {

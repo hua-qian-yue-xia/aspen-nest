@@ -40,6 +40,7 @@ export * from "libs/aspen-core/src/cache/redis-tool"
 export * from "@aspen/aspen-core/database/common/common-column"
 export * from "@aspen/aspen-core/database/tool/orm-query-tool"
 export * from "@aspen/aspen-core/database/database-module"
+export * from "@aspen/aspen-core/database/extension/orm-extension"
 /******************** end database end ********************/
 
 /******************** start 装饰器 start ********************/
@@ -47,7 +48,7 @@ export * from "@aspen/aspen-core/decorator/log/log-decorator"
 export * from "@aspen/aspen-core/decorator/req/req-decorator"
 export * from "@aspen/aspen-core/constant/group-constant"
 export * from "@aspen/aspen-core/constant/decorator-constant"
-export * from "@aspen/aspen-core/decorator/validator/validator-decorator"
+export * from "@aspen/aspen-core/decorator/summary/summary-decorator"
 /******************** end 装饰器 end ********************/
 
 /******************** start 异常 start ********************/
