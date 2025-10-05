@@ -1,4 +1,4 @@
-import { Body, Param, Query } from "@nestjs/common"
+import { Body, Param, ParseArrayPipe, Query } from "@nestjs/common"
 
 import { BasePage, R, router } from "@aspen/aspen-core"
 
@@ -68,6 +68,18 @@ export class SysUserController {
 	async edit(@Body() dto: SysUserEditDto) {
 		await this.sysUserService.edit(dto)
 		return R.success()
+	}
+
+	@router.delete({
+		summary: "根据用户ids删除用户",
+		router: "/:userIds",
+	})
+	async delete(
+		@Param("userIds", new ParseArrayPipe({ items: Number, separator: "," }))
+		userIds: Array<number>,
+	) {
+		const delCount = await this.sysUserService.delByIds(userIds)
+		return R.success(delCount)
 	}
 
 	@router.post({

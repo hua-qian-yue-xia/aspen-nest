@@ -1,9 +1,9 @@
 import { Injectable } from "@nestjs/common"
-import { Repository } from "typeorm"
+import { In, Repository } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
 import { plainToInstance } from "class-transformer"
 
-import { BasePageVo, exception } from "@aspen/aspen-core"
+import { BasePageVo, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
@@ -16,6 +16,7 @@ export class SysUserService {
 	constructor(
 		@InjectRepository(SysUserEntity) private readonly sysUserRepo: Repository<SysUserEntity>,
 		private readonly jwtStrategy: JwtStrategy,
+		private readonly redisTool: RedisTool,
 	) {}
 
 	// 分页查询用户
@@ -48,14 +49,27 @@ export class SysUserService {
 	// 修改用户
 	@cache.evict({ key: "sys:user:id", value: ([dto]) => `${dto.userId}` })
 	async edit(dto: SysUserEditDto) {
-		if (await this.isUsernameDuplicate(dto.username, null)) {
+		if (await this.isUsernameDuplicate(dto.username, dto.userId)) {
 			throw new exception.validator(`用户名"${dto.username}"重复`)
 		}
-		if (await this.isMobileDuplicate(dto.mobile, null)) {
+		if (await this.isMobileDuplicate(dto.mobile, dto.userId)) {
 			throw new exception.validator(`手机号"${dto.mobile}"重复`)
 		}
 		const obj = plainToInstance(SysUserEntity, dto)
 		await this.sysUserRepo.update({ userId: dto.userId }, obj)
+	}
+
+	// 根据用户ids删除用户
+	async delByIds(userIds: Array<number>) {
+		// 查询存不存在
+		const userList = await this.sysUserRepo.find({ where: { userId: In(userIds) } })
+		if (!userList.length) return 0
+		const delUserIds = userList.map((v) => v.userId)
+		// 删除数据
+		const { affected } = await this.sysUserRepo.softDelete(delUserIds)
+		// 删除缓存
+		this.redisTool.del(delUserIds.map((v) => `sys:user:id:${v}`))
+		return affected ?? 0
 	}
 
 	// admin登录

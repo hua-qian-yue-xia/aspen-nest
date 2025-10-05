@@ -1,6 +1,16 @@
-import { isEmpty } from "class-validator"
+import { isEmpty } from "radash"
 
-import { BaseEntity, BeforeInsert, BeforeRemove, BeforeSoftRemove, BeforeUpdate, Column } from "typeorm"
+import {
+	BaseEntity,
+	BeforeInsert,
+	BeforeRemove,
+	BeforeSoftRemove,
+	BeforeUpdate,
+	Column,
+	DeleteDateColumn,
+} from "typeorm"
+
+import { AspenSummary } from "../decorator/summary/summary-decorator"
 
 export abstract class BaseDb extends BaseEntity {
 	props(): Array<any> {
@@ -25,21 +35,27 @@ export abstract class BaseDb extends BaseEntity {
 
 export class BaseRecordDb extends BaseDb {
 	@Column({ type: "varchar", length: 64, comment: "新增人" })
+	@AspenSummary({ summary: "新增人" })
 	createBy: string
 
 	@Column({ type: "datetime", comment: "新增时间" })
+	@AspenSummary({ summary: "新增时间" })
 	createAt: Date
 
 	@Column({ type: "varchar", length: 64, nullable: true, comment: "修改人" })
+	@AspenSummary({ summary: "修改人" })
 	updateBy: string
 
 	@Column({ type: "datetime", nullable: true, comment: "修改时间" })
+	@AspenSummary({ summary: "修改时间" })
 	updateAt: Date
 
 	@Column({ type: "varchar", length: 64, nullable: true, comment: "删除人" })
+	@AspenSummary({ summary: "删除人" })
 	delBy: string
 
-	@Column({ type: "datetime", nullable: true, comment: "删除时间" })
+	@DeleteDateColumn({ type: "datetime", nullable: true, comment: "删除时间" })
+	@AspenSummary({ summary: "删除时间" })
 	delAt: Date
 
 	@BeforeInsert()

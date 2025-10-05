@@ -1,11 +1,12 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 
-import { AspenRule, AspenSummary, BaseUser } from "@aspen/aspen-core"
+import { AspenRule, AspenSummary, BaseUser, SortColumn } from "@aspen/aspen-core"
 import { SysDeptEntity, SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity"
 
 @Entity({ comment: "用户", name: "sys_user" })
 export class SysUserEntity extends BaseUser {
 	@PrimaryGeneratedColumn({ type: "bigint", comment: "用户id" })
+	@AspenSummary({ summary: "登录名", rule: AspenRule().isNotEmpty() })
 	override userId: number
 
 	@Column({ type: "varchar", length: 64, unique: true, comment: "登录名" })
@@ -25,8 +26,11 @@ export class SysUserEntity extends BaseUser {
 	override mobile: string
 
 	@Column({ type: "bit", default: true, comment: "是否启用" })
-	@AspenSummary({ summary: "是否启用", rule: AspenRule() })
+	@AspenSummary({ summary: "是否启用" })
 	override enable: boolean
+
+	@Column(() => SortColumn, { prefix: false })
+	sort: SortColumn
 
 	@ManyToMany(() => SysRoleEntity)
 	@JoinTable({ name: "sys_user_role", joinColumn: { name: "user_id" }, inverseJoinColumn: { name: "role_id" } })

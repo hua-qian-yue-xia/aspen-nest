@@ -126,7 +126,7 @@ export function AspenCacheable<T extends (...args: any[]) => any>(
 			for (let i = 0; i < cacheList.length; i++) {
 				const cacheResult = await redisTool.get(cacheList[i].key)
 				if (!_.isEmpty(cacheResult)) {
-					console.log(`cache.able缓存命中key|${cacheList[i].key}|过期时间|${cacheList[i].expiresIn}秒`)
+					console.log(`cache.able缓存命中key|${cacheList[i].key}|value|${cacheResult}`)
 					return typeof cacheResult == "string" ? JSON.parse(cacheResult) : cacheResult
 				}
 			}

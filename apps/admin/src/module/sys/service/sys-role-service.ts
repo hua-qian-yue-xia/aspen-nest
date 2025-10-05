@@ -69,10 +69,11 @@ export class SysRoleService {
 		// 查询存不存在
 		const roleList = await this.sysRoleRepo.find({ where: { roleId: In(roleIds) } })
 		if (!roleList.length) return 0
+		const delRoleIds = roleList.map((v) => v.roleId)
 		// 删除数据
-		const { affected } = await this.sysRoleRepo.delete(roleIds)
+		const { affected } = await this.sysRoleRepo.softDelete(delRoleIds)
 		// 删除缓存
-		this.redisTool.del(roleIds.map((v) => `sys:role:id:${v}`))
+		this.redisTool.del(delRoleIds.map((v) => `sys:role:id:${v}`))
 		return affected ?? 0
 	}
 

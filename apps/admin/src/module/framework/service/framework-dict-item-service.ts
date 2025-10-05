@@ -66,7 +66,7 @@ export class FrameDictItemService {
 		const roleList = await this.frameDictItemRep.find({ where: { id: In(dictIds) } })
 		if (!roleList.length) return 0
 		// 删除数据
-		const { affected } = await this.frameDictItemRep.delete(dictIds)
+		const { affected } = await this.frameDictItemRep.softDelete(dictIds)
 		// 删除缓存
 		this.redisTool.del(roleList.map((v) => `frame:dict-item:id:${v.id}`))
 		this.redisTool.del(roleList.map((v) => `frame:dict-item:code:${v.code}`))
