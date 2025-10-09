@@ -73,7 +73,7 @@ export class SysUserService {
 	}
 
 	// admin登录
-	async adminLogin(dto: SysUserAdminLoginDto): Promise<object> {
+	async adminLogin(dto: SysUserAdminLoginDto) {
 		const { username, password } = dto
 		// 1.1 校验用户是否存在、密码是否正确
 		const user = await this.sysUserRepo.findOneBy({ username: username })

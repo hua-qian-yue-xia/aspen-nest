@@ -4,7 +4,7 @@ import { HttpCodeEnum } from "libs/aspen-core/src/constant/http-constant"
 /**
  * 响应结果
  */
-export class R<T> extends Map<string, any> {
+export class R<T> {
 	@ApiProperty({
 		description: "状态码",
 	})
@@ -21,7 +21,6 @@ export class R<T> extends Map<string, any> {
 	private data: T
 
 	constructor(code: HttpCodeEnum, msg: string, data: T) {
-		super()
 		this.code = code
 		this.msg = msg
 		this.data = data
@@ -71,10 +70,5 @@ export class R<T> extends Map<string, any> {
 			return new R<T>(HttpCodeEnum.WARN, msg, null)
 		}
 		return new R<T>(HttpCodeEnum.ERROR, msg, data)
-	}
-
-	override set(key: string, value: any) {
-		super.set(key, value)
-		return this
 	}
 }

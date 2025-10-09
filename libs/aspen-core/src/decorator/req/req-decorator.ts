@@ -105,6 +105,27 @@ function createReqDecorators(options: CreateReqOptions) {
 					}),
 				],
 			)
+		} else if (wrapper === "list") {
+			swagger.push(
+				...[
+					ApiExtraModels(type, R),
+					ApiOkResponse({
+						schema: {
+							allOf: [
+								{ $ref: getSchemaPath(R) },
+								{
+									properties: {
+										data: {
+											type: "array",
+											items: { $ref: getSchemaPath(type) },
+										},
+									},
+								},
+							],
+						},
+					}),
+				],
+			)
 		} else {
 			swagger.push(
 				...[

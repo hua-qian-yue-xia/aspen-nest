@@ -30,14 +30,15 @@ export class SysUserController {
 		router: "/select",
 		resType: {
 			type: SysUserEntity,
-			wrapper: "list",
+			wrapper: "page",
 		},
 	})
 	async select() {
-		return R.success()
+		const pageList = await this.sysUserService.scopePage()
+		return R.success(pageList)
 	}
 
-	@router.patch({
+	@router.get({
 		summary: "根据用户id查询用户",
 		description: "有缓存",
 		router: "/id/:userId",

@@ -3,6 +3,8 @@ import * as ms from "ms"
 
 import { AppCtx, RedisTool, exception } from "@aspen/aspen-core"
 
+import { logger } from "./cache-logger"
+
 // 工具类型：如果 T 是 Promise 包裹的类型，则提取内部类型，否则返回 T
 type UnwrapPromise<T> = T extends Promise<infer U> ? U : T
 
@@ -73,7 +75,7 @@ function parseCacheKeyExpressions<T extends (...args: any[]) => any>(
 		const key = expressions(args, result)
 		return key
 	} catch (error) {
-		console.error("解析缓存key表达式失败", error)
+		logger.error("解析缓存key表达式失败error:", error)
 		return null
 	}
 }
@@ -126,7 +128,7 @@ export function AspenCacheable<T extends (...args: any[]) => any>(
 			for (let i = 0; i < cacheList.length; i++) {
 				const cacheResult = await redisTool.get(cacheList[i].key)
 				if (!_.isEmpty(cacheResult)) {
-					console.log(`cache.able缓存命中key|${cacheList[i].key}|value|${cacheResult}`)
+					logger.debug(`cache.able缓存命中key|${cacheList[i].key}|value|${cacheResult}`)
 					return typeof cacheResult == "string" ? JSON.parse(cacheResult) : cacheResult
 				}
 			}
@@ -182,7 +184,7 @@ export function AspenCachePut<T extends (...args: any[]) => any>(
 			// 设置缓存
 			await Promise.allSettled(
 				cacheList.map((i) => {
-					console.log(`cache.put缓存key|${i.key}|过期时间|${i.expiresIn}秒`)
+					logger.debug(`cache.put缓存key|${i.key}|过期时间|${i.expiresIn}秒`)
 					return redisTool.set(i.key, JSON.stringify(result), i.expiresIn as number)
 				}),
 			)

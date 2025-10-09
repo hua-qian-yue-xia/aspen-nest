@@ -1,4 +1,5 @@
 import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import { Exclude } from "class-transformer"
 
 import { AspenRule, AspenSummary, BaseUser, SortColumn } from "@aspen/aspen-core"
 import { SysDeptEntity, SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity"
@@ -19,6 +20,7 @@ export class SysUserEntity extends BaseUser {
 
 	@Column({ type: "varchar", length: 128, comment: "用户密码" })
 	@AspenSummary({ summary: "用户密码", rule: AspenRule().isNotEmpty() })
+	@Exclude()
 	override password: string
 
 	@Column({ type: "varchar", length: 128, unique: true, comment: "用户手机号" })
