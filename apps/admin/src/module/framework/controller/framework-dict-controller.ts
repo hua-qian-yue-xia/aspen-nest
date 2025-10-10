@@ -22,9 +22,9 @@ export class FrameDictController {
 		summary: "根据dictId查询字典(有缓存)",
 		router: "/:dictId",
 	})
-	async getByDictId(@Param("deptId") dictId: number) {
-		const deptDetail = await this.frameDictService.getByDictId(dictId)
-		return R.success(deptDetail)
+	async getByDictId(@Param("dictId") dictId: string) {
+		const dictDetail = await this.frameDictService.getByDictId(dictId)
+		return R.success(dictDetail)
 	}
 
 	@router.post({

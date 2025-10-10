@@ -6,10 +6,10 @@ import { FrameDictItemEntity } from "./frame-dict-item-entity"
 
 @Entity({ comment: "字典", name: "frame_dict" })
 export class FrameDictEntity extends BaseRecordDb {
-	@PrimaryGeneratedColumn({ type: "bigint", comment: "字典id" })
-	id: number
+	@PrimaryGeneratedColumn("uuid", { comment: "字典id" })
+	id: string
 
-	@Column({ type: "varchar", length: 64, comment: "字典code" })
+	@Column({ type: "varchar", length: 64, unique: true, comment: "字典code" })
 	@AspenSummary({ summary: "字典code", rule: AspenRule().isNotEmpty() })
 	code: string
 

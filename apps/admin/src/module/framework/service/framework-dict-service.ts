@@ -23,7 +23,7 @@ export class FrameDictService {
 
 	// 根据dictId查询字典
 	@cache.able({ key: "frame:dict:id", value: ([dictId]) => `${dictId}`, expiresIn: "2h" })
-	async getByDictId(dictId: number) {
+	async getByDictId(dictId: string) {
 		const dictDetail = await this.frameDictRep.findOne({
 			where: {
 				id: dictId,
@@ -68,7 +68,7 @@ export class FrameDictService {
 	}
 
 	// 字典code是否重复
-	async isDictCodeDuplicate(dictCode: string, dictId?: number): Promise<boolean> {
+	async isDictCodeDuplicate(dictCode: string, dictId?: string): Promise<boolean> {
 		const queryBuilder = this.frameDictRep.createQueryBuilder("dict").where("dict.code = :dictCode", { dictCode })
 		if (dictId) {
 			queryBuilder.andWhere("dict.id != :dictId", { dictId })

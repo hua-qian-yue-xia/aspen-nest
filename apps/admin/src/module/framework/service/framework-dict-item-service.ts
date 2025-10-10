@@ -21,7 +21,7 @@ export class FrameDictItemService {
 
 	// 根据dictItemId查询字典项
 	@cache.able({ key: "frame:dict-item:id", value: ([dictId]) => `${dictId}`, expiresIn: "2h" })
-	async getByDictItemId(dictId: number) {
+	async getByDictItemId(dictId: string) {
 		const dictDetail = await this.frameDictItemRep.findOne({
 			where: {
 				id: dictId,

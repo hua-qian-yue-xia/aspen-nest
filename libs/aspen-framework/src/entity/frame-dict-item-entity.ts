@@ -6,8 +6,8 @@ import { FrameDictEntity } from "./frame-dict-entity"
 
 @Entity({ comment: "字典项", name: "frame_dict_item" })
 export class FrameDictItemEntity extends BaseRecordDb {
-	@PrimaryGeneratedColumn({ type: "bigint", comment: "字典项id" })
-	id: number
+	@PrimaryGeneratedColumn("uuid", { comment: "字典项id" })
+	id: string
 
 	@ManyToOne(() => FrameDictEntity, (dict) => dict.dictList, { onDelete: "CASCADE" })
 	@JoinTable({ name: "dictId" })

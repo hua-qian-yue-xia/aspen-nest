@@ -5,6 +5,11 @@ import { AspenCacheable, AspenCacheEvict, AspenCachePut } from "./decorator/cach
 
 import { JwtStrategyModule } from "./guard/jwt/index"
 
+import { comActiveEnum } from "./enum/com-active.enum-gen"
+import { comBoolEnum } from "./enum/com-bool.enum-gen"
+import { comEnableEnum } from "./enum/com-enable.enum-gen"
+import { comToggleEnum } from "./enum/com-toggle.enum-gen"
+
 export const gen = {
 	dict: GenDict,
 }
@@ -18,4 +23,11 @@ export const cache = {
 export const frameworkModule = {
 	genDict: GenDictModule,
 	jwtStrategy: JwtStrategyModule,
+}
+
+export const enums = {
+	comActiveEnum,
+	comBoolEnum,
+	comEnableEnum,
+	comToggleEnum,
 }
