@@ -13,7 +13,7 @@ export class SysDeptService {
 
 	// 权限分页查询
 	async scopePage() {
-		return null
+		return this.sysDeptRep.page()
 	}
 
 	// 根据部门id查询部门
@@ -23,10 +23,9 @@ export class SysDeptService {
 
 	// 新增
 	async save(dto: SysDeptSaveDto): Promise<SysDeptEntity> {
-		// 使用 repository.create() 创建实体，这样可以确保 @BeforeInsert() 钩子正常执行
+		// 判断父部门是否存在
 		const entity = this.sysDeptRep.create(dto)
-		const saveObj = await this.sysDeptRep.save(entity)
-		return saveObj
+		return entity
 	}
 
 	// 修改

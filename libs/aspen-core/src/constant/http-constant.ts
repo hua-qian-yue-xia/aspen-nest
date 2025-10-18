@@ -3,7 +3,7 @@
  * - DEFAULT 默认策略全局限流
  * - IP 根据请求者IP进行限流
  */
-export type HttpLimit = "DEFAULT" | "IP"
+export type HttpLimit = "GLOBAL" | "IP"
 
 /**
  * 返回状态码

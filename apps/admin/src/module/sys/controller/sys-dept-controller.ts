@@ -13,7 +13,6 @@ export class SysDeptController {
 		router: "/page",
 	})
 	async page(@Body() body: SysDeptSaveDto) {
-		console.log(body)
 		const list = await this.sysDeptService.scopePage()
 		return R.success(list)
 	}

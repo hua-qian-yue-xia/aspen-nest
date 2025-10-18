@@ -29,7 +29,7 @@ export type RateLimitOption = {
 const defaultRateLimitOption: RateLimitOption = {
 	time: 60,
 	count: 100,
-	limitType: "DEFAULT",
+	limitType: "GLOBAL",
 }
 
 export const AspenRateLimit = (option?: RateLimitOption) => {

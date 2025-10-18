@@ -19,7 +19,6 @@ export class SysRoleService {
 	// 权限分页查询
 	async scopePage(dto: SysRoleDto) {
 		const where = OrmQuery.getWhereOptions(dto)
-
 		return this.sysRoleRepo.page(where)
 	}
 

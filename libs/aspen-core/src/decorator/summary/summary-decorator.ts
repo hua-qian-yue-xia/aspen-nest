@@ -1,4 +1,5 @@
 import { applyDecorators } from "@nestjs/common"
+import { IsOptional } from "class-validator"
 import { ApiProperty } from "@nestjs/swagger"
 
 import {
@@ -108,5 +109,9 @@ export function AspenSummary(options: AspenSummaryOptions): PropertyDecorator {
 		description: description,
 		groups: groups,
 	})
+	// 如果没有校验规则,则默认添加IsOptional注解
+	if (!options.rule || !options.rule.ruleList.length) {
+		ruleDecorators.push(IsOptional({ groups: groups }))
+	}
 	return applyDecorators(ApiProperty({ description: description || summary }), ...ruleDecorators)
 }

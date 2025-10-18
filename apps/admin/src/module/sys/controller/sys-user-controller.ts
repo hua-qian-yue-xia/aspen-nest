@@ -1,9 +1,14 @@
 import { Body, Param, ParseArrayPipe, Query } from "@nestjs/common"
 
-import { BasePage, R, router } from "@aspen/aspen-core"
+import { R, router } from "@aspen/aspen-core"
 
 import { SysUserService } from "apps/admin/src/module/sys/service"
-import { SysUserAdminLoginDto, SysUserEditDto, SysUserSaveDto } from "apps/admin/src/module/sys/dto/sys-user-dto"
+import {
+	SysUserAdminLoginDto,
+	SysUserEditDto,
+	SysUserQueryDto,
+	SysUserSaveDto,
+} from "apps/admin/src/module/sys/dto/sys-user-dto"
 
 import { SysUserEntity } from "../_gen/_entity"
 
@@ -19,8 +24,8 @@ export class SysUserController {
 			wrapper: "page",
 		},
 	})
-	async page(@Query() page: BasePage) {
-		const pageList = await this.sysUserService.scopePage()
+	async page(@Body() dto: SysUserQueryDto) {
+		const pageList = await this.sysUserService.scopePage(dto)
 		return R.success(pageList)
 	}
 
@@ -33,8 +38,8 @@ export class SysUserController {
 			wrapper: "page",
 		},
 	})
-	async select() {
-		const pageList = await this.sysUserService.scopePage()
+	async select(@Body() dto: SysUserQueryDto) {
+		const pageList = await this.sysUserService.scopePage(dto)
 		return R.success(pageList)
 	}
 
@@ -65,6 +70,7 @@ export class SysUserController {
 		summary: "修改用户",
 		description: "有缓存",
 		router: "/",
+		rateLimit: {},
 	})
 	async edit(@Body() dto: SysUserEditDto) {
 		await this.sysUserService.edit(dto)

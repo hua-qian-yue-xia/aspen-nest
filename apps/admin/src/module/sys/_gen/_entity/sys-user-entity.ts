@@ -10,7 +10,7 @@ export class SysUserEntity extends BaseUser {
 	@AspenSummary({ summary: "登录名", rule: AspenRule().isNotEmpty() })
 	override userId: number
 
-	@Column({ type: "varchar", length: 64, unique: true, comment: "登录名" })
+	@Column({ type: "varchar", length: 64, comment: "登录名" })
 	@AspenSummary({ summary: "登录名", rule: AspenRule().isNotEmpty() })
 	override username: string
 
@@ -23,7 +23,7 @@ export class SysUserEntity extends BaseUser {
 	@Exclude()
 	override password: string
 
-	@Column({ type: "varchar", length: 128, unique: true, comment: "用户手机号" })
+	@Column({ type: "varchar", length: 128, comment: "用户手机号" })
 	@AspenSummary({ summary: "用户手机号", rule: AspenRule().isNotEmpty() })
 	override mobile: string
 

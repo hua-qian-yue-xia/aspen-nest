@@ -9,7 +9,12 @@ import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
 import { SysUserEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
 
-import { SysUserAdminLoginDto, SysUserEditDto, SysUserSaveDto } from "apps/admin/src/module/sys/dto/sys-user-dto"
+import {
+	SysUserAdminLoginDto,
+	SysUserEditDto,
+	SysUserQueryDto,
+	SysUserSaveDto,
+} from "apps/admin/src/module/sys/dto/sys-user-dto"
 
 @Injectable()
 export class SysUserService {
@@ -20,7 +25,7 @@ export class SysUserService {
 	) {}
 
 	// 分页查询用户
-	async scopePage(): Promise<BasePageVo<SysUserEntity>> {
+	async scopePage(dto: SysUserQueryDto): Promise<BasePageVo<SysUserEntity>> {
 		return this.sysUserRepo.page()
 	}
 

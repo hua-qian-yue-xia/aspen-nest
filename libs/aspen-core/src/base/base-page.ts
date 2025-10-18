@@ -1,5 +1,4 @@
 import { ApiProperty } from "@nestjs/swagger"
-
 import { FastifyRequest } from "fastify"
 
 export class BasePage {
