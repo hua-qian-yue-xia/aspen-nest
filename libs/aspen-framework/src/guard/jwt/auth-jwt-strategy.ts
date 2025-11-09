@@ -10,7 +10,7 @@ import * as ms from "ms"
 import dayjs from "dayjs"
 import * as _ from "radash"
 
-import { JwtConfig, BaseUser, RedisTool, exception } from "@aspen/aspen-core"
+import { BaseUser, RedisTool, exception } from "@aspen/aspen-core"
 
 import { JwtError } from "./common/error"
 
@@ -55,7 +55,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 		private readonly jwtService: JwtService,
 		private readonly redisTool: RedisTool,
 	) {
-		const { secret } = config.get<JwtConfig>("jwt")
+		const { secret } = config.get<GlobalConfig.JwtConfig>("jwt")
 		// ymal配置jwt.secret为空
 		if (_.isEmpty(secret)) throw new exception.core(JwtError.JWT_SECRET_NOT_FOUND)
 		super({
@@ -77,7 +77,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	 */
 	async generateToken(baseUser: BaseUser, options?: GenerateTokenOptions): Promise<GenerateTokenVo> {
 		const { platform = "admin" } = options || {}
-		const { expiresIn } = this.config.get<JwtConfig>("jwt")
+		const { expiresIn } = this.config.get<GlobalConfig.JwtConfig>("jwt")
 		// 过期时间秒
 		const expiresInSecond = Math.floor(ms(expiresIn) / 1000)
 		const expiresInTime = dayjs().add(expiresInSecond, "second").format("YYYY-MM-DD HH:mm:ss")

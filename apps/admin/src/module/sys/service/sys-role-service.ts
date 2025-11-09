@@ -6,8 +6,8 @@ import { plainToInstance } from "class-transformer"
 import { OrmQuery, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
-import { SysRoleEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
-import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto as SysRoleDto } from "apps/admin/src/module/sys/dto"
+import { SysRoleEntity } from "../common/sys-entity"
+import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto as SysRoleDto } from "../controller/dto/sys-role-dto"
 
 @Injectable()
 export class SysRoleService {

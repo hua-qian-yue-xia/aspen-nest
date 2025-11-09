@@ -7,14 +7,8 @@ import { BasePageVo, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
-import { SysUserEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
-
-import {
-	SysUserAdminLoginDto,
-	SysUserEditDto,
-	SysUserQueryDto,
-	SysUserSaveDto,
-} from "apps/admin/src/module/sys/dto/sys-user-dto"
+import { SysUserEntity } from "../common/sys-entity"
+import { SysUserAdminLoginDto, SysUserEditDto, SysUserQueryDto, SysUserSaveDto } from "../controller/dto/sys-user-dto"
 
 @Injectable()
 export class SysUserService {

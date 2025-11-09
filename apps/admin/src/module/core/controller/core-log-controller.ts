@@ -29,13 +29,13 @@ export class CoreLogController {
 
 	@router.patch({
 		summary: "根据接口id查询接口(有缓存)",
-		router: "/id/:logId",
+		router: "/id/:logCode",
 		log: {
 			tag: "OTHER",
 		},
 	})
-	async getByRoleId(@Param("logId") logId: number) {
-		const deptDetail = await this.coreLogService.getByApiId(logId)
+	async getByRoleId(@Param("logCode") logCode: string) {
+		const deptDetail = await this.coreLogService.getByApiId(logCode)
 		return R.success(deptDetail)
 	}
 }

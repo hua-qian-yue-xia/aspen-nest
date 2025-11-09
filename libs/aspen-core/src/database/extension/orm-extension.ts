@@ -1,6 +1,6 @@
 import { SelectQueryBuilder, Repository, FindManyOptions } from "typeorm"
 
-import { BasePageVo, AppCtx } from "@aspen/aspen-core/index"
+import { BasePageVo, ApplicationCtx } from "@aspen/aspen-core/index"
 
 /******************** start 扩展SelectQueryBuilder start ********************/
 declare module "typeorm/query-builder/SelectQueryBuilder" {
@@ -15,7 +15,7 @@ SelectQueryBuilder.prototype.pageMany = async function <Entity>(
 ): Promise<BasePageVo<Entity>> {
 	const pageVo = new BasePageVo<Entity>()
 	// 获取当前分页参数
-	const { page, pageSize } = await AppCtx.getInstance().getPage()
+	const { page, pageSize } = await ApplicationCtx.getInstance().getPage()
 	// 查询总条数
 	const count = await this.skip((page - 1) * pageSize)
 		.take(pageSize)
@@ -56,9 +56,8 @@ Repository.prototype.page = async function <Entity>(
 ): Promise<BasePageVo<Entity>> {
 	const pageVo = new BasePageVo<Entity>()
 	// 获取当前分页参数
-	const { page, pageSize } = await AppCtx.getInstance().getPage()
+	const { page, pageSize } = await ApplicationCtx.getInstance().getPage()
 	const condition = { ...options, skip: (page - 1) * pageSize, take: pageSize }
-	// 查询总条数
 	const count = await this.count(condition)
 	if (count > 0) {
 		pageVo.records = await this.find(condition)

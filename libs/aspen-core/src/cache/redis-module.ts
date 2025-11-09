@@ -4,8 +4,6 @@ import { DynamicModule, Global, Logger, Module } from "@nestjs/common"
 import { RedisModule, RedisModuleOptions } from "@liaoliaots/nestjs-redis"
 import * as _ from "radash"
 
-import { Application, RedisConfig } from "../index"
-
 export const REDIS_TAG = "redis"
 
 export type RedisCacheModuleOptions = {
@@ -28,11 +26,11 @@ export class RedisCacheModule {
 				RedisModule.forRootAsync({
 					imports: [ConfigModule],
 					inject: [ConfigService],
-					useFactory: async (config: ConfigService<Application, true>): Promise<RedisModuleOptions> => {
+					useFactory: async (config: ConfigService<GlobalConfig.Application, true>): Promise<RedisModuleOptions> => {
 						const logger = new Logger(REDIS_TAG)
-						const { host, port, password, db } = config.get<RedisConfig>("redis")
+						const { host, port, password, db } = config.get<GlobalConfig.RedisConfig>("redis")
 						if (_.isEmpty(host) || _.isEmpty(port) || _.isEmpty(db)) return {}
-						logger.verbose(`连接redis参数host:<${host}>port:<${port}>password:<${password}>db:<${db}>`)
+						logger.debug(`连接redis参数host:<${host}>port:<${port}>password:<${password}>db:<${db}>`)
 						return {
 							config: {
 								host: host,

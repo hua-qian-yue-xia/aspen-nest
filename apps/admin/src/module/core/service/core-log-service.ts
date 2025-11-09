@@ -13,7 +13,7 @@ export class CoreLogService {
 	}
 
 	// 根据接口id查询接口(有缓存)
-	getByApiId(logId: number) {
-		return this.coreLogEntity.findOneBy({ logId: logId })
+	getByApiId(logCode: string) {
+		return this.coreLogEntity.findOneBy({ logCode: logCode })
 	}
 }

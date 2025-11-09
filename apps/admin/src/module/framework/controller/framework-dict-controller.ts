@@ -3,18 +3,36 @@ import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 import { R, router } from "@aspen/aspen-core"
 
 import { FrameDictService } from "../service/framework-dict-service"
-import { FrameDictSaveDto, FrameDictEditDto } from "../dto/index"
+import { FrameDictSaveDto, FrameDictEditDto, FrameDictQueryDto } from "../dto/index"
+import { FrameDictEntity } from "@aspen/aspen-framework"
 
-@router.controller({ prefix: "frame", summary: "字典管理" })
+@router.controller({ prefix: "/frame/dict", summary: "字典管理" })
 export class FrameDictController {
 	constructor(private readonly frameDictService: FrameDictService) {}
 
-	@router.get({
+	@router.post({
 		summary: "字典分页",
 		router: "/page",
+		resType: {
+			wrapper: "page",
+			type: FrameDictEntity,
+		},
 	})
-	async page() {
-		const list = await this.frameDictService.page()
+	async page(@Body() dto: FrameDictQueryDto) {
+		const list = await this.frameDictService.page(dto)
+		return R.success(list)
+	}
+
+	@router.get({
+		summary: "查询所有字典code",
+		router: "/all/dict-code",
+		resType: {
+			wrapper: "list",
+			type: String,
+		},
+	})
+	async allDictCode() {
+		const list = await this.frameDictService.allDictCode()
 		return R.success(list)
 	}
 

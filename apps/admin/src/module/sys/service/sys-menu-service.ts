@@ -6,8 +6,9 @@ import { plainToInstance } from "class-transformer"
 import { RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
-import { SysMenuEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
-import { SysMenuEditDto, SysMenuSaveDto } from "../dto"
+import { SysMenuEntity } from "../common/sys-entity"
+import { sysMenuTypeEnum } from "../common/sys-enum.enum-gen"
+import { SysMenuEditDto, SysMenuSaveDto } from "../controller/dto/sys-menu-dto"
 
 @Injectable()
 export class SysMenuService {
@@ -34,6 +35,10 @@ export class SysMenuService {
 			throw new DOMException(`路径"${dto.path}"重复`)
 		}
 		const obj = plainToInstance(SysMenuEntity, dto)
+		if (obj.type == sysMenuTypeEnum.CATALOGUE.code) {
+			obj.position = null
+			obj.path = null
+		}
 		const saveObj = await this.sysMenuEntity.save(obj)
 		return saveObj
 	}
@@ -41,10 +46,14 @@ export class SysMenuService {
 	// 修改菜单
 	@cache.evict({ key: "sys:menu:id", value: ([dto]) => `${dto.menuId}` })
 	async edit(dto: SysMenuEditDto) {
-		if (await this.isPathDuplicate(dto.path, null)) {
+		if (await this.isPathDuplicate(dto.path, dto.menuId)) {
 			throw new DOMException(`路径"${dto.path}"重复`)
 		}
 		const obj = plainToInstance(SysMenuEntity, dto)
+		if (obj.type == sysMenuTypeEnum.CATALOGUE.code) {
+			obj.position = null
+			obj.path = null
+		}
 		await this.sysMenuEntity.update({ menuId: dto.menuId }, obj)
 	}
 

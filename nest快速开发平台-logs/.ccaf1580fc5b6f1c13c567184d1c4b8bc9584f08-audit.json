@@ -1,0 +1,15 @@
+{
+	"keep": {
+		"days": false,
+		"amount": 3
+	},
+	"auditLog": "nest快速开发平台-logs/.ccaf1580fc5b6f1c13c567184d1c4b8bc9584f08-audit.json",
+	"files": [
+		{
+			"date": 1762675248547,
+			"name": "nest快速开发平台-logs/nest快速开发平台-2025-11-09.log",
+			"hash": "e2cfa50314534e994c3cd7117858fcca6f2e1bb50301fe88b5db9838e48fd080"
+		}
+	],
+	"hashType": "sha256"
+}

@@ -1,7 +1,7 @@
 import * as _ from "radash"
 import * as ms from "ms"
 
-import { AppCtx, RedisTool, exception } from "@aspen/aspen-core"
+import { ApplicationCtx, RedisTool, exception } from "@aspen/aspen-core"
 
 import { logger } from "./cache-logger"
 
@@ -92,7 +92,7 @@ function parseExpiresIn(expiresIn?: number | ms.StringValue): number {
 
 const getRedisTool = async (): Promise<RedisTool> => {
 	try {
-		return await AppCtx.getInstance().getRedisTool()
+		return await ApplicationCtx.getInstance().getRedisTool()
 	} catch (error) {
 		throw new exception.core(`获取RedisTool失败error:|${error}|`)
 	}

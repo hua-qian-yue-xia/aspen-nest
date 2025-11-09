@@ -3,37 +3,37 @@ import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 import { R, router } from "@aspen/aspen-core"
 
 import { FrameDictItemService } from "../service/index"
-import { FrameDictItemSaveDto, FrameDictItemEditDto } from "../dto/index"
+import { FrameDictItemSaveDto, FrameDictItemEditDto, FrameDictItemQueryDto } from "../dto/index"
+import { FrameDictItemEntity } from "@aspen/aspen-framework"
 
-@router.controller({ prefix: "frame/dict", summary: "字典项管理" })
+@router.controller({ prefix: "/frame/dict-item", summary: "字典项管理" })
 export class FrameDictItemController {
 	constructor(private readonly frameDictItemService: FrameDictItemService) {}
 
-	@router.get({
+	@router.post({
 		summary: "字典项分页",
 		router: "/page",
+		resType: {
+			wrapper: "page",
+			type: FrameDictItemEntity,
+		},
 	})
-	async page() {
-		const list = await this.frameDictItemService.page()
+	async page(@Body() dto: FrameDictItemQueryDto) {
+		const list = await this.frameDictItemService.page(dto)
 		return R.success(list)
 	}
 
 	@router.patch({
-		summary: "根据dictItemId查询字典项(有缓存)",
-		router: "/id/:dictId",
+		summary: "根据dictId查询字典项(有缓存)",
+		router: "/dictCode/:dictCode",
+		resType: {
+			wrapper: "list",
+			type: FrameDictItemEntity,
+		},
 	})
-	async getByDictItemId(@Param("dictItemId") dictId: string) {
-		const dictDetail = await this.frameDictItemService.getByDictItemId(dictId)
+	async getListBydictCode(@Param("dictCode") dictCode: string) {
+		const dictDetail = await this.frameDictItemService.getListBydictCode(dictCode)
 		return R.success(dictDetail)
-	}
-
-	@router.patch({
-		summary: "根据dictItemCode查询字典项(有缓存)",
-		router: "/code/:deptCode",
-	})
-	async getByDictItemCode(@Param("deptCode") deptCode: string) {
-		const deptDetail = await this.frameDictItemService.getByDictItemCode(deptCode)
-		return R.success(deptDetail)
 	}
 
 	@router.post({

@@ -28,13 +28,13 @@ export class CoreApiController {
 
 	@router.patch({
 		summary: "根据接口id查询接口(有缓存)",
-		router: "/id/:apiId",
+		router: "/id/:apiCode",
 		log: {
 			tag: "OTHER",
 		},
 	})
-	async getByRoleId(@Param("apiId") apiId: number) {
-		const deptDetail = await this.coreApiService.getByApiId(apiId)
+	async getByRoleId(@Param("apiCode") apiCode: string) {
+		const deptDetail = await this.coreApiService.getByApiId(apiCode)
 		return R.success(deptDetail)
 	}
 }

@@ -1,4 +1,4 @@
-import { AppClsModule } from "./app/app-cls-module"
+import { ApplicationCls } from "./app/application-cls"
 
 import { RedisCacheModule } from "./cache/redis-module"
 
@@ -13,5 +13,5 @@ export const coreModule = {
 	database: DatabaseModule,
 	log: LogModule,
 	noToken: NoTokenModule,
-	appCls: AppClsModule,
+	appCls: ApplicationCls,
 }

@@ -13,7 +13,7 @@ export class CoreApiService {
 	}
 
 	// 根据接口id查询接口(有缓存)
-	async getByApiId(apiId: number) {
-		return this.coreApiEntity.findOneBy({ apiId: apiId })
+	async getByApiId(apiCode: string) {
+		return this.coreApiEntity.findOneBy({ apiCode: apiCode })
 	}
 }

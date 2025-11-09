@@ -2,7 +2,7 @@ import { HttpException, HttpStatus } from "@nestjs/common"
 
 /**
  * 核心异常
- * aspen-core等报错
+ * @description aspen-core等报错
  */
 class CoreException extends HttpException {
 	constructor(msg?: string) {
@@ -12,7 +12,7 @@ class CoreException extends HttpException {
 
 /**
  * 运行时异常
- * 代码执行错误、意外的错误
+ * @description 代码执行错误、意外的错误
  */
 class RuntimeException extends HttpException {
 	constructor(msg?: string) {
@@ -22,7 +22,7 @@ class RuntimeException extends HttpException {
 
 /**
  * 校验错误
- * 参数校验失败等、如数据不存在、数据重复等
+ * @description 参数校验失败等、如数据不存在、数据重复等
  */
 class ValidatorException extends HttpException {
 	constructor(msg?: string) {

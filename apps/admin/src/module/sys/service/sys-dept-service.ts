@@ -1,18 +1,26 @@
-import { Injectable } from "@nestjs/common"
+import { Injectable, Logger } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
-import { SysDeptEntity } from "apps/admin/src/module/sys/_gen/_entity/index"
-import { SysDeptSaveDto, SysDeptEditDto } from "apps/admin/src/module/sys/dto/index"
 import { exception } from "@aspen/aspen-core"
+
+import { SysDeptEntity } from "../common/sys-entity"
+import { SysDeptSaveDto, SysDeptEditDto } from "../controller/dto/sys-dept-dto"
 
 @Injectable()
 export class SysDeptService {
+	private readonly logger = new Logger(SysDeptService.name)
+
 	constructor(@InjectRepository(SysDeptEntity) private readonly sysDeptRep: Repository<SysDeptEntity>) {}
 
 	// 权限分页查询
 	async scopePage() {
+		this.logger.debug("1")
+		this.logger.log("2")
+		this.logger.verbose("3")
+		this.logger.warn("4")
+		this.logger.fatal("5")
 		return this.sysDeptRep.page()
 	}
 

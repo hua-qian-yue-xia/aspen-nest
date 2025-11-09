@@ -4,58 +4,56 @@ import { In, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
 import { RedisTool } from "@aspen/aspen-core"
-import { cache, FrameDictItemEntity } from "@aspen/aspen-framework"
+import { FrameDictEntity, FrameDictItemEntity } from "@aspen/aspen-framework"
 
-import { FrameDictItemEditDto, FrameDictItemSaveDto } from "../dto"
+import { FrameDictItemEditDto, FrameDictItemQueryDto, FrameDictItemSaveDto } from "../dto"
 
 @Injectable()
 export class FrameDictItemService {
 	constructor(
+		@InjectRepository(FrameDictEntity) private readonly frameDictRep: Repository<FrameDictEntity>,
 		@InjectRepository(FrameDictItemEntity) private readonly frameDictItemRep: Repository<FrameDictItemEntity>,
 
 		private readonly redisTool: RedisTool,
 	) {}
 
 	// 字典项分页
-	async page() {}
+	async page(dto: FrameDictItemQueryDto) {
+		console.log(dto, "dto")
 
-	// 根据dictItemId查询字典项
-	@cache.able({ key: "frame:dict-item:id", value: ([dictId]) => `${dictId}`, expiresIn: "2h" })
-	async getByDictItemId(dictId: string) {
-		const dictDetail = await this.frameDictItemRep.findOne({
-			where: {
-				id: dictId,
-			},
-		})
-		return dictDetail
+		const pageListBuild = this.frameDictItemRep.createQueryBuilder("dictItem")
+		if (dto && dto.dictId) {
+			pageListBuild.where("dictItem.dict_id = :dictId", { dictId: dto.dictId })
+		}
+		const pageList = await pageListBuild.orderBy("dictItem.dict_id", "DESC").orderBy("dictItem.sort", "DESC").pageMany()
+		return pageList
 	}
 
-	// 根据dictItemCode查询字典项
-	@cache.able({ key: "frame:dict-item:code", value: ([deptCode]) => `${deptCode}`, expiresIn: "2h" })
-	async getByDictItemCode(deptCode: string) {
-		const dictDetail = await this.frameDictItemRep.findOne({
+	// 根据dictItemId查询字典项
+	async getListBydictCode(dictCode: string) {
+		const dict = await this.frameDictRep.findOne({
 			where: {
-				code: deptCode,
+				code: dictCode,
+			},
+		})
+		if (!dict) return []
+		const dictDetail = await this.frameDictItemRep.find({
+			where: {
+				dict: {
+					id: dict.id,
+				},
 			},
 		})
 		return dictDetail
 	}
 
 	// 新增字典项
-	@cache.put([
-		{ key: "frame:dict-item:id", value: (_, result) => `${result.id}`, expiresIn: "2h" },
-		{ key: "frame:dict-item:code", value: (_, result) => `${result.code}`, expiresIn: "2h" },
-	])
 	async save(body: FrameDictItemSaveDto) {
 		const saveObj = await this.frameDictItemRep.save(plainToInstance(FrameDictItemEntity, body))
 		return saveObj
 	}
 
 	// 修改字典项
-	@cache.evict([
-		{ key: "frame:dict-item:id", value: ([dto]) => `${dto.id}` },
-		{ key: "frame:dict-item:code", value: ([dto]) => `${dto.code}` },
-	])
 	async edit(body: FrameDictItemEditDto) {
 		await this.frameDictItemRep.update({ id: body.id }, plainToInstance(FrameDictItemEntity, body))
 	}
@@ -67,9 +65,6 @@ export class FrameDictItemService {
 		if (!roleList.length) return 0
 		// 删除数据
 		const { affected } = await this.frameDictItemRep.softDelete(dictIds)
-		// 删除缓存
-		this.redisTool.del(roleList.map((v) => `frame:dict-item:id:${v.id}`))
-		this.redisTool.del(roleList.map((v) => `frame:dict-item:code:${v.code}`))
 		return affected ?? 0
 	}
 }

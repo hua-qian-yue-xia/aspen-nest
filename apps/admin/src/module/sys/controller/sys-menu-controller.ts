@@ -1,10 +1,9 @@
 import { R, router } from "@aspen/aspen-core"
 import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
-import { SysMenuService } from "apps/admin/src/module/sys/service"
-
-import { SysMenuEntity } from "../_gen/_entity"
-import { SysMenuEditDto, SysMenuQueryDto, SysMenuSaveDto } from "../dto"
+import { SysMenuService } from "../service/sys-menu-service"
+import { SysMenuEntity } from "../common/sys-entity"
+import { SysMenuEditDto, SysMenuQueryDto, SysMenuSaveDto } from "./dto/sys-menu-dto"
 
 @router.controller({ prefix: "sys/menu", summary: "菜单管理" })
 export class SysMenuController {

@@ -2,8 +2,8 @@ import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
-import { SysRoleService } from "apps/admin/src/module/sys/service"
-import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto } from "apps/admin/src/module/sys/dto"
+import { SysRoleService } from "../service/sys-role-service"
+import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto } from "./dto/sys-role-dto"
 
 @router.controller({ prefix: "sys/role", summary: "角色管理" })
 export class SysRoleController {

@@ -1,8 +1,9 @@
 import { R, router } from "@aspen/aspen-core"
 import { Body, Param } from "@nestjs/common"
 
-import { SysDeptService } from "apps/admin/src/module/sys/service"
-import { SysDeptSaveDto, SysDeptEditDto } from "apps/admin/src/module/sys/dto/index"
+import { SysDeptService } from "../service/sys-dept-service"
+
+import { SysDeptSaveDto, SysDeptEditDto } from "./dto/sys-dept-dto"
 
 @router.controller({ prefix: "sys/dept", summary: "部门管理" })
 export class SysDeptController {

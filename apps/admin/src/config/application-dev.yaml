@@ -11,3 +11,6 @@ database:
   dropSchema: false
   # 自动同步实体到数据库
   synchronize: true
+logger:
+  # 日志级别
+  level: debug

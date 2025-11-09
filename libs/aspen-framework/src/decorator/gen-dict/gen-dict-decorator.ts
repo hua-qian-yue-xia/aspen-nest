@@ -2,7 +2,7 @@ import * as glob from "glob"
 import * as path from "path"
 
 import { Injectable, OnModuleInit, SetMetadata, Type, Inject } from "@nestjs/common"
-import { DataSource } from "typeorm"
+import { DataSource, In } from "typeorm"
 
 import { DecoratorKey, tool, BaseEnum } from "@aspen/aspen-core"
 import { GEN_DICT_MODULE_OPTIONS, GenDictModuleOptions } from "./gen-dict-module"
@@ -89,9 +89,7 @@ export class GenDictService implements OnModuleInit {
 					const dictItemEntity = new FrameDictItemEntity()
 					dictItemEntity.code = item.code
 					dictItemEntity.summary = item.summary
-					dictItemEntity.sort = {
-						sort: item.order,
-					}
+					dictItemEntity.sort = item.order
 					return dictItemEntity
 				})
 				dictList.push(dictEntity)

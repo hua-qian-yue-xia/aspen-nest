@@ -2,15 +2,9 @@ import { Body, Param, ParseArrayPipe, Query } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
-import { SysUserService } from "apps/admin/src/module/sys/service"
-import {
-	SysUserAdminLoginDto,
-	SysUserEditDto,
-	SysUserQueryDto,
-	SysUserSaveDto,
-} from "apps/admin/src/module/sys/dto/sys-user-dto"
-
-import { SysUserEntity } from "../_gen/_entity"
+import { SysUserEntity } from "../common/sys-entity"
+import { SysUserService } from "../service/sys-user-service"
+import { SysUserAdminLoginDto, SysUserEditDto, SysUserQueryDto, SysUserSaveDto } from "./dto/sys-user-dto"
 
 @router.controller({ prefix: "sys/user", summary: "用户管理" })
 export class SysUserController {
