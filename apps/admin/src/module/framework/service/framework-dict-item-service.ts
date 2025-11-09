@@ -4,7 +4,7 @@ import { In, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
 import { RedisTool } from "@aspen/aspen-core"
-import { FrameDictEntity, FrameDictItemEntity } from "@aspen/aspen-framework"
+import { cache, FrameDictEntity, FrameDictItemEntity } from "@aspen/aspen-framework"
 
 import { FrameDictItemEditDto, FrameDictItemQueryDto, FrameDictItemSaveDto } from "../dto"
 
@@ -19,8 +19,6 @@ export class FrameDictItemService {
 
 	// 字典项分页
 	async page(dto: FrameDictItemQueryDto) {
-		console.log(dto, "dto")
-
 		const pageListBuild = this.frameDictItemRep.createQueryBuilder("dictItem")
 		if (dto && dto.dictId) {
 			pageListBuild.where("dictItem.dict_id = :dictId", { dictId: dto.dictId })
@@ -30,6 +28,17 @@ export class FrameDictItemService {
 	}
 
 	// 根据dictItemId查询字典项
+	@cache.able({ key: "frame:dict-item:id", value: ([dictItemId]) => `${dictItemId}`, expiresIn: "2h" })
+	async getByDictItemId(dictItemId: string) {
+		const dictDetail = await this.frameDictItemRep.findOne({
+			where: {
+				id: dictItemId,
+			},
+		})
+		return dictDetail
+	}
+
+	// 根据dictCode查询字典项
 	async getListBydictCode(dictCode: string) {
 		const dict = await this.frameDictRep.findOne({
 			where: {
@@ -48,12 +57,14 @@ export class FrameDictItemService {
 	}
 
 	// 新增字典项
+	@cache.put({ key: "frame:dict-item:id", value: (_, result) => `${result.id}`, expiresIn: "2h" })
 	async save(body: FrameDictItemSaveDto) {
 		const saveObj = await this.frameDictItemRep.save(plainToInstance(FrameDictItemEntity, body))
 		return saveObj
 	}
 
 	// 修改字典项
+	@cache.evict({ key: "frame:dict-item:id", value: ([body]) => `${body.id}` })
 	async edit(body: FrameDictItemEditDto) {
 		await this.frameDictItemRep.update({ id: body.id }, plainToInstance(FrameDictItemEntity, body))
 	}
@@ -65,6 +76,8 @@ export class FrameDictItemService {
 		if (!roleList.length) return 0
 		// 删除数据
 		const { affected } = await this.frameDictItemRep.softDelete(dictIds)
+		// 删除缓存
+		this.redisTool.del(roleList.map((v) => `frame:dict-item:id:${v.id}`))
 		return affected ?? 0
 	}
 }

@@ -6,7 +6,7 @@ import { HttpException, HttpStatus } from "@nestjs/common"
  */
 class CoreException extends HttpException {
 	constructor(msg?: string) {
-		super(msg, HttpStatus.INTERNAL_SERVER_ERROR)
+		super(msg, HttpStatus.OK)
 	}
 }
 
@@ -16,7 +16,7 @@ class CoreException extends HttpException {
  */
 class RuntimeException extends HttpException {
 	constructor(msg?: string) {
-		super(msg, HttpStatus.INTERNAL_SERVER_ERROR)
+		super(msg, HttpStatus.OK)
 	}
 }
 
@@ -26,7 +26,7 @@ class RuntimeException extends HttpException {
  */
 class ValidatorException extends HttpException {
 	constructor(msg?: string) {
-		super(msg, HttpStatus.NOT_FOUND)
+		super(msg, HttpStatus.OK)
 	}
 }
 

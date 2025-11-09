@@ -1,5 +1,4 @@
 import { applyDecorators } from "@nestjs/common"
-import { IsOptional } from "class-validator"
 import { ApiProperty } from "@nestjs/swagger"
 
 import {
@@ -11,6 +10,7 @@ import {
 	MinLength,
 	MAX_LENGTH,
 	MaxLength,
+	IsOptional,
 } from "class-validator"
 
 import { GroupEnum } from "libs/aspen-core/src/constant/group-constant"

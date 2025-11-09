@@ -1,13 +1,13 @@
 import { Column, Entity, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 
-import { AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
+import { AspenRule, AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
 
 import { FrameDictEntity } from "./frame-dict-entity"
 
 @Entity({ comment: "字典项", name: "frame_dict_item" })
 export class FrameDictItemEntity extends BaseRecordDb {
-	@PrimaryGeneratedColumn("uuid", { comment: "字典项id" })
-	@AspenSummary({ summary: "字典项id" })
+	@PrimaryGeneratedColumn("uuid", { comment: "字典项code" })
+	@AspenSummary({ summary: "字典项code" })
 	id: string
 
 	@ManyToOne(() => FrameDictEntity, (dict) => dict.dictList, { onDelete: "CASCADE" })
@@ -15,11 +15,11 @@ export class FrameDictItemEntity extends BaseRecordDb {
 	dict: FrameDictEntity
 
 	@Column({ type: "char", length: 32, comment: "字典code" })
-	@AspenSummary({ summary: "字典项code" })
+	@AspenSummary({ summary: "字典项code", rule: AspenRule().isNotEmpty() })
 	code: string
 
 	@Column({ type: "varchar", length: 256, comment: "字典摘要" })
-	@AspenSummary({ summary: "字典项摘要" })
+	@AspenSummary({ summary: "字典项摘要", rule: AspenRule().isNotEmpty() })
 	summary: string
 
 	@Column({ type: "char", length: 32, nullable: true, comment: "字典项颜色" })
@@ -27,10 +27,6 @@ export class FrameDictItemEntity extends BaseRecordDb {
 	hexColor: string
 
 	@Column({ type: "int", default: 0, comment: "排序" })
-	@AspenSummary({ summary: "排序" })
+	@AspenSummary({ summary: "排序", rule: AspenRule() })
 	sort: number
-
-	override props(): Array<keyof FrameDictItemEntity> {
-		return ["code", "summary", "sort"]
-	}
 }

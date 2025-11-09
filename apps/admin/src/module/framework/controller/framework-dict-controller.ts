@@ -36,9 +36,12 @@ export class FrameDictController {
 		return R.success(list)
 	}
 
-	@router.patch({
+	@router.get({
 		summary: "根据dictId查询字典(有缓存)",
 		router: "/:dictId",
+		resType: {
+			type: FrameDictEntity,
+		},
 	})
 	async getByDictId(@Param("dictId") dictId: string) {
 		const dictDetail = await this.frameDictService.getByDictId(dictId)

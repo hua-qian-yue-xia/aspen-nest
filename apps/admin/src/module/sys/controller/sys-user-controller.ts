@@ -2,9 +2,8 @@ import { Body, Param, ParseArrayPipe, Query } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
-import { SysUserEntity } from "../common/sys-entity"
 import { SysUserService } from "../service/sys-user-service"
-import { SysUserAdminLoginDto, SysUserEditDto, SysUserQueryDto, SysUserSaveDto } from "./dto/sys-user-dto"
+import { SysUserEntity, SysDeptSaveDto, SysUserAdminLoginDto } from "../common/entity/sys-user-entity"
 
 @router.controller({ prefix: "sys/user", summary: "用户管理" })
 export class SysUserController {
@@ -18,7 +17,7 @@ export class SysUserController {
 			wrapper: "page",
 		},
 	})
-	async page(@Body() dto: SysUserQueryDto) {
+	async page(@Body() dto: SysUserEntity) {
 		const pageList = await this.sysUserService.scopePage(dto)
 		return R.success(pageList)
 	}
@@ -32,7 +31,7 @@ export class SysUserController {
 			wrapper: "page",
 		},
 	})
-	async select(@Body() dto: SysUserQueryDto) {
+	async select(@Body() dto: SysUserEntity) {
 		const pageList = await this.sysUserService.scopePage(dto)
 		return R.success(pageList)
 	}
@@ -45,7 +44,7 @@ export class SysUserController {
 			type: SysUserEntity,
 		},
 	})
-	async getByUserId(@Param("userId") userId: number) {
+	async getByUserId(@Param("userId") userId: string) {
 		const detail = await this.sysUserService.getByUserId(userId)
 		return R.success(detail)
 	}
@@ -55,7 +54,7 @@ export class SysUserController {
 		description: "有缓存",
 		router: "/",
 	})
-	async save(@Body() dto: SysUserSaveDto) {
+	async save(@Body() dto: SysDeptSaveDto) {
 		await this.sysUserService.save(dto)
 		return R.success()
 	}
@@ -66,7 +65,7 @@ export class SysUserController {
 		router: "/",
 		rateLimit: {},
 	})
-	async edit(@Body() dto: SysUserEditDto) {
+	async edit(@Body() dto: SysDeptSaveDto) {
 		await this.sysUserService.edit(dto)
 		return R.success()
 	}
@@ -76,8 +75,8 @@ export class SysUserController {
 		router: "/:userIds",
 	})
 	async delete(
-		@Param("userIds", new ParseArrayPipe({ items: Number, separator: "," }))
-		userIds: Array<number>,
+		@Param("userIds", new ParseArrayPipe({ items: String, separator: "," }))
+		userIds: Array<string>,
 	) {
 		const delCount = await this.sysUserService.delByIds(userIds)
 		return R.success(delCount)

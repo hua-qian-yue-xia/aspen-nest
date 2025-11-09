@@ -6,7 +6,7 @@ import { FrameDictEntity } from "@aspen/aspen-framework"
 export class FrameDictQueryDto extends FrameDictEntity {}
 
 // 新增字典
-export class FrameDictSaveDto extends PickType(FrameDictEntity, ["code", "summary", "enable", "sort"]) {}
+export class FrameDictSaveDto extends PickType(FrameDictEntity, ["code", "summary"]) {}
 
 // 编辑字典
-export class FrameDictEditDto extends PickType(FrameDictEntity, ["id", "code", "summary", "enable", "sort"]) {}
+export class FrameDictEditDto extends PickType(FrameDictEntity, ["id", "code", "summary"]) {}

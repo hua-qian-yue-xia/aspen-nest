@@ -14,8 +14,8 @@ import { ApplicationModule } from "./application-module"
 import { registerSwaggerDoc } from "../doc/swagger"
 import { HttpExceptionFilter } from "../exception/filter/exception-filter"
 import { ValidationExceptionFilter } from "../exception/filter/validation-exception-filter"
-import { WinstonLogger, createWinstonLogger } from "../logger/winston-logger"
-import { ClassSerializerInterceptor } from "@nestjs/common"
+import { WinstonLogger } from "../logger/winston-logger"
+import { ClassSerializerInterceptor, ValidationPipe, BadRequestException } from "@nestjs/common"
 
 export class Application {
 	private app: NestFastifyApplication
@@ -37,10 +37,22 @@ export class Application {
 		this.config = this.app.get(ConfigService)
 		const appConfig = this.config.get<GlobalConfig.AppConfig>("app")
 
+		this.app.enableCors()
+
 		// 配置全局路由前缀
 		this.app.setGlobalPrefix(appConfig.prefix)
 
-		// 配置全局异常过滤器
+		this.app.useGlobalPipes(
+			// 启用全局校验管道
+			new ValidationPipe({
+				transform: true,
+				whitelist: true,
+				forbidNonWhitelisted: false,
+				forbidUnknownValues: false,
+			}),
+		)
+
+		// 配置全局异常过滤器（先注册 Http，再注册 Validation；逆序执行使 Validation 优先处理 400）
 		this.app.useGlobalFilters(new HttpExceptionFilter(), new ValidationExceptionFilter())
 
 		// 日志处理：注入 WinstonLogger

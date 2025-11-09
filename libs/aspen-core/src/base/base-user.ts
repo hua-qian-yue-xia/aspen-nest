@@ -4,7 +4,7 @@ import { BaseRecordDb } from "../index"
 
 export class BaseUser extends BaseRecordDb {
 	// 用户id
-	userId: number
+	userId: string
 
 	// 登录名
 	username: string

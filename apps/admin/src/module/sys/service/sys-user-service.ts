@@ -7,8 +7,7 @@ import { BasePageVo, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
-import { SysUserEntity } from "../common/sys-entity"
-import { SysUserAdminLoginDto, SysUserEditDto, SysUserQueryDto, SysUserSaveDto } from "../controller/dto/sys-user-dto"
+import { SysUserEntity, SysUserAdminLoginDto, SysDeptSaveDto } from "../common/entity/sys-user-entity"
 
 @Injectable()
 export class SysUserService {
@@ -19,47 +18,43 @@ export class SysUserService {
 	) {}
 
 	// 分页查询用户
-	async scopePage(dto: SysUserQueryDto): Promise<BasePageVo<SysUserEntity>> {
+	async scopePage(dto: SysUserEntity): Promise<BasePageVo<SysUserEntity>> {
 		return this.sysUserRepo.page()
 	}
 
 	// 根据用户id查询用户
 	@cache.able({ key: "sys:user:id", value: ([userId]) => `${userId}`, expiresIn: "2h" })
-	async getByUserId(userId: number) {
+	async getByUserId(userId: string) {
 		return this.sysUserRepo.findOneBy({ userId: userId })
 	}
 
 	// 新增用户
 	@cache.put({ key: "sys:user:id", value: (_, result) => `${result.userId}`, expiresIn: "2h" })
-	async save(dto: SysUserSaveDto) {
+	async save(dto: SysDeptSaveDto) {
 		if (await this.isUsernameDuplicate(dto.username, null)) {
 			throw new exception.validator(`用户名"${dto.username}"重复`)
 		}
 		if (await this.isMobileDuplicate(dto.mobile, null)) {
 			throw new exception.validator(`手机号"${dto.mobile}"重复`)
 		}
-		const obj = plainToInstance(SysUserEntity, dto)
-		obj.enable = true
-		obj.password = obj.encryptPassword("123456")
-		const saveObj = await this.sysUserRepo.save(obj)
+		const saveObj = await this.sysUserRepo.save(dto.toEntity())
 		return saveObj
 	}
 
 	// 修改用户
 	@cache.evict({ key: "sys:user:id", value: ([dto]) => `${dto.userId}` })
-	async edit(dto: SysUserEditDto) {
+	async edit(dto: SysDeptSaveDto) {
 		if (await this.isUsernameDuplicate(dto.username, dto.userId)) {
 			throw new exception.validator(`用户名"${dto.username}"重复`)
 		}
 		if (await this.isMobileDuplicate(dto.mobile, dto.userId)) {
 			throw new exception.validator(`手机号"${dto.mobile}"重复`)
 		}
-		const obj = plainToInstance(SysUserEntity, dto)
-		await this.sysUserRepo.update({ userId: dto.userId }, obj)
+		await this.sysUserRepo.update({ userId: dto.userId }, dto.toEntity())
 	}
 
 	// 根据用户ids删除用户
-	async delByIds(userIds: Array<number>) {
+	async delByIds(userIds: Array<string>) {
 		// 查询存不存在
 		const userList = await this.sysUserRepo.find({ where: { userId: In(userIds) } })
 		if (!userList.length) return 0
@@ -92,7 +87,7 @@ export class SysUserService {
 	async adminLogout() {}
 
 	// 用户名是否重复
-	async isUsernameDuplicate(username: string, userId?: number): Promise<boolean> {
+	async isUsernameDuplicate(username: string, userId?: string): Promise<boolean> {
 		const queryBuilder = this.sysUserRepo.createQueryBuilder("user").where("user.username = :username", { username })
 		if (userId) {
 			queryBuilder.andWhere("user.userId != :userId", { userId })
@@ -102,7 +97,7 @@ export class SysUserService {
 	}
 
 	// 用户手机号是否重复
-	async isMobileDuplicate(mobile: string, userId?: number): Promise<boolean> {
+	async isMobileDuplicate(mobile: string, userId?: string): Promise<boolean> {
 		const queryBuilder = this.sysUserRepo.createQueryBuilder("user").where("user.mobile = :mobile", { mobile })
 		if (userId) {
 			queryBuilder.andWhere("user.userId != :userId", { userId })

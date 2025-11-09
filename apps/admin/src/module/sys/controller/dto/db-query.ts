@@ -2,7 +2,7 @@ import { Type } from "@nestjs/common"
 
 import { BaseEntity } from "typeorm/repository/BaseEntity"
 
-import { SysUserEntity, SysDeptEntity } from "../../common/sys-entity"
+import { SysUserEntity } from "../../common/entity/sys-user-entity"
 
 type ConditionKeys = "eq" | "ne" | "like" | "in" | "notIn"
 // 查询令牌：操作符-字段名（不再强制绑定到实体的键，以适配自定义/别名字段）
@@ -56,7 +56,7 @@ export abstract class OrmQuery {
 	test1() {
 		const generated = this.DataBaseQuickQuery([
 			makeQueryItem("user", SysUserEntity, "eq-username"),
-			makeQueryItem("dept", SysDeptEntity, "eq-deptName"),
+			makeQueryItem("dept", SysUserEntity, "eq-deptName"),
 		])
 		const _hint = generated.user.username
 		//

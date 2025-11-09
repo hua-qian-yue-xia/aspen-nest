@@ -5,8 +5,7 @@ import { plainToInstance } from "class-transformer"
 
 import { exception } from "@aspen/aspen-core"
 
-import { SysDeptEntity } from "../common/sys-entity"
-import { SysDeptSaveDto, SysDeptEditDto } from "../controller/dto/sys-dept-dto"
+import { SysDeptEntity, SysDeptSaveDto } from "../common/entity/sys-dept-entity"
 
 @Injectable()
 export class SysDeptService {
@@ -25,7 +24,7 @@ export class SysDeptService {
 	}
 
 	// 根据部门id查询部门
-	async getByDeptId(deptId: number): Promise<SysDeptEntity | null> {
+	async getByDeptId(deptId: string): Promise<SysDeptEntity | null> {
 		return this.sysDeptRep.findOneBy({ deptId: deptId })
 	}
 
@@ -37,7 +36,7 @@ export class SysDeptService {
 	}
 
 	// 修改
-	async update(dto: SysDeptEditDto): Promise<void> {
+	async update(dto: SysDeptSaveDto): Promise<void> {
 		const role = await this.getByDeptId(dto.deptId)
 		if (!role) {
 			throw new exception.validator(`部门id"${dto.deptId}"不存在`)

@@ -2,14 +2,6 @@ import { Column } from "typeorm"
 import pinyin from "pinyin"
 
 /**
- * 排序嵌入实体
- */
-export class SortColumn {
-	@Column({ type: "int", default: 0, comment: "倒序排序(越大越在前面)" })
-	sort: number
-}
-
-/**
  * 拼音嵌入实体
  */
 export class PinyinColumn {

@@ -2,8 +2,8 @@ import { R, router } from "@aspen/aspen-core"
 import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { SysMenuService } from "../service/sys-menu-service"
-import { SysMenuEntity } from "../common/sys-entity"
-import { SysMenuEditDto, SysMenuQueryDto, SysMenuSaveDto } from "./dto/sys-menu-dto"
+
+import { SysMenuEntity, SysMenuSaveDto } from "../common/entity/sys-menu-entity"
 
 @router.controller({ prefix: "sys/menu", summary: "菜单管理" })
 export class SysMenuController {
@@ -17,7 +17,7 @@ export class SysMenuController {
 			wrapper: "page",
 		},
 	})
-	async page(@Body() query: SysMenuQueryDto) {
+	async page(@Body() query: SysMenuEntity) {
 		const list = await this.sysMenuService.scopePage()
 		return R.success(list)
 	}
@@ -30,7 +30,7 @@ export class SysMenuController {
 			wrapper: "page",
 		},
 	})
-	async select(@Body() query: SysMenuQueryDto) {
+	async select(@Body() query: SysMenuEntity) {
 		const list = await this.sysMenuService.scopePage()
 		return R.success(list)
 	}
@@ -73,7 +73,7 @@ export class SysMenuController {
 		router: "/",
 		rateLimit: {},
 	})
-	async edit(@Body() dto: SysMenuEditDto) {
+	async edit(@Body() dto: SysMenuSaveDto) {
 		await this.sysMenuService.edit(dto)
 		return R.success()
 	}

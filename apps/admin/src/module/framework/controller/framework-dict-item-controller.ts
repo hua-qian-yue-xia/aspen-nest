@@ -1,10 +1,10 @@
 import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
+import { FrameDictItemEntity } from "@aspen/aspen-framework"
 
 import { FrameDictItemService } from "../service/index"
 import { FrameDictItemSaveDto, FrameDictItemEditDto, FrameDictItemQueryDto } from "../dto/index"
-import { FrameDictItemEntity } from "@aspen/aspen-framework"
 
 @router.controller({ prefix: "/frame/dict-item", summary: "字典项管理" })
 export class FrameDictItemController {
@@ -23,7 +23,19 @@ export class FrameDictItemController {
 		return R.success(list)
 	}
 
-	@router.patch({
+	@router.get({
+		summary: "根据dictItemId查询字典项(有缓存)",
+		router: "/:dictItemId",
+		resType: {
+			type: FrameDictItemEntity,
+		},
+	})
+	async getByDictItemId(@Param("dictItemId") dictItemId: string) {
+		const dictDetail = await this.frameDictItemService.getByDictItemId(dictItemId)
+		return R.success(dictDetail)
+	}
+
+	@router.get({
 		summary: "根据dictId查询字典项(有缓存)",
 		router: "/dictCode/:dictCode",
 		resType: {

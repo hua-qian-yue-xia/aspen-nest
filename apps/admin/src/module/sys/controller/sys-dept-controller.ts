@@ -3,7 +3,7 @@ import { Body, Param } from "@nestjs/common"
 
 import { SysDeptService } from "../service/sys-dept-service"
 
-import { SysDeptSaveDto, SysDeptEditDto } from "./dto/sys-dept-dto"
+import { SysDeptSaveDto } from "../common/entity/sys-dept-entity"
 
 @router.controller({ prefix: "sys/dept", summary: "部门管理" })
 export class SysDeptController {
@@ -35,7 +35,7 @@ export class SysDeptController {
 			tag: "OTHER",
 		},
 	})
-	async getByRoleId(@Param("deptId") deptId: number) {
+	async getByRoleId(@Param("deptId") deptId: string) {
 		const deptDetail = await this.sysDeptService.getByDeptId(deptId)
 		return R.success(deptDetail)
 	}
@@ -53,7 +53,7 @@ export class SysDeptController {
 		summary: "修改",
 		router: "",
 	})
-	async edit(@Body() dto: SysDeptEditDto) {
+	async edit(@Body() dto: SysDeptSaveDto) {
 		await this.sysDeptService.update(dto)
 		return R.success()
 	}

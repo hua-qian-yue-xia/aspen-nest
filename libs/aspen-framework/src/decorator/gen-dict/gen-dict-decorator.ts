@@ -81,10 +81,7 @@ export class GenDictService implements OnModuleInit {
 				dictEntity.code = matedata.key
 				dictEntity.summary = matedata.summary
 				dictEntity.genType = "1"
-				dictEntity.enable = true
-				dictEntity.sort = {
-					sort: matedata.order,
-				}
+				dictEntity.sort = 0
 				dictEntity.dictList = enumValues.map((item) => {
 					const dictItemEntity = new FrameDictItemEntity()
 					dictItemEntity.code = item.code

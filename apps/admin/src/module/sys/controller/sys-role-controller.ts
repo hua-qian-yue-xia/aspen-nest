@@ -3,7 +3,7 @@ import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 import { R, router } from "@aspen/aspen-core"
 
 import { SysRoleService } from "../service/sys-role-service"
-import { SysRoleSaveDto, SysRoleEditDto, SysRolePaDto } from "./dto/sys-role-dto"
+import { SysRoleEntity, SysRoleSaveDto } from "../common/entity/sys-role-entity"
 
 @router.controller({ prefix: "sys/role", summary: "角色管理" })
 export class SysRoleController {
@@ -12,8 +12,12 @@ export class SysRoleController {
 	@router.post({
 		summary: "分页",
 		router: "/page",
+		resType: {
+			wrapper: "page",
+			type: SysRoleEntity,
+		},
 	})
-	async page(@Body() dto: SysRolePaDto) {
+	async page(@Body() dto: SysRoleEntity) {
 		const list = await this.sysRoleService.scopePage(dto)
 		return R.success(list)
 	}
@@ -21,8 +25,12 @@ export class SysRoleController {
 	@router.post({
 		summary: "下拉(没有权限控制)",
 		router: "/select",
+		resType: {
+			wrapper: "page",
+			type: SysRoleEntity,
+		},
 	})
-	async select(@Body() pa: SysRolePaDto) {
+	async select(@Body() pa: SysRoleEntity) {
 		const list = await this.sysRoleService.scopePage(pa)
 		return R.success(list)
 	}
@@ -34,7 +42,7 @@ export class SysRoleController {
 			tag: "OTHER",
 		},
 	})
-	async getByRoleId(@Param("roleId") roleId: number) {
+	async getByRoleId(@Param("roleId") roleId: string) {
 		const roleDetail = await this.sysRoleService.getByRoleId(roleId)
 		return R.success(roleDetail)
 	}
@@ -70,7 +78,7 @@ export class SysRoleController {
 		summary: "修改角色(限流、日志)",
 		router: "",
 	})
-	async update(@Body() dto: SysRoleEditDto) {
+	async update(@Body() dto: SysRoleSaveDto) {
 		await this.sysRoleService.edit(dto)
 		return R.success()
 	}
@@ -80,8 +88,8 @@ export class SysRoleController {
 		router: "/delete/:roleIds",
 	})
 	async delByIds(
-		@Param("roleIds", new ParseArrayPipe({ items: Number, separator: "," }))
-		roleIds: Array<number>,
+		@Param("roleIds", new ParseArrayPipe({ items: String, separator: "," }))
+		roleIds: Array<string>,
 	) {
 		const delCount = await this.sysRoleService.delByIds(roleIds)
 		return R.success(delCount)

@@ -10,6 +10,8 @@ import {
 	DeleteDateColumn,
 } from "typeorm"
 
+import { Exclude } from "class-transformer"
+
 import { AspenSummary } from "../decorator/summary/summary-decorator"
 
 export abstract class BaseDb extends BaseEntity {
@@ -44,18 +46,22 @@ export class BaseRecordDb extends BaseDb {
 
 	@Column({ type: "varchar", length: 64, nullable: true, comment: "修改人" })
 	@AspenSummary({ summary: "修改人" })
+	@Exclude()
 	updateBy: string
 
 	@Column({ type: "datetime", nullable: true, comment: "修改时间" })
 	@AspenSummary({ summary: "修改时间" })
+	@Exclude()
 	updateAt: Date
 
 	@Column({ type: "varchar", length: 64, nullable: true, comment: "删除人" })
 	@AspenSummary({ summary: "删除人" })
+	@Exclude()
 	delBy: string
 
 	@DeleteDateColumn({ type: "datetime", nullable: true, comment: "删除时间" })
 	@AspenSummary({ summary: "删除时间" })
+	@Exclude()
 	delAt: Date
 
 	@BeforeInsert()
