@@ -1,10 +1,13 @@
 import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
-import { FrameDictItemEntity } from "@aspen/aspen-framework"
 
 import { FrameDictItemService } from "../service/index"
-import { FrameDictItemSaveDto, FrameDictItemEditDto, FrameDictItemQueryDto } from "../dto/index"
+import {
+	FrameDictItemEntity,
+	FrameDictItemSaveDto,
+	FrameDictItemQueryDto,
+} from "../common/entity/frame-dict-item-entity"
 
 @router.controller({ prefix: "/frame/dict-item", summary: "字典项管理" })
 export class FrameDictItemController {
@@ -61,7 +64,7 @@ export class FrameDictItemController {
 		summary: "修改字典项",
 		router: "",
 	})
-	async edit(@Body() body: FrameDictItemEditDto) {
+	async edit(@Body() body: FrameDictItemSaveDto) {
 		await this.frameDictItemService.edit(body)
 		return R.success()
 	}

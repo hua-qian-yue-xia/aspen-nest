@@ -35,9 +35,12 @@ export class SysRoleController {
 		return R.success(list)
 	}
 
-	@router.patch({
+	@router.get({
 		summary: "根据角色id查询角色(有缓存)",
 		router: "/id/:roleId",
+		resType: {
+			type: SysRoleEntity,
+		},
 		log: {
 			tag: "OTHER",
 		},
@@ -47,9 +50,12 @@ export class SysRoleController {
 		return R.success(roleDetail)
 	}
 
-	@router.patch({
+	@router.get({
 		summary: "根据角色code查询角色(有缓存)",
 		router: "/code/:roleCode",
+		resType: {
+			type: SysRoleEntity,
+		},
 		log: {
 			tag: "OTHER",
 		},
@@ -78,7 +84,7 @@ export class SysRoleController {
 		summary: "修改角色(限流、日志)",
 		router: "",
 	})
-	async update(@Body() dto: SysRoleSaveDto) {
+	async edit(@Body() dto: SysRoleSaveDto) {
 		await this.sysRoleService.edit(dto)
 		return R.success()
 	}

@@ -7,18 +7,19 @@ import { FrameDictItemEntity } from "./frame-dict-item-entity"
 @Entity({ comment: "字典", name: "frame_dict" })
 export class FrameDictEntity extends BaseRecordDb {
 	@PrimaryGeneratedColumn("uuid", { comment: "字典id" })
-	@AspenSummary({ summary: "字典摘要", rule: AspenRule().isNotEmpty() })
+	@AspenSummary({ summary: "字典id" })
 	id: string
 
 	@Column({ type: "varchar", length: 64, unique: true, comment: "字典code" })
-	@AspenSummary({ summary: "字典code", rule: AspenRule().isNotEmpty() })
+	@AspenSummary({ summary: "字典code" })
 	code: string
 
 	@Column({ type: "varchar", length: 256, comment: "字典摘要" })
-	@AspenSummary({ summary: "字典摘要", rule: AspenRule().isNotEmpty() })
+	@AspenSummary({ summary: "字典摘要" })
 	summary: string
 
 	@Column({ type: "varchar", length: 32, default: "1", comment: "字典类型(1:自动生成,2:用户创建)" })
+	@AspenSummary({ summary: "字典类型", rule: AspenRule() })
 	genType: string
 
 	@Column({ type: "int", default: 0, comment: "排序" })

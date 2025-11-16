@@ -11,15 +11,15 @@ export class FrameDictItemEntity extends BaseRecordDb {
 	id: string
 
 	@ManyToOne(() => FrameDictEntity, (dict) => dict.dictList, { onDelete: "CASCADE" })
-	@JoinTable({ name: "dictId" })
+	@JoinTable({ name: "dict_id" })
 	dict: FrameDictEntity
 
 	@Column({ type: "char", length: 32, comment: "字典code" })
-	@AspenSummary({ summary: "字典项code", rule: AspenRule().isNotEmpty() })
+	@AspenSummary({ summary: "字典项code" })
 	code: string
 
 	@Column({ type: "varchar", length: 256, comment: "字典摘要" })
-	@AspenSummary({ summary: "字典项摘要", rule: AspenRule().isNotEmpty() })
+	@AspenSummary({ summary: "字典项摘要" })
 	summary: string
 
 	@Column({ type: "char", length: 32, nullable: true, comment: "字典项颜色" })

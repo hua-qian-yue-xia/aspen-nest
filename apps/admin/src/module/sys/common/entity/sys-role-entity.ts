@@ -19,9 +19,9 @@ export class SysRoleEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "角色id" })
 	roleId: string
 
-	@Column({ type: "bigint", comment: "父角色id" })
+	@Column({ type: "bigint", nullable: true, comment: "父角色id" })
 	@AspenSummary({ summary: "父角色id" })
-	parentRoleId: number
+	parentRoleId?: number
 
 	@Column({ type: "varchar", length: 64, comment: "角色名" })
 	@AspenSummary({ summary: "角色名" })
@@ -52,7 +52,7 @@ export class SysRoleSaveDto {
 	@AspenSummary({ summary: "角色id", rule: AspenRule() })
 	roleId: string
 
-	@AspenSummary({ summary: "父角色id" })
+	@AspenSummary({ summary: "父角色id", rule: AspenRule() })
 	parentRoleId: number
 
 	@AspenSummary({ summary: "角色名", rule: AspenRule().isNotEmpty() })
@@ -66,6 +66,7 @@ export class SysRoleSaveDto {
 
 	toEntity(): SysRoleEntity {
 		const obj = plainToInstance(SysRoleEntity, this)
+		if (_.isEmpty(obj.roleId)) obj.roleId = undefined
 		if (_.isEmpty(obj.sort)) obj.sort = 0
 		return obj
 	}

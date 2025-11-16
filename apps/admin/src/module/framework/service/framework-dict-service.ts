@@ -4,9 +4,9 @@ import { In, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
 import { exception, RedisTool } from "@aspen/aspen-core"
-import { cache, FrameDictEntity, FrameDictItemEntity } from "@aspen/aspen-framework"
+import { cache, FrameDictItemEntity } from "@aspen/aspen-framework"
 
-import { FrameDictEditDto, FrameDictQueryDto, FrameDictSaveDto } from "../dto"
+import { FrameDictEntity, FrameDictSaveDto } from "../common/entity/frame-dict-dto"
 
 @Injectable()
 export class FrameDictService {
@@ -17,7 +17,7 @@ export class FrameDictService {
 		private readonly redisTool: RedisTool,
 	) {}
 
-	async page(dto: FrameDictQueryDto) {
+	async page(dto: FrameDictEntity) {
 		return await this.frameDictRep.page({})
 	}
 
@@ -54,7 +54,7 @@ export class FrameDictService {
 
 	// 修改字典
 	@cache.evict({ key: "frame:dict:id", value: ([dto]) => `${dto.id}` })
-	async edit(body: FrameDictEditDto) {
+	async edit(body: FrameDictSaveDto) {
 		if (await this.isDictCodeDuplicate(body.code, body.id)) {
 			throw new exception.validator(`字典code"${body.code}"重复`)
 		}

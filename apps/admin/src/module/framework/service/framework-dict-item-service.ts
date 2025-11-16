@@ -4,9 +4,13 @@ import { In, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
 import { RedisTool } from "@aspen/aspen-core"
-import { cache, FrameDictEntity, FrameDictItemEntity } from "@aspen/aspen-framework"
+import { cache, FrameDictEntity } from "@aspen/aspen-framework"
 
-import { FrameDictItemEditDto, FrameDictItemQueryDto, FrameDictItemSaveDto } from "../dto"
+import {
+	FrameDictItemEntity,
+	FrameDictItemQueryDto,
+	FrameDictItemSaveDto,
+} from "../common/entity/frame-dict-item-entity"
 
 @Injectable()
 export class FrameDictItemService {
@@ -59,14 +63,14 @@ export class FrameDictItemService {
 	// 新增字典项
 	@cache.put({ key: "frame:dict-item:id", value: (_, result) => `${result.id}`, expiresIn: "2h" })
 	async save(body: FrameDictItemSaveDto) {
-		const saveObj = await this.frameDictItemRep.save(plainToInstance(FrameDictItemEntity, body))
+		const saveObj = await this.frameDictItemRep.save(body.toEntity())
 		return saveObj
 	}
 
 	// 修改字典项
 	@cache.evict({ key: "frame:dict-item:id", value: ([body]) => `${body.id}` })
-	async edit(body: FrameDictItemEditDto) {
-		await this.frameDictItemRep.update({ id: body.id }, plainToInstance(FrameDictItemEntity, body))
+	async edit(body: FrameDictItemSaveDto) {
+		await this.frameDictItemRep.update({ id: body.id }, body.toEntity())
 	}
 
 	// 删除字典项

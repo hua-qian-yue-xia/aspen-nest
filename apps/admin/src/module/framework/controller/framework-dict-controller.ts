@@ -3,8 +3,7 @@ import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 import { R, router } from "@aspen/aspen-core"
 
 import { FrameDictService } from "../service/framework-dict-service"
-import { FrameDictSaveDto, FrameDictEditDto, FrameDictQueryDto } from "../dto/index"
-import { FrameDictEntity } from "@aspen/aspen-framework"
+import { FrameDictEntity, FrameDictSaveDto } from "../common/entity/frame-dict-dto"
 
 @router.controller({ prefix: "/frame/dict", summary: "字典管理" })
 export class FrameDictController {
@@ -18,7 +17,7 @@ export class FrameDictController {
 			type: FrameDictEntity,
 		},
 	})
-	async page(@Body() dto: FrameDictQueryDto) {
+	async page(@Body() dto: FrameDictEntity) {
 		const list = await this.frameDictService.page(dto)
 		return R.success(list)
 	}
@@ -61,7 +60,7 @@ export class FrameDictController {
 		summary: "修改字典",
 		router: "",
 	})
-	async edit(@Body() body: FrameDictEditDto) {
+	async edit(@Body() body: FrameDictSaveDto) {
 		await this.frameDictService.edit(body)
 		return R.success()
 	}
