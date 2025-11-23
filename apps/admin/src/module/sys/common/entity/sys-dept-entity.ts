@@ -18,7 +18,7 @@ export class SysDeptEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "部门id" })
 	deptId: string
 
-	@Column({ type: "bigint", comment: "部门父id" })
+	@Column({ type: "varchar", length: 36, comment: "部门父id" })
 	@AspenSummary({ summary: "部门父id" })
 	deptParentId: string
 
@@ -31,7 +31,30 @@ export class SysDeptEntity extends BaseRecordDb {
 	sort: number
 
 	@OneToMany(() => SysUserEntity, (sysUser) => sysUser.userDept)
-	users: Array<SysUserEntity>
+	users?: Array<SysUserEntity>
+
+	// 获取根部门id
+	static getRootDeptId() {
+		return "-1"
+	}
+
+	// 获取不存在的根部门id
+	static getNotExistRootDeptId() {
+		return "-99"
+	}
+}
+
+/*
+ * ---------------------------------------------------------------
+ * ## 部门-查询
+ * ---------------------------------------------------------------
+ */
+export class SysDeptQueryDto {
+	@AspenSummary({ summary: "部门父id", rule: AspenRule() })
+	deptParentId?: string
+
+	@AspenSummary({ summary: "部门名", rule: AspenRule() })
+	deptNameLike?: string
 }
 
 /*
@@ -41,20 +64,22 @@ export class SysDeptEntity extends BaseRecordDb {
  */
 export class SysDeptSaveDto {
 	@AspenSummary({ summary: "部门id", rule: AspenRule() })
-	deptId: string
+	deptId?: string
 
 	@AspenSummary({ summary: "部门父id", rule: AspenRule() })
-	deptParentId: string
+	deptParentId?: string
 
 	@AspenSummary({ summary: "部门名", rule: AspenRule().isNotEmpty() })
 	deptName: string
 
 	@Column({ type: "int", default: 0, comment: "排序" })
 	@AspenSummary({ summary: "排序" })
-	sort: number
+	sort?: number
 
 	toEntity() {
 		const obj = plainToInstance(SysDeptEntity, this)
+		if (_.isEmpty(obj.deptId)) obj.deptId = undefined
+		if (_.isEmpty(obj.deptParentId)) obj.deptParentId = SysDeptEntity.getRootDeptId()
 		if (_.isEmpty(obj.sort)) obj.sort = 0
 		return obj
 	}

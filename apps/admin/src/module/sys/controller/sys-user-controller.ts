@@ -3,7 +3,7 @@ import { Body, Param, ParseArrayPipe, Query } from "@nestjs/common"
 import { R, router } from "@aspen/aspen-core"
 
 import { SysUserService } from "../service/sys-user-service"
-import { SysUserEntity, SysDeptSaveDto, SysUserAdminLoginDto } from "../common/entity/sys-user-entity"
+import { SysUserEntity, SysUserSaveDto, SysUserAdminLoginDto } from "../common/entity/sys-user-entity"
 
 @router.controller({ prefix: "sys/user", summary: "用户管理" })
 export class SysUserController {
@@ -54,7 +54,7 @@ export class SysUserController {
 		description: "有缓存",
 		router: "/",
 	})
-	async save(@Body() dto: SysDeptSaveDto) {
+	async save(@Body() dto: SysUserSaveDto) {
 		await this.sysUserService.save(dto)
 		return R.success()
 	}
@@ -65,7 +65,7 @@ export class SysUserController {
 		router: "/",
 		rateLimit: {},
 	})
-	async edit(@Body() dto: SysDeptSaveDto) {
+	async edit(@Body() dto: SysUserSaveDto) {
 		await this.sysUserService.edit(dto)
 		return R.success()
 	}

@@ -21,6 +21,7 @@ SelectQueryBuilder.prototype.pageMany = async function <Entity>(
 		.take(pageSize)
 		.getCount()
 	if (count > 0) {
+		// @ts-ignore
 		pageVo.records = await this.skip((page - 1) * pageSize)
 			.take(pageSize)
 			.getMany()

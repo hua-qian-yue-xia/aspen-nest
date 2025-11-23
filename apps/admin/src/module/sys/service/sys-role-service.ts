@@ -2,6 +2,8 @@ import { Injectable } from "@nestjs/common"
 import { In, Repository } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
 
+import * as _ from "radash"
+
 import { OrmQuery, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
@@ -15,9 +17,13 @@ export class SysRoleService {
 	) {}
 
 	// 权限分页查询
-	async scopePage(dto: SysRoleEntity) {
-		const where = OrmQuery.getWhereOptions(dto)
-		return this.sysRoleRepo.page(where)
+	async scopePage(query: SysRoleEntity) {
+		const queryBuilder = this.sysRoleRepo.createQueryBuilder("sys_role")
+		if (!_.isEmpty(query.roleName)) {
+			queryBuilder.where("sys_role.roleName like :roleNameLike", { roleNameLike: `%${query.roleName}%` })
+		}
+		queryBuilder.orderBy("sys_role.sort", "DESC")
+		return queryBuilder.pageMany()
 	}
 
 	// 根据角色id查询角色

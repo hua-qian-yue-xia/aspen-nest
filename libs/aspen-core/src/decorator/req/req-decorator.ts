@@ -5,7 +5,7 @@ import * as _ from "radash"
 import { ReqMethod, ReqMethodMap } from "libs/aspen-core/src/constant/decorator-constant"
 import { AspenLog, LogOption } from "@aspen/aspen-core/decorator/log/log-decorator"
 import { AspenRateLimit, RateLimitOption } from "@aspen/aspen-core/decorator/repeat-submit/repeat-submit-decorator"
-import { ApiOperation, ApiTags, ApiOkResponse, ApiExtraModels, getSchemaPath } from "@nestjs/swagger"
+import { ApiOperation, ApiTags, ApiOkResponse, ApiExtraModels, getSchemaPath, ApiProperty } from "@nestjs/swagger"
 import { BasePageVo } from "@aspen/aspen-core/base/base-page"
 import { R } from "@aspen/aspen-core/base/base-result"
 
@@ -32,7 +32,7 @@ type CreateReqOptions = {
 		 * 返回包装类型
 		 * @default "none"
 		 */
-		wrapper?: "none" | "list" | "page"
+		wrapper?: "none" | "list" | "page" | "tree"
 	}
 	/**
 	 * 接口路由地址
@@ -73,6 +73,11 @@ function createReqDecorators(options: CreateReqOptions) {
 
 	const decorators = [ReqMethodMap[method](router)]
 	const swagger = [ApiOperation({ summary: summary, description: description })]
+	// 用于树状结构的递归 children 模型：为所有层级统一增加 children 属性
+	class SwaggerTreeNode {
+		@ApiProperty({ type: () => [SwaggerTreeNode], description: "子节点", default: [] })
+		children: any[]
+	}
 	if (type) {
 		if (wrapper === "page") {
 			swagger.push(
@@ -118,6 +123,29 @@ function createReqDecorators(options: CreateReqOptions) {
 										data: {
 											type: "array",
 											items: { $ref: getSchemaPath(type) },
+										},
+									},
+								},
+							],
+						},
+					}),
+				],
+			)
+		} else if (wrapper === "tree") {
+			swagger.push(
+				...[
+					ApiExtraModels(type, R, SwaggerTreeNode),
+					ApiOkResponse({
+						schema: {
+							allOf: [
+								{ $ref: getSchemaPath(R) },
+								{
+									properties: {
+										data: {
+											type: "array",
+											items: {
+												allOf: [{ $ref: getSchemaPath(type) }, { $ref: getSchemaPath(SwaggerTreeNode) }],
+											},
 										},
 									},
 								},

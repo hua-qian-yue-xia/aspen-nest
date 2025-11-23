@@ -57,8 +57,8 @@ export class SysUserEntity extends BaseUser {
  * ## 用户-新增
  * ---------------------------------------------------------------
  */
-export class SysDeptSaveDto {
-	@AspenSummary({ summary: "登录名", rule: AspenRule().isNotEmpty() })
+export class SysUserSaveDto {
+	@AspenSummary({ summary: "登录名", rule: AspenRule() })
 	userId: string
 
 	@AspenSummary({ summary: "登录名", rule: AspenRule().isNotEmpty() })

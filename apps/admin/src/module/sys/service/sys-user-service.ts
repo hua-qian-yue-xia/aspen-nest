@@ -7,7 +7,7 @@ import { BasePageVo, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
-import { SysUserEntity, SysUserAdminLoginDto, SysDeptSaveDto } from "../common/entity/sys-user-entity"
+import { SysUserEntity, SysUserAdminLoginDto, SysUserSaveDto } from "../common/entity/sys-user-entity"
 
 @Injectable()
 export class SysUserService {
@@ -30,7 +30,7 @@ export class SysUserService {
 
 	// 新增用户
 	@cache.put({ key: "sys:user:id", value: (_, result) => `${result.userId}`, expiresIn: "2h" })
-	async save(dto: SysDeptSaveDto) {
+	async save(dto: SysUserSaveDto) {
 		if (await this.isUsernameDuplicate(dto.username, null)) {
 			throw new exception.validator(`用户名"${dto.username}"重复`)
 		}
@@ -43,7 +43,7 @@ export class SysUserService {
 
 	// 修改用户
 	@cache.evict({ key: "sys:user:id", value: ([dto]) => `${dto.userId}` })
-	async edit(dto: SysDeptSaveDto) {
+	async edit(dto: SysUserSaveDto) {
 		if (await this.isUsernameDuplicate(dto.username, dto.userId)) {
 			throw new exception.validator(`用户名"${dto.username}"重复`)
 		}

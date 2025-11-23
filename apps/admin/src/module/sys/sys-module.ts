@@ -16,10 +16,12 @@ import { SysMenuService } from "./service/sys-menu-service"
 import { SysRoleService } from "./service/sys-role-service"
 import { SysUserService } from "./service/sys-user-service"
 
-import { SysDeptRepo } from "./service/repo/sys-dept.repo"
-import { SysMenuRepo } from "./service/repo/sys-menu.repo"
-import { SysRoleRepo } from "./service/repo/sys-role.repo"
-import { SysUserRepo } from "./service/repo/sys-user.repo"
+import { SysDeptShare } from "./service/share/sys-dept.share"
+import { SysMenuShare } from "./service/share/sys-menu.share"
+import { SysRoleShare } from "./service/share/sys-role.share"
+import { SysUserShare } from "./service/share/sys-user.share"
+
+import { SysModuleInit } from "./common/init/sys-module-init"
 
 @Module({
 	imports: [TypeOrmModule.forFeature([SysDeptEntity, SysMenuEntity, SysRoleEntity, SysUserEntity])],
@@ -29,10 +31,11 @@ import { SysUserRepo } from "./service/repo/sys-user.repo"
 		SysMenuService,
 		SysRoleService,
 		SysUserService,
-		SysDeptRepo,
-		SysMenuRepo,
-		SysRoleRepo,
-		SysUserRepo,
+		SysDeptShare,
+		SysMenuShare,
+		SysRoleShare,
+		SysUserShare,
+		SysModuleInit,
 	],
 })
 export class SysModule {}

@@ -19,9 +19,9 @@ export class SysRoleEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "角色id" })
 	roleId: string
 
-	@Column({ type: "bigint", nullable: true, comment: "父角色id" })
+	@Column({ type: "varchar", length: 36, nullable: true, comment: "父角色id" })
 	@AspenSummary({ summary: "父角色id" })
-	parentRoleId?: number
+	parentRoleId?: string
 
 	@Column({ type: "varchar", length: 64, comment: "角色名" })
 	@AspenSummary({ summary: "角色名" })
@@ -53,7 +53,7 @@ export class SysRoleSaveDto {
 	roleId: string
 
 	@AspenSummary({ summary: "父角色id", rule: AspenRule() })
-	parentRoleId: number
+	parentRoleId?: number
 
 	@AspenSummary({ summary: "角色名", rule: AspenRule().isNotEmpty() })
 	roleName: string

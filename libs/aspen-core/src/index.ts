@@ -8,7 +8,6 @@ export { Application } from "libs/aspen-core/src/app/application"
 export { BaseDb, BaseRecordDb } from "libs/aspen-core/src/base/base-db"
 export { BaseEnum } from "libs/aspen-core/src/base/base-enum"
 export { BasePage, BasePageVo, BasePageTool } from "libs/aspen-core/src/base/base-page"
-export { BaseRepo } from "libs/aspen-core/src/base/base-repo"
 export { R } from "libs/aspen-core/src/base/base-result"
 export { BaseUser } from "libs/aspen-core/src/base/base-user"
 /******************** end base end ********************/
@@ -53,6 +52,7 @@ export * from "@aspen/aspen-core/exception/common-exception"
 
 /******************** start 工具 start ********************/
 export * from "@aspen/aspen-core/tool"
+export type { TreeNode } from "@aspen/aspen-core/tool/tree-tool"
 /******************** end 工具 end ********************/
 
 /******************** start 模块 start ********************/
