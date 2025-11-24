@@ -166,7 +166,7 @@ export const createWinstonLogger = (appConfig: GlobalConfig.AppConfig, loggerCon
 				handleRejections: true,
 			}),
 			new RotateClass({
-				dirname: `${appConfig.name}-logs`,
+				dirname: `logs/${appConfig.name}`,
 				filename: `${appConfig.name}-%DATE%.log`,
 				datePattern: "YYYY-MM-DD",
 				zippedArchive: loggerConfig.zippedArchive,
