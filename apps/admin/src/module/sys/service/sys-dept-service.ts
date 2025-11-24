@@ -9,6 +9,7 @@ import { exception, tool } from "@aspen/aspen-core"
 
 import { SysDeptEntity, SysDeptQueryDto, SysDeptSaveDto } from "../common/entity/sys-dept-entity"
 import { SysDeptShare } from "./share/sys-dept.share"
+import { sysDeptTypeEnum } from "../common/sys-enum.enum-gen"
 
 @Injectable()
 export class SysDeptService {
@@ -34,7 +35,7 @@ export class SysDeptService {
 		if (!_.isEmpty(query.deptNameLike)) {
 			deptListBuilder.where("sys_dept.deptName like :deptNameLike", { deptNameLike: `%${query.deptNameLike}%` })
 		}
-		deptListBuilder.orderBy("sys_dept.sort", "DESC")
+		deptListBuilder.orderBy("sys_dept.is_catalogue_dpet", "DESC").addOrderBy("sys_dept.sort", "DESC")
 		const deptList = await deptListBuilder.getMany()
 		// 转换为树状结构
 		const tree = tool.tree.toTree(deptList, {
@@ -42,7 +43,12 @@ export class SysDeptService {
 			parentIdKey: "deptParentId",
 			childrenKey: "children",
 			rootParentValue: rootDept.deptParentId,
-			sort: (a, b) => b.sort - a.sort,
+			sort: (a, b) => {
+				if (a.isCatalogueDpet !== b.isCatalogueDpet) {
+					return a.isCatalogueDpet ? -1 : 1
+				}
+				return b.sort - a.sort
+			},
 			excludeKeys: ["delAt", "delBy", "updateBy", "updateAt"],
 		})
 		return tree
@@ -56,9 +62,10 @@ export class SysDeptService {
 	// 新增
 	async save(dto: SysDeptSaveDto): Promise<SysDeptEntity> {
 		console.log(this.sysDeptRep.create(dto.toEntity()))
-
 		// 判断父部门是否存在
 		const saveObj = await this.sysDeptRep.save(this.sysDeptRep.create(dto.toEntity()))
+		// 为`isCatalogueDpet`为`true`的目录的专属部门
+		await this.sysDeptShare.generateOrUpdateCatalogueDpet(saveObj)
 		return saveObj
 	}
 
@@ -68,6 +75,9 @@ export class SysDeptService {
 		if (!role) {
 			throw new exception.validator(`部门id"${dto.deptId}"不存在`)
 		}
-		await this.sysDeptRep.update({ deptId: dto.deptId }, dto.toEntity())
+		const entity = dto.toEntity()
+		await this.sysDeptRep.update({ deptId: dto.deptId }, entity)
+		// 为`isCatalogueDpet`为`true`的目录的专属部门
+		await this.sysDeptShare.generateOrUpdateCatalogueDpet(entity)
 	}
 }

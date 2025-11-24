@@ -1,4 +1,4 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
 
 import { plainToInstance } from "class-transformer"
 import * as _ from "radash"
@@ -6,6 +6,7 @@ import * as _ from "radash"
 import { AspenRule, AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
 
 import { SysUserEntity } from "./sys-user-entity"
+import { sysDeptTypeEnum } from "../sys-enum.enum-gen"
 
 /*
  * ---------------------------------------------------------------
@@ -26,11 +27,19 @@ export class SysDeptEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "部门名" })
 	deptName: string
 
+	@Column({ type: "char", length: 32, comment: "部门类型" })
+	@AspenSummary({ summary: "部门类型" })
+	deptType: string
+
+	@Column({ type: "boolean", default: false, comment: "是否为部门目录的专属部门" })
+	@AspenSummary({ summary: "是否为部门目录的专属部门" })
+	isCatalogueDpet: boolean
+
 	@Column({ type: "int", default: 0, comment: "排序" })
 	@AspenSummary({ summary: "排序" })
 	sort: number
 
-	@OneToMany(() => SysUserEntity, (sysUser) => sysUser.userDept)
+	@ManyToMany(() => SysUserEntity)
 	users?: Array<SysUserEntity>
 
 	// 获取根部门id
@@ -41,6 +50,17 @@ export class SysDeptEntity extends BaseRecordDb {
 	// 获取不存在的根部门id
 	static getNotExistRootDeptId() {
 		return "-99"
+	}
+
+	// 生成目录的专属部门
+	static generateCatalogueDpet(entity: SysDeptEntity) {
+		const catalogueDpet = new SysDeptEntity()
+		catalogueDpet.deptParentId = entity.deptId
+		catalogueDpet.deptName = entity.deptName
+		catalogueDpet.deptType = sysDeptTypeEnum.DEPT.code
+		catalogueDpet.isCatalogueDpet = true
+		catalogueDpet.sort = 9999
+		return catalogueDpet
 	}
 }
 
@@ -71,6 +91,9 @@ export class SysDeptSaveDto {
 
 	@AspenSummary({ summary: "部门名", rule: AspenRule().isNotEmpty() })
 	deptName: string
+
+	@AspenSummary({ summary: "部门类型", rule: AspenRule().isNotEmpty() })
+	deptType: string
 
 	@Column({ type: "int", default: 0, comment: "排序" })
 	@AspenSummary({ summary: "排序" })

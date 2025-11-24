@@ -10,15 +10,15 @@ export class SysRoleController {
 	constructor(private readonly sysRoleService: SysRoleService) {}
 
 	@router.post({
-		summary: "分页",
-		router: "/page",
+		summary: "树状结构",
+		router: "/tree",
 		resType: {
-			wrapper: "page",
+			wrapper: "tree",
 			type: SysRoleEntity,
 		},
 	})
-	async page(@Body() dto: SysRoleEntity) {
-		const list = await this.sysRoleService.scopePage(dto)
+	async tree(@Body() dto: SysRoleEntity) {
+		const list = await this.sysRoleService.scopeTree(dto)
 		return R.success(list)
 	}
 
@@ -31,7 +31,7 @@ export class SysRoleController {
 		},
 	})
 	async select(@Body() pa: SysRoleEntity) {
-		const list = await this.sysRoleService.scopePage(pa)
+		const list = await this.sysRoleService.scopeTree(pa)
 		return R.success(list)
 	}
 

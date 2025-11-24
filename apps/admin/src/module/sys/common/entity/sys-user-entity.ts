@@ -45,11 +45,11 @@ export class SysUserEntity extends BaseUser {
 
 	@ManyToMany(() => SysRoleEntity)
 	@JoinTable({ name: "sys_user_role", joinColumn: { name: "user_id" }, inverseJoinColumn: { name: "role_id" } })
-	roles: Array<SysRoleEntity>
+	userRoles: Array<SysRoleEntity>
 
-	@ManyToOne(() => SysDeptEntity, (sysDept) => sysDept.users)
-	@JoinColumn({ name: "dept_id" })
-	userDept: SysDeptEntity
+	@ManyToMany(() => SysDeptEntity)
+	@JoinTable({ name: "sys_user_dept", joinColumn: { name: "user_id" }, inverseJoinColumn: { name: "dept_id" } })
+	userDepts: Array<SysDeptEntity>
 }
 
 /*
@@ -75,6 +75,12 @@ export class SysUserSaveDto {
 
 	@AspenSummary({ summary: "排序" })
 	sort: number
+
+	@AspenSummary({ summary: "部门id列表", rule: AspenRule().isNotEmpty() })
+	deptIdList: Array<string>
+
+	@AspenSummary({ summary: "角色id列表", rule: AspenRule().isNotEmpty() })
+	roleIdList: Array<string>
 
 	toEntity() {
 		const obj = plainToInstance(SysUserEntity, this)

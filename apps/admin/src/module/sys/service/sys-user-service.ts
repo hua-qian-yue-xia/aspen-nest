@@ -1,18 +1,26 @@
 import { Injectable } from "@nestjs/common"
 import { In, Repository } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
-import { plainToInstance } from "class-transformer"
+
+import * as _ from "radash"
 
 import { BasePageVo, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
 import { SysUserEntity, SysUserAdminLoginDto, SysUserSaveDto } from "../common/entity/sys-user-entity"
+import { SysDeptShare } from "./share/sys-dept.share"
+import { SysRoleShare } from "./share/sys-role.share"
+import { SysUserShare } from "./share/sys-user.share"
 
 @Injectable()
 export class SysUserService {
 	constructor(
 		@InjectRepository(SysUserEntity) private readonly sysUserRepo: Repository<SysUserEntity>,
+		private readonly sysUserShare: SysUserShare,
+		private readonly sysDeptShare: SysDeptShare,
+		private readonly sysRoleShare: SysRoleShare,
+
 		private readonly jwtStrategy: JwtStrategy,
 		private readonly redisTool: RedisTool,
 	) {}
@@ -25,32 +33,79 @@ export class SysUserService {
 	// 根据用户id查询用户
 	@cache.able({ key: "sys:user:id", value: ([userId]) => `${userId}`, expiresIn: "2h" })
 	async getByUserId(userId: string) {
-		return this.sysUserRepo.findOneBy({ userId: userId })
+		const entity = await this.sysUserRepo.findOne({
+			where: { userId: userId },
+			relations: { userRoles: true, userDepts: true },
+		})
+
+		return entity
 	}
 
 	// 新增用户
 	@cache.put({ key: "sys:user:id", value: (_, result) => `${result.userId}`, expiresIn: "2h" })
 	async save(dto: SysUserSaveDto) {
-		if (await this.isUsernameDuplicate(dto.username, null)) {
+		const entity = dto.toEntity()
+		if (await this.sysUserShare.isUsernameDuplicate(entity)) {
 			throw new exception.validator(`用户名"${dto.username}"重复`)
 		}
-		if (await this.isMobileDuplicate(dto.mobile, null)) {
+		if (await this.sysUserShare.isMobileDuplicate(entity)) {
 			throw new exception.validator(`手机号"${dto.mobile}"重复`)
 		}
-		const saveObj = await this.sysUserRepo.save(dto.toEntity())
+		// 判断部门列表
+		if (!_.isEmpty(dto.deptIdList)) {
+			const deptList = await this.sysDeptShare.checkThrowExist(dto.deptIdList)
+			if (!_.isEmpty(deptList)) {
+				entity.userDepts = deptList
+			}
+		}
+		// 判断角色列表
+		if (!_.isEmpty(dto.roleIdList)) {
+			const roleList = await this.sysRoleShare.checkThrowExist(dto.roleIdList)
+			if (!_.isEmpty(roleList)) {
+				entity.userRoles = roleList
+			}
+		}
+		const saveObj = await this.sysUserRepo.save(entity)
 		return saveObj
 	}
 
 	// 修改用户
 	@cache.evict({ key: "sys:user:id", value: ([dto]) => `${dto.userId}` })
 	async edit(dto: SysUserSaveDto) {
-		if (await this.isUsernameDuplicate(dto.username, dto.userId)) {
+		const entity = dto.toEntity()
+		if (await this.sysUserShare.isUsernameDuplicate(entity)) {
 			throw new exception.validator(`用户名"${dto.username}"重复`)
 		}
-		if (await this.isMobileDuplicate(dto.mobile, dto.userId)) {
+		if (await this.sysUserShare.isMobileDuplicate(entity)) {
 			throw new exception.validator(`手机号"${dto.mobile}"重复`)
 		}
-		await this.sysUserRepo.update({ userId: dto.userId }, dto.toEntity())
+
+		// (1) 先更新标量字段，避免在 update 中携带多对多关系导致错误
+		const partial = this.sysUserRepo.create(entity)
+		await this.sysUserRepo.update({ userId: dto.userId }, partial)
+
+		// (2) 再单独更新多对多关系
+		const current = await this.sysUserRepo.findOne({
+			where: { userId: dto.userId },
+			relations: { userDepts: true, userRoles: true },
+		})
+		// 更新部门关系：当传入为空数组时清空；未传入时保持不变
+		if (!_.isEmpty(dto.deptIdList)) {
+			const deptList = await this.sysDeptShare.checkThrowExist(dto.deptIdList)
+			await this.sysUserRepo
+				.createQueryBuilder()
+				.relation(SysUserEntity, "userDepts")
+				.of(dto.userId)
+				.addAndRemove(deptList, current?.userDepts ?? [])
+		}
+		if (!_.isEmpty(dto.roleIdList)) {
+			const roleList = await this.sysRoleShare.checkThrowExist(dto.roleIdList)
+			await this.sysUserRepo
+				.createQueryBuilder()
+				.relation(SysUserEntity, "userRoles")
+				.of(dto.userId)
+				.addAndRemove(roleList, current?.userRoles ?? [])
+		}
 	}
 
 	// 根据用户ids删除用户
@@ -85,24 +140,4 @@ export class SysUserService {
 
 	// admin登出
 	async adminLogout() {}
-
-	// 用户名是否重复
-	async isUsernameDuplicate(username: string, userId?: string): Promise<boolean> {
-		const queryBuilder = this.sysUserRepo.createQueryBuilder("user").where("user.username = :username", { username })
-		if (userId) {
-			queryBuilder.andWhere("user.userId != :userId", { userId })
-		}
-		const count = await queryBuilder.getCount()
-		return count > 0
-	}
-
-	// 用户手机号是否重复
-	async isMobileDuplicate(mobile: string, userId?: string): Promise<boolean> {
-		const queryBuilder = this.sysUserRepo.createQueryBuilder("user").where("user.mobile = :mobile", { mobile })
-		if (userId) {
-			queryBuilder.andWhere("user.userId != :userId", { userId })
-		}
-		const count = await queryBuilder.getCount()
-		return count > 0
-	}
 }

@@ -4,26 +4,42 @@ import { InjectRepository } from "@nestjs/typeorm"
 
 import * as _ from "radash"
 
-import { OrmQuery, exception, RedisTool } from "@aspen/aspen-core"
+import { exception, RedisTool, tool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
 import { SysRoleEntity, SysRoleSaveDto } from "../common/entity/sys-role-entity"
+import { SysRoleShare } from "./share/sys-role.share"
 
 @Injectable()
 export class SysRoleService {
 	constructor(
 		@InjectRepository(SysRoleEntity) private readonly sysRoleRepo: Repository<SysRoleEntity>,
+		private readonly sysRoleShare: SysRoleShare,
 		private readonly redisTool: RedisTool,
 	) {}
 
-	// 权限分页查询
-	async scopePage(query: SysRoleEntity) {
-		const queryBuilder = this.sysRoleRepo.createQueryBuilder("sys_role")
-		if (!_.isEmpty(query.roleName)) {
-			queryBuilder.where("sys_role.roleName like :roleNameLike", { roleNameLike: `%${query.roleName}%` })
-		}
-		queryBuilder.orderBy("sys_role.sort", "DESC")
-		return queryBuilder.pageMany()
+	// 树状结构
+	async scopeTree(query: SysRoleEntity) {
+		// 查询所有部门
+		const deptListBuilder = this.sysRoleRepo.createQueryBuilder("sys_role")
+		deptListBuilder.orderBy("sys_role.is_catalogue_role", "DESC").addOrderBy("sys_role.sort", "DESC")
+		const deptList = await deptListBuilder.getMany()
+		if (_.isEmpty(deptList)) return []
+		// 转换为树状结构
+		const tree = tool.tree.toTree(deptList, {
+			idKey: "roleId",
+			parentIdKey: "parentRoleId",
+			childrenKey: "children",
+			rootParentValue: SysRoleEntity.getNotExistRootRoleId(),
+			sort: (a, b) => {
+				if (a.isCatalogueRole !== b.isCatalogueRole) {
+					return a.isCatalogueRole ? -1 : 1
+				}
+				return b.sort - a.sort
+			},
+			excludeKeys: ["delAt", "delBy", "updateBy", "updateAt"],
+		})
+		return tree
 	}
 
 	// 根据角色id查询角色
@@ -41,13 +57,16 @@ export class SysRoleService {
 	// 新增
 	@cache.put({ key: "sys:role:id", value: (_, result) => `${result.roleId}`, expiresIn: "1h" })
 	async save(dto: SysRoleSaveDto): Promise<SysRoleEntity> {
-		if (await this.isRoleNameDuplicate(dto.roleName, null)) {
+		const entity = dto.toEntity()
+		if (await this.sysRoleShare.isRoleNameDuplicate(entity)) {
 			throw new exception.validator(`角色名"${dto.roleName}"重复`)
 		}
-		if (await this.isRoleCodeDuplicate(dto.roleCode, null)) {
+		if (await this.sysRoleShare.isRoleCodeDuplicate(entity)) {
 			throw new exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
-		const saveObj = await this.sysRoleRepo.save(dto.toEntity())
+		const saveObj = await this.sysRoleRepo.save(entity)
+		// 为`isCatalogueRole`为`true`的目录的专属角色
+		await this.sysRoleShare.generateOrUpdateCatalogueRole(saveObj)
 		return saveObj
 	}
 
@@ -58,13 +77,16 @@ export class SysRoleService {
 		if (!role) {
 			throw new exception.validator(`角色id"${dto.roleId}"不存在`)
 		}
-		if (await this.isRoleNameDuplicate(dto.roleName, dto.roleId)) {
+		const entity = dto.toEntity()
+		if (await this.sysRoleShare.isRoleNameDuplicate(entity)) {
 			throw new exception.validator(`角色名"${dto.roleName}"重复`)
 		}
-		if (await this.isRoleCodeDuplicate(dto.roleCode, dto.roleId)) {
+		if (await this.sysRoleShare.isRoleCodeDuplicate(entity)) {
 			throw new exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
-		await this.sysRoleRepo.update({ roleId: dto.roleId }, dto.toEntity())
+		await this.sysRoleRepo.update({ roleId: dto.roleId }, entity)
+		// 为`isCatalogueRole`为`true`的目录的专属角色
+		await this.sysRoleShare.generateOrUpdateCatalogueRole(entity)
 	}
 
 	// 删除
@@ -78,25 +100,5 @@ export class SysRoleService {
 		// 删除缓存
 		this.redisTool.del(delRoleIds.map((v) => `sys:role:id:${v}`))
 		return affected ?? 0
-	}
-
-	// 角色名是否重复
-	async isRoleNameDuplicate(roleName: string, roleId?: string): Promise<boolean> {
-		const queryBuilder = this.sysRoleRepo.createQueryBuilder("role").where("role.roleName = :roleName", { roleName })
-		if (roleId) {
-			queryBuilder.andWhere("role.roleId != :roleId", { roleId })
-		}
-		const count = await queryBuilder.getCount()
-		return count > 0
-	}
-
-	// 角色code是否重复
-	async isRoleCodeDuplicate(roleCode: string, roleId?: string): Promise<boolean> {
-		const queryBuilder = this.sysRoleRepo.createQueryBuilder("role").where("role.roleCode = :roleCode", { roleCode })
-		if (roleId) {
-			queryBuilder.andWhere("role.roleId != :roleId", { roleId })
-		}
-		const count = await queryBuilder.getCount()
-		return count > 0
 	}
 }
