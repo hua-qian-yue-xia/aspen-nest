@@ -53,7 +53,7 @@ export class SysUserService {
 		}
 		// 判断部门列表
 		if (!_.isEmpty(dto.deptIdList)) {
-			const deptList = await this.sysDeptShare.checkThrowExist(dto.deptIdList)
+			const deptList = await this.sysDeptShare.checkExistThrow(dto.deptIdList)
 			if (!_.isEmpty(deptList)) {
 				entity.userDepts = deptList
 			}
@@ -91,7 +91,7 @@ export class SysUserService {
 		})
 		// 更新部门关系：当传入为空数组时清空；未传入时保持不变
 		if (!_.isEmpty(dto.deptIdList)) {
-			const deptList = await this.sysDeptShare.checkThrowExist(dto.deptIdList)
+			const deptList = await this.sysDeptShare.checkExistThrow(dto.deptIdList)
 			await this.sysUserRepo
 				.createQueryBuilder()
 				.relation(SysUserEntity, "userDepts")

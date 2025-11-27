@@ -61,7 +61,6 @@ export class SysDeptService {
 
 	// 新增
 	async save(dto: SysDeptSaveDto): Promise<SysDeptEntity> {
-		console.log(this.sysDeptRep.create(dto.toEntity()))
 		// 判断父部门是否存在
 		const saveObj = await this.sysDeptRep.save(this.sysDeptRep.create(dto.toEntity()))
 		// 为`isCatalogueDpet`为`true`的目录的专属部门
@@ -71,13 +70,15 @@ export class SysDeptService {
 
 	// 修改
 	async update(dto: SysDeptSaveDto): Promise<void> {
-		const role = await this.getByDeptId(dto.deptId)
-		if (!role) {
+		const [deptDetail] = await this.sysDeptShare.checkExistThrow(dto.deptId)
+		if (!deptDetail) {
 			throw new exception.validator(`部门id"${dto.deptId}"不存在`)
 		}
 		const entity = dto.toEntity()
 		await this.sysDeptRep.update({ deptId: dto.deptId }, entity)
 		// 为`isCatalogueDpet`为`true`的目录的专属部门
-		await this.sysDeptShare.generateOrUpdateCatalogueDpet(entity)
+		if (dto.deptType !== deptDetail.deptType) {
+			await this.sysDeptShare.generateOrUpdateCatalogueDpet(entity)
+		}
 	}
 }

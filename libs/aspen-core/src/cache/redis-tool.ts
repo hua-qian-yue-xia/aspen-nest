@@ -29,11 +29,34 @@ export class RedisTool {
 
 	/**
 	 * 删除字符串缓存(单位秒)
+	 * 例如:key = "sys:user:id:123"
 	 */
 	async del(keys: string | Array<string>): Promise<number> {
 		if (!keys || keys === "*") return 0
 		if (typeof keys === "string") keys = [keys]
 		return this.redis.del(...keys)
+	}
+
+	/**
+	 * 根据通配符删除缓存（使用SCAN，不阻塞）
+	 * 例如:pattern = "sys:user:id:*"
+	 */
+	async delByPattern(patterns: string | Array<string>, count = 1000): Promise<number> {
+		const list = typeof patterns === "string" ? [patterns] : patterns
+		if (!list || list.length === 0) return 0
+		let total = 0
+		for (const pattern of list) {
+			if (!pattern || pattern === "*") continue
+			let cursor = "0"
+			do {
+				const [next, keys] = await this.redis.scan(cursor, "MATCH", pattern, "COUNT", count)
+				cursor = next
+				if (keys && keys.length) {
+					total += await this.redis.del(...keys)
+				}
+			} while (cursor !== "0")
+		}
+		return total
 	}
 
 	/**
