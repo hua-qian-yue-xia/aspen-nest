@@ -56,14 +56,14 @@ export class SysDeptShare {
 			else {
 				await this.sysDeptRep.update({ deptId: catalogueDpet.deptId }, catalogueDpetObj)
 			}
-			// 迁移部门用户
+			// 迁移用户的部门
 			await this.migrateDeptUserThrow(saveObj.deptId, catalogueDpetObj.deptId)
 			return
 		}
 		// 把部门从`部门目录`修改到`部门`
 		if (targetDeptType === sysDeptTypeEnum.DEPT.code) {
 			if (!catalogueDpet) return
-			// 迁移部门用户
+			// 迁移用户的部门
 			await this.migrateDeptUserThrow(catalogueDpet.deptId, saveObj.deptId)
 			// 删除
 			await this.sysDeptRep.delete({ deptId: catalogueDpet.deptId })
@@ -88,7 +88,7 @@ export class SysDeptShare {
 		return deptList.filter((v) => checkDeptIdList.includes(v.deptId))
 	}
 
-	// 迁移部门用户
+	// 迁移用户的部门
 	async migrateDeptUserThrow(sourceDeptId: string, targetDeptId: string) {
 		// 查询源部门
 		const sourceDept = await this.sysDeptRep.findOneBy({ deptId: sourceDeptId })

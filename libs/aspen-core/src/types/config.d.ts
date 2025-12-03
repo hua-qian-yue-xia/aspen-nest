@@ -134,5 +134,19 @@ declare namespace GlobalConfig {
 		 * @default '3m'
 		 */
 		maxFiles?: string
+
+		/**
+		 * loki主机地址
+		 */
+		lokiHost?: string
+
+		/**
+		 * 日志传输方式
+		 * @default console | file
+		 * console: 控制台输出
+		 * file: 文件输出
+		 * loki: loki输出
+		 */
+		transports?: Array<"console" | "file" | "loki">
 	}
 }

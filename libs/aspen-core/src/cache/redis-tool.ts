@@ -1,4 +1,5 @@
 import { Injectable, Scope } from "@nestjs/common"
+
 import { RedisService } from "@liaoliaots/nestjs-redis"
 import Redis from "ioredis"
 

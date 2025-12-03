@@ -3,6 +3,8 @@ import * as os from "node:os"
 import { Injectable, Scope, LoggerService } from "@nestjs/common"
 
 import { createLogger, format, transports, config, Logger } from "winston"
+// @ts-ignore
+import * as LokiTransport from "winston-loki"
 import * as DailyRotateFile from "winston-daily-rotate-file"
 
 import { tool } from "../tool/index"
@@ -125,7 +127,7 @@ const colorLevel = (raw: string, fixed: string) => {
 }
 
 export const createWinstonLogger = (appConfig: GlobalConfig.AppConfig, loggerConfig: GlobalConfig.LoggerConfig) => {
-	// 控制台彩色可读格式（开发友好）
+	// 控制台彩色可读格式(开发友好)
 	const consoleFormat = format.combine(
 		// 不使用全局 colorize，避免影响对齐；改为在 printf 内对 level 上色
 		format.timestamp({ format: "YYYY-MM-DD HH:mm:ss.SSS" }),
@@ -147,35 +149,69 @@ export const createWinstonLogger = (appConfig: GlobalConfig.AppConfig, loggerCon
 
 	// 兼容 default 导出与命名空间导出
 	const RotateClass: any = (DailyRotateFile as any).default || (DailyRotateFile as any)
+	const LokiClass: any = (LokiTransport as any).default || (LokiTransport as any)
+
+	const labels = {
+		app: appConfig.name,
+		env: process.env.NODE_ENV,
+		os: os.hostname(),
+		instance: tool.os.getResolveInstance(),
+	}
+
+	const consoleTransports = () => {
+		return new transports.Console({
+			level: loggerConfig.level,
+			format: consoleFormat,
+			handleExceptions: true,
+			handleRejections: true,
+		})
+	}
+
+	const fileTransports = () => {
+		return new RotateClass({
+			dirname: `logs/${appConfig.name}`,
+			filename: `${appConfig.name}-%DATE%.log`,
+			datePattern: "YYYY-MM-DD",
+			zippedArchive: loggerConfig.zippedArchive,
+			maxSize: loggerConfig.maxSize,
+			maxFiles: loggerConfig.maxFiles,
+			handleExceptions: true,
+			handleRejections: true,
+			format: jsonFormat,
+		})
+	}
+
+	const lokiTransports = () => {
+		return new LokiClass({
+			host: loggerConfig.lokiHost,
+			labels: labels,
+			json: true,
+			// 是否开启批量推送
+			batching: true,
+			// 批量推送间隔(秒)
+			interval: 5,
+			// 是否用日志中的 timestamp 替换 loki 中的 timestamp
+			replaceTimestamp: true,
+			level: loggerConfig.level,
+		})
+	}
+
+	const transportList = []
+	if (loggerConfig.transports.includes("console")) {
+		transportList.push(consoleTransports())
+	}
+	if (loggerConfig.transports.includes("file")) {
+		transportList.push(fileTransports())
+	}
+	if (loggerConfig.transports.includes("loki")) {
+		transportList.push(lokiTransports())
+	}
 
 	return createLogger({
 		levels: config.npm.levels,
 		level: loggerConfig.level,
 		exitOnError: false,
-		defaultMeta: {
-			app: appConfig.name,
-			env: process.env.NODE_ENV,
-			os: os.hostname(),
-			instance: tool.os.getResolveInstance(),
-		},
-		transports: [
-			new transports.Console({
-				level: loggerConfig.level,
-				format: consoleFormat,
-				handleExceptions: true,
-				handleRejections: true,
-			}),
-			new RotateClass({
-				dirname: `logs/${appConfig.name}`,
-				filename: `${appConfig.name}-%DATE%.log`,
-				datePattern: "YYYY-MM-DD",
-				zippedArchive: loggerConfig.zippedArchive,
-				maxSize: loggerConfig.maxSize,
-				maxFiles: loggerConfig.maxFiles,
-				handleExceptions: true,
-				handleRejections: true,
-				format: jsonFormat,
-			}),
-		],
+		defaultMeta: labels,
+		transports: transportList,
 	})
 }

@@ -167,6 +167,7 @@ export class Application {
 			zippedArchive: true,
 			maxSize: "20m",
 			maxFiles: "3m",
+			transports: ["console", "file"],
 		} as GlobalConfig.LoggerConfig
 	}
 }

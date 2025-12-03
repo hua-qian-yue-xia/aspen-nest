@@ -14,13 +14,13 @@ import { sysMenuTypeEnum } from "../sys-enum.enum-gen"
  */
 @Entity({ comment: "菜单", name: "sys_menu" })
 export class SysMenuEntity extends BaseRecordDb {
-	@PrimaryGeneratedColumn({ type: "bigint", comment: "菜单id" })
+	@PrimaryGeneratedColumn("uuid", { comment: "菜单id" })
 	@AspenSummary({ summary: "菜单id" })
-	menuId: number
+	menuId: string
 
-	@Column({ type: "bigint", comment: "菜单父id" })
+	@Column({ type: "varchar", length: 36, comment: "菜单父id" })
 	@AspenSummary({ summary: "菜单父id" })
-	parentId: number
+	parentId: string
 
 	@Column({ type: "varchar", length: 64, comment: "菜单名" })
 	@AspenSummary({ summary: "菜单名" })
@@ -53,6 +53,30 @@ export class SysMenuEntity extends BaseRecordDb {
 	@Column({ type: "int", default: 0, comment: "排序" })
 	@AspenSummary({ summary: "排序" })
 	sort: number
+
+	// 获取不存在的根菜单id
+	static getNotExistRootMenuId() {
+		return "-99"
+	}
+}
+
+/*
+ * ---------------------------------------------------------------
+ * ## 菜单-查询
+ * ---------------------------------------------------------------
+ */
+export class SysMenuQueryDto {
+	@AspenSummary({ summary: "菜单父id", rule: AspenRule() })
+	menuId?: string
+
+	@AspenSummary({ summary: "菜单父id", rule: AspenRule() })
+	parentId?: string
+
+	@AspenSummary({ summary: "菜单名、路由地址", rule: AspenRule() })
+	quick?: string
+
+	@AspenSummary({ summary: "菜单类型", rule: AspenRule() })
+	type?: string
 }
 
 /*
@@ -62,10 +86,10 @@ export class SysMenuEntity extends BaseRecordDb {
  */
 export class SysMenuSaveDto {
 	@AspenSummary({ summary: "菜单id", rule: AspenRule() })
-	menuId: number
+	menuId?: string
 
 	@AspenSummary({ summary: "菜单父id", rule: AspenRule() })
-	parentId: number
+	parentId?: string
 
 	@AspenSummary({ summary: "菜单名", rule: AspenRule().isNotEmpty() })
 	menuName: string
@@ -83,13 +107,13 @@ export class SysMenuSaveDto {
 	path: string
 
 	@AspenSummary({ summary: "是否显示", rule: AspenRule() })
-	visible: boolean
+	visible?: boolean
 
 	@AspenSummary({ summary: "是否缓存", rule: AspenRule() })
-	keepAlive: boolean
+	keepAlive?: boolean
 
 	@AspenSummary({ summary: "排序", rule: AspenRule() })
-	sort: number
+	sort?: number
 
 	toEntity() {
 		if (this.type == sysMenuTypeEnum.CATALOGUE.code) {
@@ -101,6 +125,8 @@ export class SysMenuSaveDto {
 	// 转换到菜单实体
 	toMenuEntity() {
 		const obj = plainToInstance(SysMenuEntity, this)
+		if (_.isEmpty(obj.menuId)) obj.menuId = undefined
+		if (_.isEmpty(obj.parentId)) obj.parentId = SysMenuEntity.getNotExistRootMenuId()
 		if (_.isEmpty(obj.sort)) obj.sort = 0
 		return obj
 	}
@@ -108,6 +134,8 @@ export class SysMenuSaveDto {
 	// 转换到目录实体
 	toCatalogueEntity() {
 		const obj = plainToInstance(SysMenuEntity, this)
+		if (_.isEmpty(obj.menuId)) obj.menuId = undefined
+		if (_.isEmpty(obj.parentId)) obj.parentId = SysMenuEntity.getNotExistRootMenuId()
 		if (_.isEmpty(obj.sort)) obj.sort = 0
 		obj.position = null
 		obj.path = null

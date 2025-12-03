@@ -2,10 +2,11 @@ import { DynamicModule, Global, Logger, Module } from "@nestjs/common"
 import { TypeOrmModule, TypeOrmModuleOptions } from "@nestjs/typeorm"
 import { SnakeNamingStrategy } from "typeorm-naming-strategies"
 import { ConfigModule, ConfigService } from "@nestjs/config"
-import type { Logger as TypeOrmLogger, QueryRunner } from "typeorm"
 import type { Logger as WinstonLogger } from "winston"
 import { createWinstonLogger } from "../logger/winston-logger"
+
 import { WinstonLoggerModule, WINSTON_INSTANCE } from "../logger/winston-logger-module"
+import { OrmLogger } from "./tool/orm-logger"
 
 import * as _ from "radash"
 
@@ -82,50 +83,12 @@ export class DatabaseModule {
 									return value
 								},
 							},
-							logger: new TypeOrmWinstonLogger(w),
+							logger: new OrmLogger(w),
 						}
 					},
 				}),
 			],
 			exports: [TypeOrmModule],
 		}
-	}
-}
-
-class TypeOrmWinstonLogger implements TypeOrmLogger {
-	constructor(private readonly w: WinstonLogger) {}
-
-	// 将 TypeORM 的通用日志映射到 Winston（info/warn），用于输出一般信息与警告
-	log(level: "log" | "info" | "warn", message: any, _queryRunner?: QueryRunner) {
-		if (level === "warn") {
-			this.w.warn({ msg: message })
-		} else {
-			this.w.info({ msg: message })
-		}
-	}
-
-	// 记录执行的 SQL 语句(开发调试用，生产可按需关闭或降低级别)
-	logQuery(query: string, parameters?: unknown[], _queryRunner?: QueryRunner) {
-		this.w.debug({ msg: "typeorm:query", query, parameters })
-	}
-
-	// 记录 SQL 错误(包含语句与参数),便于快速定位问题
-	logQueryError(error: string | Error, query: string, parameters?: unknown[], _queryRunner?: QueryRunner) {
-		this.w.error({ msg: "typeorm:query-error", query, parameters, error: String(error) })
-	}
-
-	// 记录慢查询(阈值由 TypeORM 控制),用于性能分析与优化
-	logQuerySlow(time: number, query: string, parameters?: unknown[], _queryRunner?: QueryRunner) {
-		this.w.warn({ msg: "typeorm:query-slow", time, query, parameters })
-	}
-
-	// 记录架构构建过程(建表/结构同步等),用于迁移与初始化阶段的可观测性
-	logSchemaBuild(message: string, _queryRunner?: QueryRunner) {
-		this.w.info({ msg: "typeorm:schema-build", message })
-	}
-
-	// 记录数据库迁移执行信息(版本、步骤、状态),用于迁移与初始化阶段的可观测性
-	logMigration(message: string, _queryRunner?: QueryRunner) {
-		this.w.info({ msg: "typeorm:migration", message })
 	}
 }

@@ -1,8 +1,6 @@
 import { R, router } from "@aspen/aspen-core"
 import { Body, Param } from "@nestjs/common"
 
-import { TreeNode } from "@aspen/aspen-core"
-
 import { SysDeptService } from "../service/sys-dept-service"
 
 import { SysDeptQueryDto, SysDeptSaveDto, SysDeptEntity } from "../common/entity/sys-dept-entity"

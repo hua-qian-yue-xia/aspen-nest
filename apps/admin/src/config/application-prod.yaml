@@ -9,3 +9,14 @@ database:
   database: nest-admin
   dropSchema: false
   synchronize: false
+logger:
+  # 日志级别
+  level: debug
+  lokiHost: http://localhost:3100
+  transports:
+    # 控制台输出
+    - console
+    # 文件输出
+    - file
+    # 采集到loki
+    - loki

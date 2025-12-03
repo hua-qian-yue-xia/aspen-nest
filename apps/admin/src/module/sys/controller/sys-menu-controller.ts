@@ -3,23 +3,23 @@ import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { SysMenuService } from "../service/sys-menu-service"
 
-import { SysMenuEntity, SysMenuSaveDto } from "../common/entity/sys-menu-entity"
+import { SysMenuEntity, SysMenuQueryDto, SysMenuSaveDto } from "../common/entity/sys-menu-entity"
 
 @router.controller({ prefix: "sys/menu", summary: "菜单管理" })
 export class SysMenuController {
 	constructor(private readonly sysMenuService: SysMenuService) {}
 
-	@router.get({
-		summary: "分页",
-		router: "/page",
+	@router.post({
+		summary: "树状结构",
+		router: "/tree",
 		resType: {
 			type: SysMenuEntity,
-			wrapper: "page",
+			wrapper: "tree",
 		},
 	})
-	async page(@Body() query: SysMenuEntity) {
-		const list = await this.sysMenuService.scopePage()
-		return R.success(list)
+	async tree(@Body() query: SysMenuQueryDto) {
+		const tree = await this.sysMenuService.tree(query)
+		return R.success(tree)
 	}
 
 	@router.get({
@@ -30,8 +30,8 @@ export class SysMenuController {
 			wrapper: "page",
 		},
 	})
-	async select(@Body() query: SysMenuEntity) {
-		const list = await this.sysMenuService.scopePage()
+	async select(@Body() query: SysMenuQueryDto) {
+		const list = await this.sysMenuService.scopePage(query)
 		return R.success(list)
 	}
 
@@ -43,7 +43,7 @@ export class SysMenuController {
 			type: SysMenuEntity,
 		},
 	})
-	async getByMenuId(@Param("menuId") menuId: number) {
+	async getByMenuId(@Param("menuId") menuId: string) {
 		const detail = await this.sysMenuService.getByMenuId(menuId)
 		return R.success(detail)
 	}
@@ -52,7 +52,7 @@ export class SysMenuController {
 		summary: "根据部门id查询部门(有缓存)",
 		router: "/id/:menuId",
 	})
-	async getByRoleId(@Param("menuId") menuId: number) {
+	async getByRoleId(@Param("menuId") menuId: string) {
 		const menuDetail = await this.sysMenuService.getByMenuId(menuId)
 		return R.success(menuDetail)
 	}
@@ -83,8 +83,8 @@ export class SysMenuController {
 		router: "/:menuIds",
 	})
 	async delete(
-		@Param("menuIds", new ParseArrayPipe({ items: Number, separator: "," }))
-		menuIds: Array<number>,
+		@Param("menuIds", new ParseArrayPipe({ items: String, separator: "," }))
+		menuIds: Array<string>,
 	) {
 		const delCount = await this.sysMenuService.delByIds(menuIds)
 		return R.success(delCount)

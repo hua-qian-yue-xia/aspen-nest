@@ -14,3 +14,8 @@ database:
 logger:
   # 日志级别
   level: debug
+  lokiHost: http://localhost:3100
+  transports:
+    - console
+    - file
+    - loki

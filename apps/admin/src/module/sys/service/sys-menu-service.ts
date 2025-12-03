@@ -3,27 +3,51 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { In, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 
-import { RedisTool } from "@aspen/aspen-core"
+import { RedisTool, tool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
 import { sysMenuTypeEnum } from "../common/sys-enum.enum-gen"
-import { SysMenuEntity, SysMenuSaveDto } from "../common/entity/sys-menu-entity"
+import { SysMenuEntity, SysMenuQueryDto, SysMenuSaveDto } from "../common/entity/sys-menu-entity"
+import { SysMenuShare } from "./share/sys-menu.share"
 
 @Injectable()
 export class SysMenuService {
 	constructor(
 		@InjectRepository(SysMenuEntity) private readonly sysMenuEntity: Repository<SysMenuEntity>,
+
+		private readonly sysMenuShare: SysMenuShare,
 		private readonly redisTool: RedisTool,
 	) {}
 
-	// 权限分页查询
-	async scopePage() {
-		return this.sysMenuEntity.page()
+	// 分页查询
+	async scopePage(query: SysMenuQueryDto) {
+		const page = this.sysMenuShare.queryDtoBuild(query).pageMany()
+	}
+
+	// 树状接口
+	async tree(query: SysMenuQueryDto) {
+		const rootMenuId = query.parentId ?? SysMenuEntity.getNotExistRootMenuId()
+		if (rootMenuId !== SysMenuEntity.getNotExistRootMenuId()) {
+			query.parentId = rootMenuId
+		}
+		const treeList = await this.sysMenuShare.queryDtoBuild(query).getMany()
+		// 转换为树状结构
+		const tree = tool.tree.toTree(treeList, {
+			idKey: "menuId",
+			parentIdKey: "parentId",
+			childrenKey: "children",
+			rootParentValue: rootMenuId,
+			sort: (a, b) => {
+				return b.sort - a.sort
+			},
+			excludeKeys: ["delAt", "delBy", "updateBy", "updateAt"],
+		})
+		return tree
 	}
 
 	// 根据部门id查询部门
 	@cache.able({ key: "sys:menu:id", value: ([menuId]) => `${menuId}`, expiresIn: "2h" })
-	async getByMenuId(menuId: number) {
+	async getByMenuId(menuId: string) {
 		return this.sysMenuEntity.findOneBy({ menuId: menuId })
 	}
 
@@ -52,7 +76,7 @@ export class SysMenuService {
 	}
 
 	// 根据菜单ids删除菜单
-	async delByIds(menuIds: number[]) {
+	async delByIds(menuIds: Array<string>) {
 		// 查询存不存在
 		const menuList = await this.sysMenuEntity.find({ where: { menuId: In(menuIds) } })
 		if (!menuList.length) return 0
@@ -65,7 +89,7 @@ export class SysMenuService {
 	}
 
 	// 菜单path是否重复
-	async isPathDuplicate(path: string, menuId?: number): Promise<boolean> {
+	async isPathDuplicate(path: string, menuId?: string): Promise<boolean> {
 		const queryBuilder = this.sysMenuEntity.createQueryBuilder("menu").where("menu.path = :path", { path })
 		if (menuId) {
 			queryBuilder.andWhere("menu.menuId != :menuId", { menuId })
