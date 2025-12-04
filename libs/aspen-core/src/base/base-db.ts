@@ -38,6 +38,7 @@ export abstract class BaseDb extends BaseEntity {
 export class BaseRecordDb extends BaseDb {
 	@Column({ type: "varchar", length: 64, comment: "新增人" })
 	@AspenSummary({ summary: "新增人" })
+	@Exclude()
 	createBy: string
 
 	@Column({ type: "datetime", comment: "新增时间" })

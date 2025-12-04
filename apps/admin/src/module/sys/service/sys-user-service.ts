@@ -27,7 +27,7 @@ export class SysUserService {
 
 	// 分页查询用户
 	async scopePage(dto: SysUserEntity): Promise<BasePageVo<SysUserEntity>> {
-		return this.sysUserRepo.page()
+		return this.sysUserRepo.page({ relations: ["userRoles", "userDepts"] })
 	}
 
 	// 根据用户id查询用户

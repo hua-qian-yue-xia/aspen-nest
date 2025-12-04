@@ -18,4 +18,3 @@ logger:
   transports:
     - console
     - file
-    - loki

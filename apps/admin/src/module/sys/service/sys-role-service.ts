@@ -7,7 +7,7 @@ import * as _ from "radash"
 import { exception, RedisTool, tool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
-import { SysRoleEntity, SysRoleSaveDto } from "../common/entity/sys-role-entity"
+import { SysRoleEntity, SysRoleQueryDto, SysRoleSaveDto } from "../common/entity/sys-role-entity"
 import { SysRoleShare } from "./share/sys-role.share"
 
 @Injectable()
@@ -18,28 +18,12 @@ export class SysRoleService {
 		private readonly redisTool: RedisTool,
 	) {}
 
-	// 树状结构
-	async scopeTree(query: SysRoleEntity) {
+	// 分页结构
+	async scopePage(query: SysRoleQueryDto) {
 		// 查询所有部门
-		const deptListBuilder = this.sysRoleRepo.createQueryBuilder("sys_role")
-		deptListBuilder.orderBy("sys_role.is_catalogue_role", "DESC").addOrderBy("sys_role.sort", "DESC")
-		const deptList = await deptListBuilder.getMany()
-		if (_.isEmpty(deptList)) return []
-		// 转换为树状结构
-		const tree = tool.tree.toTree(deptList, {
-			idKey: "roleId",
-			parentIdKey: "parentRoleId",
-			childrenKey: "children",
-			rootParentValue: SysRoleEntity.getNotExistRootRoleId(),
-			sort: (a, b) => {
-				if (a.isCatalogueRole !== b.isCatalogueRole) {
-					return a.isCatalogueRole ? -1 : 1
-				}
-				return b.sort - a.sort
-			},
-			excludeKeys: ["delAt", "delBy", "updateBy", "updateAt"],
-		})
-		return tree
+		const deptListBuilder = this.sysRoleShare.queryDtoBuild(query)
+		const deptList = await deptListBuilder.pageMany()
+		return deptList
 	}
 
 	// 根据角色id查询角色
@@ -65,8 +49,6 @@ export class SysRoleService {
 			throw new exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
 		const saveObj = await this.sysRoleRepo.save(entity)
-		// 为`isCatalogueRole`为`true`的目录的专属角色
-		await this.sysRoleShare.generateOrUpdateCatalogueRole(saveObj)
 		return saveObj
 	}
 
@@ -85,8 +67,6 @@ export class SysRoleService {
 			throw new exception.validator(`角色code"${dto.roleCode}"重复`)
 		}
 		await this.sysRoleRepo.update({ roleId: dto.roleId }, entity)
-		// 为`isCatalogueRole`为`true`的目录的专属角色
-		await this.sysRoleShare.generateOrUpdateCatalogueRole(entity)
 	}
 
 	// 删除

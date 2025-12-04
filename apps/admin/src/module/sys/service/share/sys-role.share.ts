@@ -1,13 +1,13 @@
 import { Injectable } from "@nestjs/common"
 
 import { InjectRepository } from "@nestjs/typeorm"
-import { In, Repository } from "typeorm"
+import { Brackets, In, Repository } from "typeorm"
 
 import * as _ from "radash"
 
 import { exception, RedisTool } from "@aspen/aspen-core"
 
-import { SysRoleEntity } from "../../common/entity/sys-role-entity"
+import { SysRoleEntity, SysRoleQueryDto } from "../../common/entity/sys-role-entity"
 import { sysRoleTypeEnum } from "../../common/sys-enum.enum-gen"
 
 @Injectable()
@@ -17,14 +17,29 @@ export class SysRoleShare {
 		private readonly redisTool: RedisTool,
 	) {}
 
+	queryDtoBuild(query: SysRoleQueryDto) {
+		const queryBuilder = this.sysRoleRepo.createQueryBuilder("sys_role")
+		if (!_.isEmpty(query.roleId)) {
+			queryBuilder.where("sys_role.role_id = :roleId", { roleId: query.roleId })
+		}
+		if (!_.isEmpty(query.quick)) {
+			queryBuilder.where(
+				new Brackets((qb) =>
+					qb
+						.where(`sys_role.role_name like :quick`, { quick: `%${query.quick}%` })
+						.orWhere(`sys_role.role_code like :quick`, { quick: `%${query.quick}%` }),
+				),
+			)
+		}
+		queryBuilder.orderBy("sys_role.sort", "DESC")
+		return queryBuilder
+	}
+
 	// 角色名是否重复
 	async isRoleNameDuplicate(entity: SysRoleEntity): Promise<boolean> {
 		const queryBuilder = this.sysRoleRepo
 			.createQueryBuilder("role")
 			.where("role.role_name = :roleName", { roleName: entity.roleName })
-		if (entity.roleType) {
-			queryBuilder.andWhere("role.role_type = :roleType", { roleType: entity.roleType })
-		}
 		if (entity.roleId) {
 			queryBuilder.andWhere("role.role_id != :roleId", { roleId: entity.roleId })
 		}
@@ -37,9 +52,6 @@ export class SysRoleShare {
 		const queryBuilder = this.sysRoleRepo
 			.createQueryBuilder("role")
 			.where("role.role_code = :roleCode", { roleCode: entity.roleCode })
-		if (entity.roleType) {
-			queryBuilder.andWhere("role.role_type = :roleType", { roleType: entity.roleType })
-		}
 		if (entity.roleId) {
 			queryBuilder.andWhere("role.role_id != :roleId", { roleId: entity.roleId })
 		}
@@ -47,41 +59,11 @@ export class SysRoleShare {
 		return count > 0
 	}
 
-	// 为`isCatalogueRole`为`true`的目录的专属角色
-	async generateOrUpdateCatalogueRole(saveObj: SysRoleEntity) {
-		const catalogueRole = await this.sysRoleRepo.findOneBy({
-			parentRoleId: saveObj.roleId,
-			isCatalogueRole: true,
-		})
-		if (saveObj.roleType === sysRoleTypeEnum.ROLE_CATALOGUE.code) {
-			const catalogueRoleObj = SysRoleEntity.generateCatalogueRole(saveObj)
-			// 新增
-			if (_.isEmpty(catalogueRole)) {
-				catalogueRoleObj.roleId = undefined
-				await this.sysRoleRepo.save(catalogueRoleObj)
-				return
-			}
-			// 更新
-			await this.sysRoleRepo.update({ roleId: catalogueRole.roleId }, catalogueRoleObj)
-		} else {
-			if (catalogueRole) {
-				// 判断`专属角色`下是否有人员
-
-				// 删除
-				await this.sysRoleRepo.delete({ roleId: catalogueRole.roleId })
-			}
-		}
-	}
-
 	// 判断传入的`roleIdList`是否存在,会抛出异常
 	async checkThrowExist(str: Array<string> | string) {
 		const checkRoleIdList = _.isArray(str) ? str : [str]
 		// 查询所有的角色
-		const roleList = await this.sysRoleRepo.find({
-			where: {
-				roleType: sysRoleTypeEnum.ROLE.code,
-			},
-		})
+		const roleList = await this.sysRoleRepo.find()
 		if (_.isEmpty(roleList)) {
 			return []
 		}

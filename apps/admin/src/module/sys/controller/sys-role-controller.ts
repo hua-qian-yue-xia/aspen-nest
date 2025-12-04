@@ -3,22 +3,22 @@ import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 import { R, router } from "@aspen/aspen-core"
 
 import { SysRoleService } from "../service/sys-role-service"
-import { SysRoleEntity, SysRoleSaveDto } from "../common/entity/sys-role-entity"
+import { SysRoleEntity, SysRoleQueryDto, SysRoleSaveDto } from "../common/entity/sys-role-entity"
 
 @router.controller({ prefix: "sys/role", summary: "角色管理" })
 export class SysRoleController {
 	constructor(private readonly sysRoleService: SysRoleService) {}
 
 	@router.post({
-		summary: "树状结构",
-		router: "/tree",
+		summary: "分页结构",
+		router: "/scopePage",
 		resType: {
-			wrapper: "tree",
+			wrapper: "page",
 			type: SysRoleEntity,
 		},
 	})
-	async tree(@Body() dto: SysRoleEntity) {
-		const list = await this.sysRoleService.scopeTree(dto)
+	async scopePage(@Body() dto: SysRoleQueryDto) {
+		const list = await this.sysRoleService.scopePage(dto)
 		return R.success(list)
 	}
 
@@ -30,8 +30,8 @@ export class SysRoleController {
 			type: SysRoleEntity,
 		},
 	})
-	async select(@Body() pa: SysRoleEntity) {
-		const list = await this.sysRoleService.scopeTree(pa)
+	async select(@Body() pa: SysRoleQueryDto) {
+		const list = await this.sysRoleService.scopePage(pa)
 		return R.success(list)
 	}
 

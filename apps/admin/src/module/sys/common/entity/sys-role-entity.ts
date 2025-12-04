@@ -20,10 +20,6 @@ export class SysRoleEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "角色id" })
 	roleId: string
 
-	@Column({ type: "varchar", length: 36, default: "-99", comment: "父角色id" })
-	@AspenSummary({ summary: "父角色id" })
-	parentRoleId: string
-
 	@Column({ type: "varchar", length: 64, comment: "角色名" })
 	@AspenSummary({ summary: "角色名" })
 	roleName: string
@@ -31,14 +27,6 @@ export class SysRoleEntity extends BaseRecordDb {
 	@Column({ type: "varchar", length: 64, comment: "角色编码" })
 	@AspenSummary({ summary: "角色编码" })
 	roleCode: string
-
-	@Column({ type: "char", length: 32, comment: "角色类型" })
-	@AspenSummary({ summary: "角色类型" })
-	roleType: string
-
-	@Column({ type: "boolean", default: false, comment: "是否为角色目录的专属部门" })
-	@AspenSummary({ summary: "是否为角色目录的专属部门" })
-	isCatalogueRole: boolean
 
 	@Column({ type: "int", default: 0, comment: "排序" })
 	@AspenSummary({ summary: "排序" })
@@ -59,14 +47,19 @@ export class SysRoleEntity extends BaseRecordDb {
 	// 生成目录的专属角色
 	static generateCatalogueRole(entity: SysRoleEntity) {
 		const catalogueRole = new SysRoleEntity()
-		catalogueRole.parentRoleId = entity.roleId
 		catalogueRole.roleName = entity.roleName
 		catalogueRole.roleCode = entity.roleCode
-		catalogueRole.roleType = sysRoleTypeEnum.ROLE.code
-		catalogueRole.isCatalogueRole = true
 		catalogueRole.sort = 9999
 		return catalogueRole
 	}
+}
+
+export class SysRoleQueryDto {
+	@AspenSummary({ summary: "角色id", rule: AspenRule() })
+	roleId?: string
+
+	@AspenSummary({ summary: "角色名、角色编码", rule: AspenRule() })
+	quick?: string
 }
 
 /*
@@ -78,17 +71,11 @@ export class SysRoleSaveDto {
 	@AspenSummary({ summary: "角色id", rule: AspenRule() })
 	roleId: string
 
-	@AspenSummary({ summary: "父角色id", rule: AspenRule() })
-	parentRoleId?: number
-
 	@AspenSummary({ summary: "角色名", rule: AspenRule().isNotEmpty() })
 	roleName: string
 
 	@AspenSummary({ summary: "角色编码", rule: AspenRule().isNotEmpty() })
 	roleCode: string
-
-	@AspenSummary({ summary: "角色类型", rule: AspenRule().isNotEmpty() })
-	roleType: string
 
 	@AspenSummary({ summary: "排序" })
 	sort: number
@@ -96,7 +83,6 @@ export class SysRoleSaveDto {
 	toEntity(): SysRoleEntity {
 		const obj = plainToInstance(SysRoleEntity, this)
 		if (_.isEmpty(obj.roleId)) obj.roleId = undefined
-		if (_.isEmpty(obj.parentRoleId)) obj.parentRoleId = SysRoleEntity.getNotExistRootRoleId()
 		if (_.isEmpty(obj.sort)) obj.sort = 0
 		return obj
 	}
