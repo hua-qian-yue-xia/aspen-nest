@@ -1,4 +1,14 @@
-import { Column, Entity, JoinColumn, JoinTable, ManyToMany, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+import {
+	Brackets,
+	Column,
+	Entity,
+	JoinColumn,
+	JoinTable,
+	ManyToMany,
+	ManyToOne,
+	PrimaryGeneratedColumn,
+	Repository,
+} from "typeorm"
 import { Exclude, plainToInstance } from "class-transformer"
 
 import { AspenRule, AspenSummary, BaseUser } from "@aspen/aspen-core"
@@ -58,7 +68,7 @@ export class SysUserEntity extends BaseUser {
  * ---------------------------------------------------------------
  */
 export class SysUserSaveDto {
-	@AspenSummary({ summary: "登录名", rule: AspenRule() })
+	@AspenSummary({ summary: "用户id", rule: AspenRule() })
 	userId: string
 
 	@AspenSummary({ summary: "登录名", rule: AspenRule().isNotEmpty() })
@@ -89,6 +99,60 @@ export class SysUserSaveDto {
 		if (_.isEmpty(obj.enable)) obj.enable = true
 		if (_.isEmpty(obj.sort)) obj.sort = 0
 		return obj
+	}
+}
+
+/*
+ * ---------------------------------------------------------------
+ * ## 用户-查询
+ * ---------------------------------------------------------------
+ */
+export class SysUserQueryDto {
+	@AspenSummary({ summary: "登录名、用户昵称、用户手机号", rule: AspenRule() })
+	quick?: string
+
+	@AspenSummary({ summary: "是否启用", rule: AspenRule() })
+	enable?: boolean
+
+	@AspenSummary({ summary: "部门id列表", rule: AspenRule() })
+	deptIds?: Array<string>
+
+	@AspenSummary({ summary: "是否包含`deptIds`条件", rule: AspenRule() })
+	includeDeptIds?: boolean
+
+	@AspenSummary({ summary: "角色id列表", rule: AspenRule() })
+	roleIds?: Array<string>
+
+	createQueryBuilder(repo: Repository<SysUserEntity>) {
+		const queryBuilder = repo
+			.createQueryBuilder("a")
+			.leftJoinAndSelect("a.userRoles", "role")
+			.leftJoinAndSelect("a.userDepts", "dept")
+		if (!_.isEmpty(this.quick)) {
+			queryBuilder.where(
+				new Brackets((qb) =>
+					qb
+						.where(`a.username like :quick`, { quick: `%${this.quick}%` })
+						.orWhere(`a.user_nickname like :quick`, { quick: `%${this.quick}%` })
+						.orWhere(`a.mobile like :quick`, { quick: `%${this.quick}%` }),
+				),
+			)
+		}
+		if (!_.isEmpty(this.enable)) {
+			queryBuilder.where("a.enable = :enable", { enable: this.enable })
+		}
+		if (!_.isEmpty(this.deptIds)) {
+			if (this.includeDeptIds == false) {
+				queryBuilder.where("dept.deptId NOT IN (:...deptIds)", { deptIds: this.deptIds })
+			} else {
+				queryBuilder.where("dept.deptId IN (:...deptIds)", { deptIds: this.deptIds })
+			}
+		}
+		if (!_.isEmpty(this.roleIds)) {
+			queryBuilder.where("role.roleId IN (:...roleIds)", { roleIds: this.roleIds })
+		}
+		queryBuilder.orderBy("a.sort", "DESC").addOrderBy("a.userId", "DESC")
+		return queryBuilder
 	}
 }
 

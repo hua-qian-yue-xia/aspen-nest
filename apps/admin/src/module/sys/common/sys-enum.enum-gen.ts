@@ -58,6 +58,10 @@ export class SysMenuTypeEnum extends BaseEnum {
 		code: "200",
 		summary: "目录",
 	}
+	readonly PERM = {
+		code: "300",
+		summary: "能力/权限",
+	}
 }
 
 export const sysMenuTypeEnum = new SysMenuTypeEnum()
@@ -84,41 +88,9 @@ export const sysMenuPositionEnum = new SysMenuPositionEnum()
  * ## 部门相关枚举
  * ---------------------------------------------------------------
  */
-@gen.dict({
-	key: "sys_dept_type",
-	summary: "部门类型",
-})
-export class SysDeptTypeEnum extends BaseEnum {
-	readonly DEPT = {
-		code: "100",
-		summary: "部门",
-	}
-	readonly DEPT_CATALOGUE = {
-		code: "200",
-		summary: "部门目录",
-	}
-}
-
-export const sysDeptTypeEnum = new SysDeptTypeEnum()
 
 /*
  * ---------------------------------------------------------------
  * ## 角色相关枚举
  * ---------------------------------------------------------------
  */
-@gen.dict({
-	key: "sys_role_type",
-	summary: "角色类型",
-})
-export class SysRoleTypeEnum extends BaseEnum {
-	readonly ROLE = {
-		code: "100",
-		summary: "角色",
-	}
-	readonly ROLE_CATALOGUE = {
-		code: "200",
-		summary: "角色目录",
-	}
-}
-
-export const sysRoleTypeEnum = new SysRoleTypeEnum()

@@ -1,15 +1,15 @@
 import { Injectable, Logger } from "@nestjs/common"
 
 import { InjectRepository } from "@nestjs/typeorm"
-import { In, Repository } from "typeorm"
+import { Repository } from "typeorm"
 
 import * as _ from "radash"
 
 import { exception, RedisTool } from "@aspen/aspen-core"
 
 import { SysDeptEntity } from "../../common/entity/sys-dept-entity"
-import { sysDeptTypeEnum } from "../../common/sys-enum.enum-gen"
 import { SysUserEntity } from "../../common/entity/sys-user-entity"
+import { SysDeptCountTotalBO } from "./BO/sys-dept-bo"
 
 @Injectable()
 export class SysDeptShare {
@@ -37,40 +37,6 @@ export class SysDeptShare {
 		return this.sysDeptRep.save(newRootDept)
 	}
 
-	// 为`isCatalogueDpet`为`true`的目录的专属部门
-	async generateOrUpdateCatalogueDpet(saveObj: SysDeptEntity) {
-		const catalogueDpet = await this.sysDeptRep.findOneBy({
-			deptParentId: saveObj.deptId,
-			isCatalogueDpet: true,
-		})
-		const targetDeptType = saveObj.deptType
-		// 把部门从`部门`修改到`部门目录`
-		if (targetDeptType === sysDeptTypeEnum.DEPT_CATALOGUE.code) {
-			const catalogueDpetObj = SysDeptEntity.generateCatalogueDpet(saveObj)
-			// 新增
-			if (_.isEmpty(catalogueDpet)) {
-				catalogueDpetObj.deptId = undefined
-				await this.sysDeptRep.save(catalogueDpetObj)
-			}
-			// 更新
-			else {
-				await this.sysDeptRep.update({ deptId: catalogueDpet.deptId }, catalogueDpetObj)
-			}
-			// 迁移用户的部门
-			await this.migrateDeptUserThrow(saveObj.deptId, catalogueDpetObj.deptId)
-			return
-		}
-		// 把部门从`部门目录`修改到`部门`
-		if (targetDeptType === sysDeptTypeEnum.DEPT.code) {
-			if (!catalogueDpet) return
-			// 迁移用户的部门
-			await this.migrateDeptUserThrow(catalogueDpet.deptId, saveObj.deptId)
-			// 删除
-			await this.sysDeptRep.delete({ deptId: catalogueDpet.deptId })
-			return
-		}
-	}
-
 	// 判断传入的`deptIdList`是否存在,会抛出异常
 	async checkExistThrow(str: Array<string> | string) {
 		const checkDeptIdList = _.isArray(str) ? str : [str]
@@ -86,6 +52,52 @@ export class SysDeptShare {
 			}
 		}
 		return deptList.filter((v) => checkDeptIdList.includes(v.deptId))
+	}
+
+	// 查询部门统计
+	async getDeptCountTotal(deptIdList: Array<string>) {
+		if (_.isEmpty(deptIdList)) return []
+
+		await this.checkExistThrow(deptIdList)
+
+		const allDepts = await this.sysDeptRep.find({ select: ["deptId", "deptParentId", "deptName"] })
+		const childrenMap = new Map<string, Array<string>>()
+		for (const d of allDepts) {
+			const pid = d.deptParentId
+			if (!childrenMap.has(pid)) childrenMap.set(pid, [])
+			childrenMap.get(pid)!.push(d.deptId)
+		}
+
+		const result: Array<SysDeptCountTotalBO> = []
+		for (const rootId of deptIdList) {
+			const descendants: Array<string> = []
+			const queue: Array<string> = [...(childrenMap.get(rootId) ?? [])]
+			while (queue.length) {
+				const id = queue.shift()!
+				descendants.push(id)
+				const kids = childrenMap.get(id)
+				if (kids && kids.length) queue.push(...kids)
+			}
+
+			const bo = new SysDeptCountTotalBO()
+			bo.dpetId = rootId
+			bo.deptName = allDepts.find((v) => v.deptId === rootId)?.deptName ?? ""
+			bo.dpetCount = descendants.length
+			if (descendants.length > 0) {
+				const raw = await this.sysUserRep
+					.createQueryBuilder("user")
+					.innerJoin("user.userDepts", "dept")
+					.where("dept.dept_id IN (:...ids)", { ids: descendants })
+					.select("COUNT(DISTINCT user.user_id)", "cnt")
+					.getRawOne<{ cnt: string }>()
+				bo.personCount = Number(raw?.cnt ?? 0)
+			} else {
+				bo.personCount = 0
+			}
+			result.push(bo)
+		}
+
+		return result
 	}
 
 	// 迁移用户的部门

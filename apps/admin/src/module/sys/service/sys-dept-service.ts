@@ -9,7 +9,6 @@ import { exception, tool } from "@aspen/aspen-core"
 
 import { SysDeptEntity, SysDeptQueryDto, SysDeptSaveDto } from "../common/entity/sys-dept-entity"
 import { SysDeptShare } from "./share/sys-dept.share"
-import { sysDeptTypeEnum } from "../common/sys-enum.enum-gen"
 
 @Injectable()
 export class SysDeptService {
@@ -31,26 +30,28 @@ export class SysDeptService {
 		const rootDept = await this.sysDeptShare.getOrCreateRootDept()
 		if (!rootDept) throw new exception.runtime("根部门不存在")
 		// 查询所有部门
-		const deptListBuilder = this.sysDeptRep.createQueryBuilder("sys_dept")
-		if (!_.isEmpty(query.deptNameLike)) {
-			deptListBuilder.where("sys_dept.deptName like :deptNameLike", { deptNameLike: `%${query.deptNameLike}%` })
-		}
-		deptListBuilder.orderBy("sys_dept.is_catalogue_dpet", "DESC").addOrderBy("sys_dept.sort", "DESC")
+		const deptListBuilder = this.sysDeptRep.createQueryBuilder("sys_dept").orderBy("sys_dept.sort", "DESC")
 		const deptList = await deptListBuilder.getMany()
 		// 转换为树状结构
-		const tree = tool.tree.toTree(deptList, {
+		let tree = tool.tree.toTree(deptList, {
 			idKey: "deptId",
 			parentIdKey: "deptParentId",
 			childrenKey: "children",
 			rootParentValue: rootDept.deptParentId,
 			sort: (a, b) => {
-				if (a.isCatalogueDpet !== b.isCatalogueDpet) {
-					return a.isCatalogueDpet ? -1 : 1
-				}
 				return b.sort - a.sort
 			},
 			excludeKeys: ["delAt", "delBy", "updateBy", "updateAt"],
 		})
+		if (!_.isEmpty(query.deptNameLike)) {
+			tree = tool.tree.filter(
+				tree,
+				(node) => {
+					return node.deptName.includes(query.deptNameLike)
+				},
+				"children",
+			)
+		}
 		return tree
 	}
 
@@ -63,8 +64,6 @@ export class SysDeptService {
 	async save(dto: SysDeptSaveDto): Promise<SysDeptEntity> {
 		// 判断父部门是否存在
 		const saveObj = await this.sysDeptRep.save(this.sysDeptRep.create(dto.toEntity()))
-		// 为`isCatalogueDpet`为`true`的目录的专属部门
-		await this.sysDeptShare.generateOrUpdateCatalogueDpet(saveObj)
 		return saveObj
 	}
 
@@ -76,9 +75,20 @@ export class SysDeptService {
 		}
 		const entity = dto.toEntity()
 		await this.sysDeptRep.update({ deptId: dto.deptId }, entity)
-		// 为`isCatalogueDpet`为`true`的目录的专属部门
-		if (dto.deptType !== deptDetail.deptType) {
-			await this.sysDeptShare.generateOrUpdateCatalogueDpet(entity)
+	}
+
+	// 删除部门
+	async delete(deptIds: Array<string>) {
+		this.sysDeptShare.checkExistThrow(deptIds)
+		const deptCountTotalList = await this.sysDeptShare.getDeptCountTotal(deptIds)
+		for (const dept of deptCountTotalList) {
+			if (dept.dpetCount > 0) {
+				throw new exception.validator(`部门"${dept.deptName}"下存在子部门,不能删除`)
+			}
+			if (dept.personCount > 0) {
+				throw new exception.validator(`部门"${dept.deptName}"下存在用户,不能删除`)
+			}
 		}
+		await this.sysDeptRep.softDelete(deptIds)
 	}
 }

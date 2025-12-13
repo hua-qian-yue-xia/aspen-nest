@@ -1,4 +1,4 @@
-import { Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Brackets, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, Repository } from "typeorm"
 
 import { plainToInstance } from "class-transformer"
 import * as _ from "radash"
@@ -7,7 +7,6 @@ import { AspenRule, AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
 
 import { SysUserEntity } from "./sys-user-entity"
 import { SysMenuEntity } from "./sys-menu-entity"
-import { sysRoleTypeEnum } from "../sys-enum.enum-gen"
 
 /*
  * ---------------------------------------------------------------
@@ -60,6 +59,24 @@ export class SysRoleQueryDto {
 
 	@AspenSummary({ summary: "角色名、角色编码", rule: AspenRule() })
 	quick?: string
+
+	createQueryBuilder(repo: Repository<SysRoleEntity>) {
+		const queryBuilder = repo.createQueryBuilder("a")
+		if (!_.isEmpty(this.roleId)) {
+			queryBuilder.where("a.role_id = :roleId", { roleId: this.roleId })
+		}
+		if (!_.isEmpty(this.quick)) {
+			queryBuilder.where(
+				new Brackets((qb) =>
+					qb
+						.where(`a.role_name like :quick`, { quick: `%${this.quick}%` })
+						.orWhere(`a.role_code like :quick`, { quick: `%${this.quick}%` }),
+				),
+			)
+		}
+		queryBuilder.orderBy("a.sort", "DESC")
+		return queryBuilder
+	}
 }
 
 /*

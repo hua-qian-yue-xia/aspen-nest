@@ -1,5 +1,5 @@
 import { R, router } from "@aspen/aspen-core"
-import { Body, Param } from "@nestjs/common"
+import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { SysDeptService } from "../service/sys-dept-service"
 
@@ -9,7 +9,7 @@ import { SysDeptQueryDto, SysDeptSaveDto, SysDeptEntity } from "../common/entity
 export class SysDeptController {
 	constructor(private readonly sysDeptService: SysDeptService) {}
 
-	@router.get({
+	@router.post({
 		summary: "分页",
 		router: "/page",
 		resType: {
@@ -17,12 +17,12 @@ export class SysDeptController {
 			wrapper: "page",
 		},
 	})
-	async page(@Body() body: SysDeptSaveDto) {
+	async page(@Body() body: SysDeptQueryDto) {
 		const list = await this.sysDeptService.scopePage()
 		return R.success(list)
 	}
 
-	@router.get({
+	@router.post({
 		summary: "下拉",
 		description: "没有权限控制",
 		router: "/select",
@@ -31,7 +31,7 @@ export class SysDeptController {
 			wrapper: "page",
 		},
 	})
-	async select() {
+	async select(@Body() body: SysDeptQueryDto) {
 		const list = await this.sysDeptService.scopePage()
 		return R.success(list)
 	}
@@ -80,6 +80,18 @@ export class SysDeptController {
 	})
 	async edit(@Body() dto: SysDeptSaveDto) {
 		await this.sysDeptService.update(dto)
+		return R.success()
+	}
+
+	@router.delete({
+		summary: "删除",
+		router: "/:deptIds",
+	})
+	async delete(
+		@Param("deptIds", new ParseArrayPipe({ items: String, separator: "," }))
+		deptIds: Array<string>,
+	) {
+		await this.sysDeptService.delete(deptIds)
 		return R.success()
 	}
 }

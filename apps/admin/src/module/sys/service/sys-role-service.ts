@@ -21,7 +21,7 @@ export class SysRoleService {
 	// 分页结构
 	async scopePage(query: SysRoleQueryDto) {
 		// 查询所有部门
-		const deptListBuilder = this.sysRoleShare.queryDtoBuild(query)
+		const deptListBuilder = query.createQueryBuilder(this.sysRoleRepo)
 		const deptList = await deptListBuilder.pageMany()
 		return deptList
 	}

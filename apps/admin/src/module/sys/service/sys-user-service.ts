@@ -8,7 +8,7 @@ import { BasePageVo, exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
-import { SysUserEntity, SysUserAdminLoginDto, SysUserSaveDto } from "../common/entity/sys-user-entity"
+import { SysUserEntity, SysUserAdminLoginDto, SysUserSaveDto, SysUserQueryDto } from "../common/entity/sys-user-entity"
 import { SysDeptShare } from "./share/sys-dept.share"
 import { SysRoleShare } from "./share/sys-role.share"
 import { SysUserShare } from "./share/sys-user.share"
@@ -26,8 +26,8 @@ export class SysUserService {
 	) {}
 
 	// 分页查询用户
-	async scopePage(dto: SysUserEntity): Promise<BasePageVo<SysUserEntity>> {
-		return this.sysUserRepo.page({ relations: ["userRoles", "userDepts"] })
+	async scopePage(dto: SysUserQueryDto) {
+		return dto.createQueryBuilder(this.sysUserRepo).pageMany()
 	}
 
 	// 根据用户id查询用户

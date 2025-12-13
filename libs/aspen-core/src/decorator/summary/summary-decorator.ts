@@ -113,5 +113,6 @@ export function AspenSummary(options: AspenSummaryOptions): PropertyDecorator {
 	if (!options.rule || !options.rule.ruleList.length) {
 		ruleDecorators.push(IsOptional({ groups: groups }))
 	}
-	return applyDecorators(ApiProperty({ description: description || summary }), ...ruleDecorators)
+	const isRequired = options.rule?.ruleList.some((item) => item.key === IS_NOT_EMPTY) ?? false
+	return applyDecorators(ApiProperty({ description: description || summary, required: isRequired }), ...ruleDecorators)
 }

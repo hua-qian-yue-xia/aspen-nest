@@ -1,15 +1,15 @@
-import { Body, Param, ParseArrayPipe, Query } from "@nestjs/common"
+import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
 import { SysUserService } from "../service/sys-user-service"
-import { SysUserEntity, SysUserSaveDto, SysUserAdminLoginDto } from "../common/entity/sys-user-entity"
+import { SysUserEntity, SysUserSaveDto, SysUserAdminLoginDto, SysUserQueryDto } from "../common/entity/sys-user-entity"
 
 @router.controller({ prefix: "sys/user", summary: "用户管理" })
 export class SysUserController {
 	constructor(private readonly sysUserService: SysUserService) {}
 
-	@router.get({
+	@router.post({
 		summary: "分页",
 		router: "/page",
 		resType: {
@@ -17,7 +17,7 @@ export class SysUserController {
 			wrapper: "page",
 		},
 	})
-	async page(@Body() dto: SysUserEntity) {
+	async page(@Body() dto: SysUserQueryDto) {
 		const pageList = await this.sysUserService.scopePage(dto)
 		return R.success(pageList)
 	}
@@ -31,7 +31,7 @@ export class SysUserController {
 			wrapper: "page",
 		},
 	})
-	async select(@Body() dto: SysUserEntity) {
+	async select(@Body() dto: SysUserQueryDto) {
 		const pageList = await this.sysUserService.scopePage(dto)
 		return R.success(pageList)
 	}

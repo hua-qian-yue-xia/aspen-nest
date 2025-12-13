@@ -1,6 +1,7 @@
-import { Column, Entity, OneToMany, PrimaryGeneratedColumn } from "typeorm"
-
+import { Brackets, Column, Entity, PrimaryGeneratedColumn, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
+
+import * as classValidator from "class-validator"
 import * as _ from "radash"
 
 import { AspenRule, AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
@@ -32,15 +33,19 @@ export class SysMenuEntity extends BaseRecordDb {
 
 	@Column({ type: "char", length: 32, nullable: true, comment: "菜单位置" })
 	@AspenSummary({ summary: "菜单位置" })
-	position: string
+	position?: string
 
 	@Column({ type: "varchar", length: 64, nullable: true, comment: "图标" })
 	@AspenSummary({ summary: "图标" })
-	icon: string
+	icon?: string
 
 	@Column({ type: "varchar", length: 128, nullable: true, comment: "路由地址" })
 	@AspenSummary({ summary: "路由地址" })
-	path: string
+	path?: string
+
+	@Column({ type: "varchar", length: 128, nullable: true, comment: "权限标识" })
+	@AspenSummary({ summary: "权限标识" })
+	perm?: string
 
 	@Column({ type: "bit", default: true, comment: "是否显示" })
 	@AspenSummary({ summary: "是否显示" })
@@ -77,6 +82,30 @@ export class SysMenuQueryDto {
 
 	@AspenSummary({ summary: "菜单类型", rule: AspenRule() })
 	type?: string
+
+	createQueryBuilder(repo: Repository<SysMenuEntity>) {
+		const queryBuilder = repo.createQueryBuilder("menu")
+		if (!_.isEmpty(this.menuId)) {
+			queryBuilder.where("menu.menu_id = :menuId", { menuId: this.menuId })
+		}
+		if (!_.isEmpty(this.parentId)) {
+			queryBuilder.where("menu.parent_id = :parentId", { parentId: this.parentId })
+		}
+		if (!_.isEmpty(this.quick)) {
+			queryBuilder.where(
+				new Brackets((qb) =>
+					qb
+						.where(`menu.menu_name like :quick`, { quick: `%${this.quick}%` })
+						.orWhere(`menu.path like :quick`, { quick: `%${this.quick}%` }),
+				),
+			)
+		}
+		if (!_.isEmpty(this.type)) {
+			queryBuilder.where("menu.type = :type", { type: this.type })
+		}
+		queryBuilder.orderBy("menu.sort", "DESC").addOrderBy("menu.menu_id", "DESC")
+		return queryBuilder
+	}
 }
 
 /*
@@ -98,13 +127,16 @@ export class SysMenuSaveDto {
 	type: string
 
 	@AspenSummary({ summary: "菜单位置", rule: AspenRule() })
-	position: string
+	position?: string
 
-	@AspenSummary({ summary: "图标", rule: AspenRule().isNotEmpty() })
-	icon: string
+	@AspenSummary({ summary: "图标", rule: AspenRule() })
+	icon?: string
 
 	@AspenSummary({ summary: "路由地址", rule: AspenRule() })
-	path: string
+	path?: string
+
+	@AspenSummary({ summary: "权限标识", rule: AspenRule() })
+	perm?: string
 
 	@AspenSummary({ summary: "是否显示", rule: AspenRule() })
 	visible?: boolean
@@ -128,6 +160,8 @@ export class SysMenuSaveDto {
 		if (_.isEmpty(obj.menuId)) obj.menuId = undefined
 		if (_.isEmpty(obj.parentId)) obj.parentId = SysMenuEntity.getNotExistRootMenuId()
 		if (_.isEmpty(obj.sort)) obj.sort = 0
+		classValidator.isEmpty(obj.icon)
+		classValidator.isEmpty(obj.path)
 		return obj
 	}
 
@@ -137,9 +171,18 @@ export class SysMenuSaveDto {
 		if (_.isEmpty(obj.menuId)) obj.menuId = undefined
 		if (_.isEmpty(obj.parentId)) obj.parentId = SysMenuEntity.getNotExistRootMenuId()
 		if (_.isEmpty(obj.sort)) obj.sort = 0
-		obj.position = null
-		obj.path = null
-		obj.keepAlive = false
+		classValidator.isEmpty(obj.icon)
+		classValidator.isEmpty(obj.path)
+		return obj
+	}
+
+	// 转换到能力/权限实体
+	toPermEntity() {
+		const obj = plainToInstance(SysMenuEntity, this)
+		if (_.isEmpty(obj.menuId)) obj.menuId = undefined
+		if (_.isEmpty(obj.parentId)) obj.parentId = SysMenuEntity.getNotExistRootMenuId()
+		if (_.isEmpty(obj.sort)) obj.sort = 0
+		classValidator.isEmpty(obj.perm)
 		return obj
 	}
 }

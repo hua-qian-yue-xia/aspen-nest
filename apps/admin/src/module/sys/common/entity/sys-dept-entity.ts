@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn, Repository } from "typeorm"
 
 import { plainToInstance } from "class-transformer"
 import * as _ from "radash"
@@ -6,7 +6,6 @@ import * as _ from "radash"
 import { AspenRule, AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
 
 import { SysUserEntity } from "./sys-user-entity"
-import { sysDeptTypeEnum } from "../sys-enum.enum-gen"
 
 /*
  * ---------------------------------------------------------------
@@ -27,14 +26,6 @@ export class SysDeptEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "部门名" })
 	deptName: string
 
-	@Column({ type: "char", length: 32, comment: "部门类型" })
-	@AspenSummary({ summary: "部门类型" })
-	deptType: string
-
-	@Column({ type: "boolean", default: false, comment: "是否为部门目录的专属部门" })
-	@AspenSummary({ summary: "是否为部门目录的专属部门" })
-	isCatalogueDpet: boolean
-
 	@Column({ type: "int", default: 0, comment: "排序" })
 	@AspenSummary({ summary: "排序" })
 	sort: number
@@ -51,17 +42,6 @@ export class SysDeptEntity extends BaseRecordDb {
 	static getNotExistRootDeptId() {
 		return "-99"
 	}
-
-	// 生成目录的专属部门
-	static generateCatalogueDpet(entity: SysDeptEntity) {
-		const catalogueDpet = new SysDeptEntity()
-		catalogueDpet.deptParentId = entity.deptId
-		catalogueDpet.deptName = entity.deptName
-		catalogueDpet.deptType = sysDeptTypeEnum.DEPT.code
-		catalogueDpet.isCatalogueDpet = true
-		catalogueDpet.sort = 9999
-		return catalogueDpet
-	}
 }
 
 /*
@@ -75,6 +55,18 @@ export class SysDeptQueryDto {
 
 	@AspenSummary({ summary: "部门名", rule: AspenRule() })
 	deptNameLike?: string
+
+	createQueryBuilder(repo: Repository<SysDeptEntity>) {
+		const queryBuilder = repo.createQueryBuilder("dept")
+		if (!_.isEmpty(this.deptParentId)) {
+			queryBuilder.where("sys_dept.dept_parent_id = :deptParentId", { deptParentId: this.deptParentId })
+		}
+		if (!_.isEmpty(this.deptNameLike)) {
+			queryBuilder.where(`sys_dept.dept_name like :deptNameLike`, { deptNameLike: `%${this.deptNameLike}%` })
+		}
+		queryBuilder.orderBy("sys_dept.sort", "DESC").addOrderBy("sys_dept.dept_id", "DESC")
+		return queryBuilder
+	}
 }
 
 /*
@@ -91,9 +83,6 @@ export class SysDeptSaveDto {
 
 	@AspenSummary({ summary: "部门名", rule: AspenRule().isNotEmpty() })
 	deptName: string
-
-	@AspenSummary({ summary: "部门类型", rule: AspenRule().isNotEmpty() })
-	deptType: string
 
 	@Column({ type: "int", default: 0, comment: "排序" })
 	@AspenSummary({ summary: "排序" })

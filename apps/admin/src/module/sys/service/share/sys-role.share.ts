@@ -8,7 +8,6 @@ import * as _ from "radash"
 import { exception, RedisTool } from "@aspen/aspen-core"
 
 import { SysRoleEntity, SysRoleQueryDto } from "../../common/entity/sys-role-entity"
-import { sysRoleTypeEnum } from "../../common/sys-enum.enum-gen"
 
 @Injectable()
 export class SysRoleShare {
@@ -16,24 +15,6 @@ export class SysRoleShare {
 		@InjectRepository(SysRoleEntity) private readonly sysRoleRepo: Repository<SysRoleEntity>,
 		private readonly redisTool: RedisTool,
 	) {}
-
-	queryDtoBuild(query: SysRoleQueryDto) {
-		const queryBuilder = this.sysRoleRepo.createQueryBuilder("sys_role")
-		if (!_.isEmpty(query.roleId)) {
-			queryBuilder.where("sys_role.role_id = :roleId", { roleId: query.roleId })
-		}
-		if (!_.isEmpty(query.quick)) {
-			queryBuilder.where(
-				new Brackets((qb) =>
-					qb
-						.where(`sys_role.role_name like :quick`, { quick: `%${query.quick}%` })
-						.orWhere(`sys_role.role_code like :quick`, { quick: `%${query.quick}%` }),
-				),
-			)
-		}
-		queryBuilder.orderBy("sys_role.sort", "DESC")
-		return queryBuilder
-	}
 
 	// 角色名是否重复
 	async isRoleNameDuplicate(entity: SysRoleEntity): Promise<boolean> {

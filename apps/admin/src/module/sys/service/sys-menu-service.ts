@@ -13,7 +13,7 @@ import { SysMenuShare } from "./share/sys-menu.share"
 @Injectable()
 export class SysMenuService {
 	constructor(
-		@InjectRepository(SysMenuEntity) private readonly sysMenuEntity: Repository<SysMenuEntity>,
+		@InjectRepository(SysMenuEntity) private readonly sysMenuRep: Repository<SysMenuEntity>,
 
 		private readonly sysMenuShare: SysMenuShare,
 		private readonly redisTool: RedisTool,
@@ -21,7 +21,7 @@ export class SysMenuService {
 
 	// 分页查询
 	async scopePage(query: SysMenuQueryDto) {
-		const page = this.sysMenuShare.queryDtoBuild(query).pageMany()
+		const page = query.createQueryBuilder(this.sysMenuRep).pageMany()
 	}
 
 	// 树状接口
@@ -30,7 +30,7 @@ export class SysMenuService {
 		if (rootMenuId !== SysMenuEntity.getNotExistRootMenuId()) {
 			query.parentId = rootMenuId
 		}
-		const treeList = await this.sysMenuShare.queryDtoBuild(query).getMany()
+		const treeList = await query.createQueryBuilder(this.sysMenuRep).getMany()
 		// 转换为树状结构
 		const tree = tool.tree.toTree(treeList, {
 			idKey: "menuId",
@@ -48,7 +48,7 @@ export class SysMenuService {
 	// 根据部门id查询部门
 	@cache.able({ key: "sys:menu:id", value: ([menuId]) => `${menuId}`, expiresIn: "2h" })
 	async getByMenuId(menuId: string) {
-		return this.sysMenuEntity.findOneBy({ menuId: menuId })
+		return this.sysMenuRep.findOneBy({ menuId: menuId })
 	}
 
 	// 新增菜单
@@ -57,7 +57,7 @@ export class SysMenuService {
 		if (await this.isPathDuplicate(dto.path, null)) {
 			throw new DOMException(`路径"${dto.path}"重复`)
 		}
-		const saveObj = await this.sysMenuEntity.save(dto.toEntity())
+		const saveObj = await this.sysMenuRep.save(dto.toEntity())
 		return saveObj
 	}
 
@@ -72,17 +72,17 @@ export class SysMenuService {
 			obj.position = null
 			obj.path = null
 		}
-		await this.sysMenuEntity.update({ menuId: dto.menuId }, obj)
+		await this.sysMenuRep.update({ menuId: dto.menuId }, obj)
 	}
 
 	// 根据菜单ids删除菜单
 	async delByIds(menuIds: Array<string>) {
 		// 查询存不存在
-		const menuList = await this.sysMenuEntity.find({ where: { menuId: In(menuIds) } })
+		const menuList = await this.sysMenuRep.find({ where: { menuId: In(menuIds) } })
 		if (!menuList.length) return 0
 		const delMenuIds = menuList.map((v) => v.menuId)
 		// 删除数据
-		const { affected } = await this.sysMenuEntity.softDelete(delMenuIds)
+		const { affected } = await this.sysMenuRep.softDelete(delMenuIds)
 		// 删除缓存
 		this.redisTool.del(delMenuIds.map((v) => `sys:menu:id:${v}`))
 		return affected ?? 0
@@ -90,7 +90,7 @@ export class SysMenuService {
 
 	// 菜单path是否重复
 	async isPathDuplicate(path: string, menuId?: string): Promise<boolean> {
-		const queryBuilder = this.sysMenuEntity.createQueryBuilder("menu").where("menu.path = :path", { path })
+		const queryBuilder = this.sysMenuRep.createQueryBuilder("menu").where("menu.path = :path", { path })
 		if (menuId) {
 			queryBuilder.andWhere("menu.menuId != :menuId", { menuId })
 		}
