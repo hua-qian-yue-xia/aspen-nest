@@ -1,3 +1,4 @@
+import { Brackets, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 import * as _ from "radash"
 
@@ -10,6 +11,29 @@ import { FrameDictEntity } from "@aspen/aspen-framework"
  * ---------------------------------------------------------------
  */
 export { FrameDictEntity }
+
+/*
+ * ---------------------------------------------------------------
+ * ## 字典-搜索
+ * ---------------------------------------------------------------
+ */
+export class FrameDictQueryDto {
+	@AspenSummary({ summary: "字典编码/名称", rule: AspenRule() })
+	quick?: string
+
+	createQueryBuilder(repo: Repository<FrameDictEntity>) {
+		const query = repo.createQueryBuilder("a")
+		if (!_.isEmpty(this.quick)) {
+			query.where(
+				new Brackets((qb) => {
+					qb.where("a.code LIKE :quick", { quick: `%${this.quick}%` })
+					qb.orWhere("a.summary LIKE :quick", { quick: `%${this.quick}%` })
+				}),
+			)
+		}
+		return query
+	}
+}
 
 /*
  * ---------------------------------------------------------------

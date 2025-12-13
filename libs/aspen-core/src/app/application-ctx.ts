@@ -1,5 +1,5 @@
 import { INestApplication, Type } from "@nestjs/common"
-
+import { FastifyRequest } from "fastify"
 import { ClsService } from "nestjs-cls"
 import * as _ from "radash"
 

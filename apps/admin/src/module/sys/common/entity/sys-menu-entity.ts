@@ -84,26 +84,26 @@ export class SysMenuQueryDto {
 	type?: string
 
 	createQueryBuilder(repo: Repository<SysMenuEntity>) {
-		const queryBuilder = repo.createQueryBuilder("menu")
+		const queryBuilder = repo.createQueryBuilder("a")
 		if (!_.isEmpty(this.menuId)) {
-			queryBuilder.where("menu.menu_id = :menuId", { menuId: this.menuId })
+			queryBuilder.where("a.menu_id = :menuId", { menuId: this.menuId })
 		}
 		if (!_.isEmpty(this.parentId)) {
-			queryBuilder.where("menu.parent_id = :parentId", { parentId: this.parentId })
+			queryBuilder.where("a.parent_id = :parentId", { parentId: this.parentId })
 		}
 		if (!_.isEmpty(this.quick)) {
 			queryBuilder.where(
 				new Brackets((qb) =>
 					qb
-						.where(`menu.menu_name like :quick`, { quick: `%${this.quick}%` })
-						.orWhere(`menu.path like :quick`, { quick: `%${this.quick}%` }),
+						.where(`a.menu_name like :quick`, { quick: `%${this.quick}%` })
+						.orWhere(`a.path like :quick`, { quick: `%${this.quick}%` }),
 				),
 			)
 		}
 		if (!_.isEmpty(this.type)) {
-			queryBuilder.where("menu.type = :type", { type: this.type })
+			queryBuilder.where("a.type = :type", { type: this.type })
 		}
-		queryBuilder.orderBy("menu.sort", "DESC").addOrderBy("menu.menu_id", "DESC")
+		queryBuilder.orderBy("a.sort", "DESC").addOrderBy("a.menu_id", "DESC")
 		return queryBuilder
 	}
 }

@@ -70,7 +70,7 @@ export class SysRoleQueryDto {
 				new Brackets((qb) =>
 					qb
 						.where(`a.role_name like :quick`, { quick: `%${this.quick}%` })
-						.orWhere(`a.role_code like :quick`, { quick: `%${this.quick}%` }),
+						.orWhere(`LOWER(a.role_code) like :quick`, { quick: `%${this.quick?.toLowerCase()}%` }),
 				),
 			)
 		}

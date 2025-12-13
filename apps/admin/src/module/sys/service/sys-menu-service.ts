@@ -2,6 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { In, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
+import * as _ from "radash"
 
 import { RedisTool, tool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
@@ -30,9 +31,13 @@ export class SysMenuService {
 		if (rootMenuId !== SysMenuEntity.getNotExistRootMenuId()) {
 			query.parentId = rootMenuId
 		}
-		const treeList = await query.createQueryBuilder(this.sysMenuRep).getMany()
+		const treeList = await this.sysMenuRep
+			.createQueryBuilder("a")
+			.orderBy("a.sort", "DESC")
+			.addOrderBy("a.menu_id", "DESC")
+			.getMany()
 		// 转换为树状结构
-		const tree = tool.tree.toTree(treeList, {
+		let tree = tool.tree.toTree(treeList, {
 			idKey: "menuId",
 			parentIdKey: "parentId",
 			childrenKey: "children",
@@ -42,6 +47,15 @@ export class SysMenuService {
 			},
 			excludeKeys: ["delAt", "delBy", "updateBy", "updateAt"],
 		})
+		if (!_.isEmpty(query.quick)) {
+			tree = tool.tree.filter(
+				tree,
+				(node) => {
+					return node.menuName.includes(query.quick)
+				},
+				"children",
+			)
+		}
 		return tree
 	}
 

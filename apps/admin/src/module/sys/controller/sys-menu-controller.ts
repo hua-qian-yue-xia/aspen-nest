@@ -22,7 +22,7 @@ export class SysMenuController {
 		return R.success(tree)
 	}
 
-	@router.get({
+	@router.post({
 		summary: "下拉(没有权限控制)",
 		router: "/select",
 		resType: {

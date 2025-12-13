@@ -1,5 +1,5 @@
 import { Global, Module } from "@nestjs/common"
-import { FastifyRequest } from "fastify"
+import { FastifyReply, FastifyRequest } from "fastify"
 
 import { ClsModule } from "nestjs-cls"
 
@@ -23,9 +23,10 @@ export class ApplicationCls {
 			imports: [
 				ClsModule.forRoot({
 					global: options.isGlobal ?? true,
-					middleware: {
+					guard: {
 						mount: true,
-						setup: (cls, req: FastifyRequest) => {
+						setup(cls, context) {
+							const req = context.switchToHttp().getRequest<FastifyRequest>()
 							cls.set("page", BasePageTool.getPageByReq(req))
 						},
 					},

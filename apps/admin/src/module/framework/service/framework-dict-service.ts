@@ -6,7 +6,7 @@ import { plainToInstance } from "class-transformer"
 import { exception, RedisTool } from "@aspen/aspen-core"
 import { cache, FrameDictItemEntity } from "@aspen/aspen-framework"
 
-import { FrameDictEntity, FrameDictSaveDto } from "../common/entity/frame-dict-dto"
+import { FrameDictEntity, FrameDictQueryDto, FrameDictSaveDto } from "../common/entity/frame-dict-dto"
 
 @Injectable()
 export class FrameDictService {
@@ -17,8 +17,8 @@ export class FrameDictService {
 		private readonly redisTool: RedisTool,
 	) {}
 
-	async page(dto: FrameDictEntity) {
-		return await this.frameDictRep.page({})
+	async page(dto: FrameDictQueryDto) {
+		return await dto.createQueryBuilder(this.frameDictRep).pageMany()
 	}
 
 	// 查询所有字典code
