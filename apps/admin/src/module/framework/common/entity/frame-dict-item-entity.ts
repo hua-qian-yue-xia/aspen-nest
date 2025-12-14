@@ -1,3 +1,4 @@
+import { Brackets, Repository } from "typeorm"
 import { plainToInstance } from "class-transformer"
 import * as _ from "radash"
 
@@ -18,10 +19,34 @@ export { FrameDictItemEntity }
  */
 export class FrameDictItemQueryDto {
 	@AspenSummary({ summary: "字典项编码", rule: AspenRule() })
-	code: string
+	code?: string
 
 	@AspenSummary({ summary: "字典id", rule: AspenRule() })
-	dictId: string
+	dictId?: string
+
+	@AspenSummary({ summary: "字典编码、字典值", rule: AspenRule() })
+	quick?: string
+
+	createQueryBuilder(repo: Repository<FrameDictItemEntity>) {
+		const queryBuilder = repo.createQueryBuilder("a")
+		if (!_.isEmpty(this.code)) {
+			queryBuilder.andWhere("a.code = :code", { code: this.code })
+		}
+		if (!_.isEmpty(this.dictId)) {
+			queryBuilder.andWhere("a.dict_id = :dictId", { dictId: this.dictId })
+		}
+		if (!_.isEmpty(this.quick)) {
+			queryBuilder.andWhere(
+				new Brackets((qb) =>
+					qb
+						.where(`a.summary like :quick`, { quick: `%${this.quick}%` })
+						.orWhere(`a.code like :quick`, { quick: `%${this.quick}%` }),
+				),
+			)
+		}
+		queryBuilder.addOrderBy("a.sort", "DESC").addOrderBy("a.id", "DESC")
+		return queryBuilder
+	}
 }
 
 /*

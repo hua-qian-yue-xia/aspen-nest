@@ -6,6 +6,7 @@ import * as _ from "radash"
 import { AspenRule, AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
 
 import { SysUserEntity } from "./sys-user-entity"
+import { SysDeptCountTotalBO } from "../../service/share/BO/sys-dept-bo"
 
 /*
  * ---------------------------------------------------------------
@@ -95,4 +96,14 @@ export class SysDeptSaveDto {
 		if (_.isEmpty(obj.sort)) obj.sort = 0
 		return obj
 	}
+}
+
+/*
+ * ---------------------------------------------------------------
+ * ## 部门-返回
+ * ---------------------------------------------------------------
+ */
+export class SysDeptVO extends SysDeptEntity {
+	@AspenSummary({ summary: "子部门总数" })
+	countTotal?: SysDeptCountTotalBO
 }

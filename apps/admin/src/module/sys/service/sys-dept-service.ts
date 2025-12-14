@@ -21,7 +21,16 @@ export class SysDeptService {
 
 	// 权限分页查询
 	async scopePage() {
-		return this.sysDeptRep.page()
+		const page = await this.sysDeptRep.page()
+		if (page.totalRecord > 0) {
+			const deptIds = page.records.map((item) => item.deptId)
+			const deptCountTotalList = await this.sysDeptShare.getDeptCountTotal(deptIds)
+			page.records.map((item) => {
+				const deptCountTotal = deptCountTotalList.find((dept) => dept.dpetId === item.deptId)
+				;(item as any).countTotal = deptCountTotal
+			})
+		}
+		return page
 	}
 
 	// 树状结构

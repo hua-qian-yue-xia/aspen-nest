@@ -23,12 +23,7 @@ export class FrameDictItemService {
 
 	// 字典项分页
 	async page(dto: FrameDictItemQueryDto) {
-		const pageListBuild = this.frameDictItemRep.createQueryBuilder("dictItem")
-		if (dto && dto.dictId) {
-			pageListBuild.where("dictItem.dict_id = :dictId", { dictId: dto.dictId })
-		}
-		const pageList = await pageListBuild.orderBy("dictItem.dict_id", "DESC").orderBy("dictItem.sort", "DESC").pageMany()
-		return pageList
+		return dto.createQueryBuilder(this.frameDictItemRep).pageMany()
 	}
 
 	// 根据dictItemId查询字典项

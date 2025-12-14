@@ -74,6 +74,12 @@ export class SysMenuQueryDto {
 	@AspenSummary({ summary: "菜单父id", rule: AspenRule() })
 	menuId?: string
 
+	@AspenSummary({ summary: "菜单父ids", rule: AspenRule() })
+	menuIds?: Array<string>
+
+	@AspenSummary({ summary: "是否包含`menuIds`条件", rule: AspenRule() })
+	includeMenuIds?: boolean
+
 	@AspenSummary({ summary: "菜单父id", rule: AspenRule() })
 	parentId?: string
 
@@ -88,11 +94,18 @@ export class SysMenuQueryDto {
 		if (!_.isEmpty(this.menuId)) {
 			queryBuilder.where("a.menu_id = :menuId", { menuId: this.menuId })
 		}
+		if (!_.isEmpty(this.menuIds)) {
+			if (this.includeMenuIds === false) {
+				queryBuilder.andWhere("a.menu_id NOT IN (:...menuIds)", { menuIds: this.menuIds })
+			} else {
+				queryBuilder.andWhere("a.menu_id IN (:...menuIds)", { menuIds: this.menuIds })
+			}
+		}
 		if (!_.isEmpty(this.parentId)) {
-			queryBuilder.where("a.parent_id = :parentId", { parentId: this.parentId })
+			queryBuilder.andWhere("a.parent_id = :parentId", { parentId: this.parentId })
 		}
 		if (!_.isEmpty(this.quick)) {
-			queryBuilder.where(
+			queryBuilder.andWhere(
 				new Brackets((qb) =>
 					qb
 						.where(`a.menu_name like :quick`, { quick: `%${this.quick}%` })
@@ -101,7 +114,7 @@ export class SysMenuQueryDto {
 			)
 		}
 		if (!_.isEmpty(this.type)) {
-			queryBuilder.where("a.type = :type", { type: this.type })
+			queryBuilder.andWhere("a.type = :type", { type: this.type })
 		}
 		queryBuilder.orderBy("a.sort", "DESC").addOrderBy("a.menu_id", "DESC")
 		return queryBuilder

@@ -142,7 +142,7 @@ export class SysUserQueryDto {
 			queryBuilder.where("a.enable = :enable", { enable: this.enable })
 		}
 		if (!_.isEmpty(this.deptIds)) {
-			if (this.includeDeptIds == false) {
+			if (this.includeDeptIds === false) {
 				queryBuilder.where("dept.deptId NOT IN (:...deptIds)", { deptIds: this.deptIds })
 			} else {
 				queryBuilder.where("dept.deptId IN (:...deptIds)", { deptIds: this.deptIds })
