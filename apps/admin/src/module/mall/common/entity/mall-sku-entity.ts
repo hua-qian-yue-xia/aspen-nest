@@ -9,14 +9,14 @@ export class MallSkuEntity extends BaseDb {
 	@PrimaryGeneratedColumn("uuid", { comment: "主键ID" })
 	id: string
 
-	@Column({ type: "bigint", unsigned: true, comment: "SPU ID" })
+	@Column({ type: "bigint", comment: "SPU ID" })
 	spuId: string
 
 	@ManyToOne(() => MallSpuEntity)
 	@JoinColumn({ name: "spuId", referencedColumnName: "id" })
 	spu?: MallSpuEntity
 
-	@Column({ type: "bigint", unsigned: true, comment: "商户/店铺ID" })
+	@Column({ type: "bigint", comment: "商户/店铺ID" })
 	merchantId: string
 
 	@Column({ type: "varchar", length: 64, comment: "SKU编码(内部)" })
@@ -30,7 +30,7 @@ export class MallSkuEntity extends BaseDb {
 
 	@Column({
 		type: "enum",
-		enum: mallProductStatusEnum.getKeys(),
+		enum: mallProductStatusEnum.getCodes(),
 		default: mallProductStatusEnum.DRAFT.code,
 		comment: "状态",
 	})
@@ -38,7 +38,7 @@ export class MallSkuEntity extends BaseDb {
 
 	@Column({
 		type: "enum",
-		enum: mallProductSourceEnum.getKeys(),
+		enum: mallProductSourceEnum.getCodes(),
 		default: mallProductSourceEnum.OWN.code,
 		comment: "来源",
 	})
@@ -59,10 +59,10 @@ export class MallSkuEntity extends BaseDb {
 	@Column({ type: "decimal", precision: 12, scale: 2, nullable: true, comment: "成本价" })
 	costPrice?: string
 
-	@Column({ type: "int", unsigned: true, default: 0, comment: "可售库存" })
+	@Column({ type: "int", default: 0, comment: "可售库存" })
 	stock: number
 
-	@Column({ type: "int", unsigned: true, default: 0, comment: "占用库存(锁定)" })
+	@Column({ type: "int", default: 0, comment: "占用库存(锁定)" })
 	stockLocked: number
 
 	@Column({ type: "decimal", precision: 12, scale: 3, nullable: true, comment: "重量(kg)" })

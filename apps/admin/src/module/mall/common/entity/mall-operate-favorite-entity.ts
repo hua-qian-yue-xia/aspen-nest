@@ -7,9 +7,9 @@ export class MallOperateFavoriteEntity extends BaseRecordDb {
 	@PrimaryGeneratedColumn("uuid", { comment: "主键ID" })
 	id: string
 
-	@Column({ type: "varchar", length: 36, unsigned: true, comment: "用户ID" })
+	@Column({ type: "varchar", length: 36, comment: "用户ID" })
 	userId: string
 
-	@Column({ type: "varchar", length: 36, unsigned: true, comment: "商品ID" })
+	@Column({ type: "varchar", length: 36, comment: "商品ID" })
 	productId: string
 }

@@ -16,14 +16,13 @@ export class MallOperateCommentEntity extends BaseRecordDb {
 	@Column({ type: "varchar", length: 36, comment: "用户ID" })
 	userId: string
 
-	@Column({ type: "boolean", default: false, comment: "是否匿名" })
 	@Column({
 		type: "enum",
-		enum: comBoolEnum.getKeys(),
+		enum: comBoolEnum.getCodes(),
 		default: comBoolEnum.NO.code,
 		comment: "是否匿名",
 	})
-	anonymous: boolean
+	anonymous: typeof comBoolEnum
 
 	@Column({ type: "varchar", length: 36, nullable: true, comment: "用户昵称" })
 	nickname?: string
@@ -46,13 +45,13 @@ export class MallOperateCommentEntity extends BaseRecordDb {
 	@Column({ type: "varchar", length: 256, nullable: true, comment: "sku 规格描述" })
 	skuSpecDesc?: string
 
-	@Column({ type: "tinyint", length: 4, nullable: true, comment: "评分星级1-5分" })
+	@Column({ type: "tinyint", nullable: true, comment: "评分星级1-5分" })
 	scores?: number
 
-	@Column({ type: "tinyint", length: 4, nullable: true, comment: "描述星级1-5星" })
+	@Column({ type: "tinyint", nullable: true, comment: "描述星级1-5星" })
 	descriptionScores?: number
 
-	@Column({ type: "tinyint", length: 4, nullable: true, comment: "服务星级1-5星" })
+	@Column({ type: "tinyint", nullable: true, comment: "服务星级1-5星" })
 	benefitScores?: number
 
 	@Column({ type: "varchar", length: 256, nullable: true, comment: "评价内容" })
@@ -63,7 +62,7 @@ export class MallOperateCommentEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: comBoolEnum.getKeys(),
+		enum: comBoolEnum.getCodes(),
 		default: comBoolEnum.NO.code,
 		comment: "商家是否回复",
 	})

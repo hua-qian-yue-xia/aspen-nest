@@ -28,6 +28,11 @@ export class BaseEnum {
 	}
 
 	// @ts-ignore
+	getCodes(): Array<string> {
+		return this.getKeys().map((key) => this[key].code)
+	}
+
+	// @ts-ignore
 	getByCode(code: string): BaseEnumOptions | null {
 		return this.getValues().find((item) => item.code === code) ?? null
 	}

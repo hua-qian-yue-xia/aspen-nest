@@ -22,12 +22,12 @@ export class MallBrandEntity extends BaseRecordDb {
 	@Column({ type: "json", nullable: true, comment: "主图/轮播图(JSON数组)" })
 	images?: Array<string>
 
-	@Column({ type: "int", unsigned: true, default: 0, comment: "排序" })
+	@Column({ type: "int", default: 0, comment: "排序" })
 	sort: number
 
 	@Column({
 		type: "enum",
-		enum: comBoolEnum.getKeys(),
+		enum: comBoolEnum.getCodes(),
 		default: comBoolEnum.YES.code,
 		comment: "是否显示",
 	})

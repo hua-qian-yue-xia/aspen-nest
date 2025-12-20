@@ -20,18 +20,18 @@ export class MallSpuEntity extends BaseRecordDb {
 	@Column({ type: "text", nullable: true, comment: "商品详情/描述" })
 	description?: string
 
-	@Column({ type: "bigint", unsigned: true, nullable: true, comment: "类目ID" })
+	@Column({ type: "bigint", nullable: true, comment: "类目ID" })
 	categoryId?: string
 
-	@Column({ type: "bigint", unsigned: true, nullable: true, comment: "品牌ID" })
+	@Column({ type: "bigint", nullable: true, comment: "品牌ID" })
 	brandId?: string
 
-	@Column({ type: "bigint", unsigned: true, comment: "商户/店铺ID" })
+	@Column({ type: "bigint", comment: "商户/店铺ID" })
 	merchantId?: string
 
 	@Column({
 		type: "enum",
-		enum: mallProductStatusEnum.getKeys(),
+		enum: mallProductStatusEnum.getCodes(),
 		default: mallProductStatusEnum.DRAFT.code,
 		comment: "状态",
 	})
@@ -39,7 +39,7 @@ export class MallSpuEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: mallProductTypeEnum.getKeys(),
+		enum: mallProductTypeEnum.getCodes(),
 		default: mallProductTypeEnum.PHYSICAL.code,
 		comment: "商品类型",
 	})
@@ -47,7 +47,7 @@ export class MallSpuEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: mallProductSourceEnum.getKeys(),
+		enum: mallProductSourceEnum.getCodes(),
 		default: mallProductSourceEnum.OWN.code,
 		comment: "来源",
 	})

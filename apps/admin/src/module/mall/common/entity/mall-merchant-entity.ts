@@ -29,14 +29,14 @@ export class MallMerchantEntity extends BaseRecordDb {
 	address?: LocationColumn
 
 	@Column({ type: "json", nullable: true, comment: "联系电话" })
-	contactPhone?: Array<ContactPhone>
+	contactPhone?: Array<OpenTime>
 
 	@Column({ type: "json", nullable: true, comment: "营业时间" })
-	openTime?: Array<OpenTime>
+	openTime?: Array<ContactPhone>
 
 	@Column({
 		type: "enum",
-		enum: comBoolEnum.getKeys(),
+		enum: comBoolEnum.getCodes(),
 		default: comBoolEnum.YES.code,
 		comment: "是否启用",
 	})
