@@ -1,7 +1,7 @@
-import { Body, Param, ParseArrayPipe, Res, Session } from "@nestjs/common"
+import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
-import { FrameCaptchaService } from "@aspen/aspen-framework"
+import { FrameCaptchaService, CaptchaCreateBO } from "@aspen/aspen-framework"
 
 import { SysUserService } from "../service/sys-user-service"
 import { SysUserEntity, SysUserSaveDto, SysUserAdminLoginDto, SysUserQueryDto } from "../common/entity/sys-user-entity"
@@ -102,6 +102,9 @@ export class SysUserController {
 	@router.get({
 		summary: "获取验证码",
 		router: "/admin/captcha",
+		resType: {
+			type: CaptchaCreateBO,
+		},
 	})
 	async adminCaptcha() {
 		const captcha = await this.frameCaptchaService.generate({

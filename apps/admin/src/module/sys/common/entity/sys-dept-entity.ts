@@ -6,7 +6,7 @@ import * as _ from "radash"
 import { AspenRule, AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
 
 import { SysUserEntity } from "./sys-user-entity"
-import { SysDeptCountTotalBO } from "../../service/share/BO/sys-dept-bo"
+import { SysDeptCountTotalBO } from "../../service/BO/sys-dept-bo"
 
 /*
  * ---------------------------------------------------------------

@@ -5,6 +5,8 @@ import * as _ from "radash"
 
 import { RedisTool } from "@aspen/aspen-core"
 
+import { CaptchaCreateBO } from "./BO/frame-captcha-bo"
+
 @Injectable({ scope: Scope.DEFAULT })
 export class FrameCaptchaService {
 	constructor(private readonly redisTool: RedisTool) {}
@@ -14,12 +16,8 @@ export class FrameCaptchaService {
 	 * @param key 验证码key
 	 * @param ttlMs 过期时间,默认120秒
 	 */
-	async generate(options: {
-		key?: string
-		ttlMs?: number
-		type?: "mathExpr" | "input"
-	}): Promise<{ key: string; svg: string }> {
-		const { ttlMs = 120000, type = "mathExpr" } = options
+	async generate(options: { key?: string; ttlMs?: number; type?: "mathExpr" | "input" }): Promise<CaptchaCreateBO> {
+		const { ttlMs = 120, type = "mathExpr" } = options
 		const key = this.generateKey(options.key)
 		const redisKey = this.generateRedisKey(key)
 		let captcha = null
@@ -43,7 +41,10 @@ export class FrameCaptchaService {
 			})
 		}
 		await this.redisTool.set(redisKey, captcha.text.toLowerCase(), ttlMs)
-		return { key: key, svg: captcha.data }
+		const result = new CaptchaCreateBO()
+		result.key = key
+		result.svg = captcha.data
+		return result
 	}
 
 	/**

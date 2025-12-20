@@ -157,4 +157,10 @@ export class SysUserAdminLoginDto {
 
 	@AspenSummary({ summary: "用户密码", rule: AspenRule().isNotEmpty() })
 	password: string
+
+	@AspenSummary({ summary: "验证码key", rule: AspenRule() })
+	captchaKey?: string
+
+	@AspenSummary({ summary: "验证码输入值", rule: AspenRule() })
+	captchaInput?: string
 }

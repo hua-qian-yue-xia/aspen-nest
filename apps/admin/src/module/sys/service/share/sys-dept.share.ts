@@ -9,7 +9,7 @@ import { exception, RedisTool } from "@aspen/aspen-core"
 
 import { SysDeptEntity } from "../../common/entity/sys-dept-entity"
 import { SysUserEntity } from "../../common/entity/sys-user-entity"
-import { SysDeptCountTotalBO } from "./BO/sys-dept-bo"
+import { SysDeptCountTotalBO } from "../BO/sys-dept-bo"
 
 @Injectable()
 export class SysDeptShare {

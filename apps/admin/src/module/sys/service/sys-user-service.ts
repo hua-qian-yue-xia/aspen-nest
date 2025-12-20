@@ -5,7 +5,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import * as _ from "radash"
 
 import { BasePageVo, exception, RedisTool } from "@aspen/aspen-core"
-import { cache } from "@aspen/aspen-framework"
+import { cache, FrameCaptchaService } from "@aspen/aspen-framework"
 import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
 
 import { SysUserEntity, SysUserAdminLoginDto, SysUserSaveDto, SysUserQueryDto } from "../common/entity/sys-user-entity"
@@ -23,6 +23,7 @@ export class SysUserService {
 
 		private readonly jwtStrategy: JwtStrategy,
 		private readonly redisTool: RedisTool,
+		private readonly frameCaptchaService: FrameCaptchaService,
 	) {}
 
 	// 分页查询用户
@@ -123,13 +124,24 @@ export class SysUserService {
 
 	// admin登录
 	async adminLogin(dto: SysUserAdminLoginDto) {
-		const { username, password } = dto
-		// 1.1 校验用户是否存在、密码是否正确
+		const { username, password, captchaKey, captchaInput } = dto
+		if (captchaKey) {
+			// 1.1 校验验证码
+			if (!captchaKey || !captchaInput) {
+				throw new exception.validator("验证码不能为空")
+			}
+			// 1.2 校验验证码是否正确
+			const captchaVerify = await this.frameCaptchaService.verify(captchaKey, captchaInput)
+			if (!captchaVerify) {
+				throw new exception.validator("验证码错误")
+			}
+		}
+		// 1.3 校验用户是否存在、密码是否正确
 		const user = await this.sysUserRepo.findOneBy({ username: username })
 		if (!user || !user.checkPassword(password)) {
 			throw new exception.validator("用户名或密码错误")
 		}
-		// 1.2 校验用户是否启用
+		// 1.4 校验用户是否启用
 		if (!user.isEnable()) {
 			throw new exception.validator("用户已被禁用")
 		}
