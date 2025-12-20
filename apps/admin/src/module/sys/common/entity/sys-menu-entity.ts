@@ -5,8 +5,11 @@ import * as classValidator from "class-validator"
 import * as _ from "radash"
 
 import { AspenRule, AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
+import { enums } from "@aspen/aspen-framework"
 
 import { sysMenuTypeEnum } from "../sys-enum.enum-gen"
+
+const { comBoolEnum } = enums
 
 /*
  * ---------------------------------------------------------------
@@ -27,13 +30,13 @@ export class SysMenuEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "菜单名" })
 	menuName: string
 
-	@Column({ type: "char", length: 32, comment: "菜单类型" })
+	@Column({
+		type: "enum",
+		enum: sysMenuTypeEnum.getCodes(),
+		comment: "菜单类型",
+	})
 	@AspenSummary({ summary: "菜单类型" })
 	type: string
-
-	@Column({ type: "char", length: 32, nullable: true, comment: "菜单位置" })
-	@AspenSummary({ summary: "菜单位置" })
-	position?: string
 
 	@Column({ type: "varchar", length: 64, nullable: true, comment: "图标" })
 	@AspenSummary({ summary: "图标" })
@@ -47,13 +50,23 @@ export class SysMenuEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "权限标识" })
 	perm?: string
 
-	@Column({ type: "bit", default: true, comment: "是否显示" })
+	@Column({
+		type: "enum",
+		enum: comBoolEnum.getCodes(),
+		default: comBoolEnum.NO.code,
+		comment: "是否显示",
+	})
 	@AspenSummary({ summary: "是否显示" })
-	visible: boolean
+	visible: string
 
-	@Column({ type: "bit", default: true, comment: "是否缓存" })
+	@Column({
+		type: "enum",
+		enum: comBoolEnum.getCodes(),
+		default: comBoolEnum.NO.code,
+		comment: "是否缓存",
+	})
 	@AspenSummary({ summary: "是否缓存" })
-	keepAlive: boolean
+	keepAlive: string
 
 	@Column({ type: "int", default: 0, comment: "排序" })
 	@AspenSummary({ summary: "排序" })

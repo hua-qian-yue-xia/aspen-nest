@@ -1,11 +1,12 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm"
 
-import { BaseRecordDb, LocationColumn } from "@aspen/aspen-core"
-import { enums } from "@aspen/aspen-framework"
+import { BaseRecordDb } from "@aspen/aspen-core"
 
-const { comBoolEnum } = enums
-
-Entity({ comment: "商户/店铺", name: "mall_merchant" })
+@Index("idx_merchant_name", ["name"])
+@Index("idx_merchant_type", ["type"])
+@Index("idx_merchant_external", ["externalSource", "externalMerchantId"])
+@Index("uniq_merchant_code", ["code"], { unique: true })
+@Entity({ comment: "商户/店铺", name: "mall_merchant" })
 export class MallMerchantEntity extends BaseRecordDb {
 	@PrimaryGeneratedColumn("uuid", { comment: "主键ID" })
 	id: string
@@ -25,62 +26,15 @@ export class MallMerchantEntity extends BaseRecordDb {
 	@Column({ type: "varchar", length: 128, nullable: true, comment: "第三方商户唯一ID" })
 	externalMerchantId?: string
 
-	@Column((type) => LocationColumn)
-	address?: LocationColumn
+	@Column({ type: "varchar", length: 256, nullable: true, comment: "地址" })
+	address?: string
 
-	@Column({ type: "json", nullable: true, comment: "联系电话" })
-	contactPhone?: Array<OpenTime>
+	@Column({ type: "varchar", length: 32, nullable: true, comment: "联系电话" })
+	contactPhone?: string
 
-	@Column({ type: "json", nullable: true, comment: "营业时间" })
-	openTime?: Array<ContactPhone>
-
-	@Column({
-		type: "enum",
-		enum: comBoolEnum.getCodes(),
-		default: comBoolEnum.YES.code,
-		comment: "是否启用",
-	})
-	enable: typeof comBoolEnum
+	@Column({ type: "bit", default: true, comment: "是否启用" })
+	enable: boolean
 
 	@Column({ type: "int", default: 0, comment: "排序" })
 	sort: number
-}
-
-/**
- * 营业时间
- */
-export class OpenTime {
-	/**
-	 * 描述
-	 * @example "周一至周五"
-	 */
-	summary?: string
-
-	/**
-	 * 开始时间
-	 * @example "09:00"
-	 */
-	startTime?: string
-
-	/**
-	 * 结束时间
-	 * @example "18:00"
-	 */
-	endTime?: string
-}
-
-/**
- * 联系电话
- */
-export class ContactPhone {
-	/**
-	 * 昵称
-	 * @example "客服A"
-	 */
-	nickname?: string
-	/**
-	 * 手机号
-	 * @example "13800000000"
-	 */
-	phone?: string
 }

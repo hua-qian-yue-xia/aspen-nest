@@ -10,6 +10,8 @@ import { comBoolEnum } from "./enum/com-bool.enum-gen"
 import { comEnableEnum } from "./enum/com-enable.enum-gen"
 import { comToggleEnum } from "./enum/com-toggle.enum-gen"
 
+import { ServiceModule } from "./service/index"
+
 export const gen = {
 	dict: GenDict,
 }
@@ -23,6 +25,7 @@ export const cache = {
 export const frameworkModule = {
 	genDict: GenDictModule,
 	jwtStrategy: JwtStrategyModule,
+	service: ServiceModule,
 }
 
 export const enums = {

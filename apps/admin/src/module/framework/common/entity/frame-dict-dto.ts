@@ -31,6 +31,7 @@ export class FrameDictQueryDto {
 				}),
 			)
 		}
+		query.orderBy("a.sort", "DESC").addOrderBy("a.code", "DESC")
 		return query
 	}
 }

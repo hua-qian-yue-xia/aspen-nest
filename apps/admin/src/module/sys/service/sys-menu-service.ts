@@ -83,7 +83,6 @@ export class SysMenuService {
 		}
 		const obj = plainToInstance(SysMenuEntity, dto)
 		if (obj.type == sysMenuTypeEnum.CATALOGUE.code) {
-			obj.position = null
 			obj.path = null
 		}
 		await this.sysMenuRep.update({ menuId: dto.menuId }, obj)

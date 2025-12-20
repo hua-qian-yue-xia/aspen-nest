@@ -12,6 +12,7 @@ import { CoreModule } from "apps/admin/src/module/core/core-module"
 	imports: [
 		frameworkModule.genDict.forRoot({ isGlobal: true, scanPatterns: ["**/dist/**/*.enum-gen.js"] }),
 		frameworkModule.jwtStrategy.forRoot(),
+		frameworkModule.service.forRoot(),
 		SysModule,
 		FrameworkModule,
 		CoreModule,
