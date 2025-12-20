@@ -14,26 +14,7 @@ import { Exclude } from "class-transformer"
 
 import { AspenSummary } from "../decorator/summary/summary-decorator"
 
-export abstract class BaseDb extends BaseEntity {
-	props(): Array<any> {
-		return []
-	}
-	equals(other: BaseDb): boolean {
-		if (!other) return false
-		const propsToCompare = this.props()
-		// 如果没有指定属性，则比较所有可枚举属性
-		if (propsToCompare.length === 0) {
-			return JSON.stringify(this) === JSON.stringify(other)
-		}
-		// 比较指定的属性
-		for (const prop of propsToCompare) {
-			if (this[prop] !== other[prop as string]) {
-				return false
-			}
-		}
-		return true
-	}
-}
+export abstract class BaseDb extends BaseEntity {}
 
 export class BaseRecordDb extends BaseDb {
 	@Column({ type: "varchar", length: 64, comment: "新增人" })

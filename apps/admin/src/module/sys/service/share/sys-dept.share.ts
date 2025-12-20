@@ -70,7 +70,10 @@ export class SysDeptShare {
 
 		const result: Array<SysDeptCountTotalBO> = []
 		for (const rootId of deptIdList) {
+			// 子部门
 			const descendants: Array<string> = []
+			// 本部门+子部门
+			const personDeptIds: Array<string> = [rootId]
 			const queue: Array<string> = [...(childrenMap.get(rootId) ?? [])]
 			while (queue.length) {
 				const id = queue.shift()!
@@ -83,11 +86,11 @@ export class SysDeptShare {
 			bo.dpetId = rootId
 			bo.deptName = allDepts.find((v) => v.deptId === rootId)?.deptName ?? ""
 			bo.dpetCount = descendants.length
-			if (descendants.length > 0) {
+			if (personDeptIds.length > 0) {
 				const raw = await this.sysUserRep
 					.createQueryBuilder("user")
 					.innerJoin("user.userDepts", "dept")
-					.where("dept.dept_id IN (:...ids)", { ids: descendants })
+					.where("dept.dept_id IN (:...ids)", { ids: personDeptIds })
 					.select("COUNT(DISTINCT user.user_id)", "cnt")
 					.getRawOne<{ cnt: string }>()
 				bo.personCount = Number(raw?.cnt ?? 0)

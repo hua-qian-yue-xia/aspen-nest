@@ -38,9 +38,25 @@ export class PinyinColumn {
  * 地址嵌入实体
  */
 export class LocationColumn {
-	@Column({ type: "decimal", precision: 10, scale: 6, comment: "经度" })
-	lng: number
+	@Column({ type: "varchar", length: 64, nullable: true, comment: "省份" })
+	provinceStr?: string
 
-	@Column({ type: "decimal", precision: 10, scale: 6, comment: "纬度" })
-	lat: number
+	@Column({ type: "varchar", length: 64, nullable: true, comment: "城市" })
+	cityStr?: string
+
+	@Column({ type: "varchar", length: 64, nullable: true, comment: "区县" })
+	districtStr?: string
+
+	@Column({ type: "decimal", precision: 10, scale: 6, nullable: true, comment: "经度(x轴)" })
+	lng?: string
+
+	@Column({ type: "decimal", precision: 10, scale: 6, nullable: true, comment: "纬度(y轴)" })
+	lat?: string
+
+	/**
+	 * 详细地址
+	 * @example "浙江省杭州市萧山区纤旭巷-萧山区和平桥村莫家港88号楼(纤旭巷东)"
+	 */
+	@Column({ type: "varchar", length: 256, nullable: true, comment: "详细地址" })
+	detail?: string
 }

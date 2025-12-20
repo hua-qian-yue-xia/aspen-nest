@@ -1,16 +1,11 @@
-import { BaseRecordDb } from "@aspen/aspen-core"
-import { Column, Entity, Index, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
-import { MallProductStatus, MallProductSource } from "../enum/mall-product.enum"
-import { MallSpuEntity } from "./mall-spu-entity"
+import { BaseDb } from "@aspen/aspen-core"
+import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 
-@Index("idx_sku_spu", ["spuId"])
-@Index("idx_sku_status", ["status"])
-@Index("idx_sku_price", ["price"])
-@Index("idx_sku_merchant", ["merchantId"])
-@Index("uniq_sku_merchant_code", ["merchantId", "code"], { unique: true })
-@Index("uniq_sku_external", ["externalSource", "externalSkuId"], { unique: true })
+import { MallSpuEntity } from "./mall-spu-entity"
+import { mallProductSourceEnum, mallProductTypeEnum, mallProductStatusEnum } from "../enum/index"
+
 @Entity({ comment: "SKU 商品", name: "mall_sku" })
-export class MallSkuEntity extends BaseRecordDb {
+export class MallSkuEntity extends BaseDb {
 	@PrimaryGeneratedColumn("uuid", { comment: "主键ID" })
 	id: string
 
@@ -33,11 +28,21 @@ export class MallSkuEntity extends BaseRecordDb {
 	@Column({ type: "varchar", length: 128, nullable: true, comment: "条形码/国际码" })
 	barcode?: string
 
-	@Column({ type: "enum", enum: MallProductStatus, default: MallProductStatus.DRAFT, comment: "状态" })
-	status: MallProductStatus
+	@Column({
+		type: "enum",
+		enum: mallProductStatusEnum.getKeys(),
+		default: mallProductStatusEnum.DRAFT.code,
+		comment: "状态",
+	})
+	status: typeof mallProductStatusEnum
 
-	@Column({ type: "enum", enum: MallProductSource, default: MallProductSource.OWN, comment: "来源" })
-	source: MallProductSource
+	@Column({
+		type: "enum",
+		enum: mallProductSourceEnum.getKeys(),
+		default: mallProductSourceEnum.OWN.code,
+		comment: "来源",
+	})
+	source: typeof mallProductSourceEnum
 
 	@Column({ type: "varchar", length: 64, nullable: true, comment: "第三方平台(如 JD/MT/ELM/TB)" })
 	externalSource?: string
@@ -65,9 +70,6 @@ export class MallSkuEntity extends BaseRecordDb {
 
 	@Column({ type: "decimal", precision: 12, scale: 3, nullable: true, comment: "体积(m^3)" })
 	volume?: string
-
-	@Column({ type: "json", nullable: true, comment: "规格参数(JSON): [{name,value}], 可用于组合规格" })
-	specs?: Array<{ name: string; value: string }>
 
 	@Column({ type: "json", nullable: true, comment: "扩展参数(JSON)" })
 	ext?: Record<string, any>

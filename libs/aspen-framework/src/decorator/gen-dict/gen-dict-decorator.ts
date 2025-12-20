@@ -75,7 +75,7 @@ export class GenDictService implements OnModuleInit {
 			// 判断是否继承自 BaseEnum
 			if (instance instanceof BaseEnum) {
 				// 处理 BaseEnum 类型的枚举
-				const enumValues = instance.getAll()
+				const enumValues = instance.getValues()
 				// 创建字典实体对象，只设置必要的属性
 				const dictEntity = new FrameDictEntity()
 				dictEntity.code = matedata.key

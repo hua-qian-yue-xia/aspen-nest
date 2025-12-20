@@ -51,7 +51,7 @@ export class SysMenuService {
 			tree = tool.tree.filter(
 				tree,
 				(node) => {
-					return node.menuName.includes(query.quick)
+					return node?.menuName?.includes(query.quick) || node?.path?.includes(query.quick)
 				},
 				"children",
 			)
