@@ -1,5 +1,6 @@
 import { Brackets, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, Repository } from "typeorm"
 import { Exclude, plainToInstance } from "class-transformer"
+import { IsNotEmpty, validateSync } from "class-validator"
 
 import { AspenRule, AspenSummary, BaseUser } from "@aspen/aspen-core"
 import * as _ from "radash"
@@ -146,6 +147,14 @@ export class SysUserQueryDto {
 	}
 }
 
+class CaptchaValidateDto {
+	@IsNotEmpty()
+	captchaKey: string
+
+	@IsNotEmpty()
+	captchaInput: string
+}
+
 /*
  * ---------------------------------------------------------------
  * ## 用户-后台登录
@@ -158,9 +167,18 @@ export class SysUserAdminLoginDto {
 	@AspenSummary({ summary: "用户密码", rule: AspenRule().isNotEmpty() })
 	password: string
 
-	@AspenSummary({ summary: "验证码key", rule: AspenRule() })
+	@AspenSummary({ summary: "验证码key", groups: ["captcha"], rule: AspenRule().isNotEmpty() })
 	captchaKey?: string
 
-	@AspenSummary({ summary: "验证码输入值", rule: AspenRule() })
+	@AspenSummary({ summary: "验证码输入值", groups: ["captcha"], rule: AspenRule().isNotEmpty() })
 	captchaInput?: string
+
+	validateCaptcha() {
+		const obj = plainToInstance(CaptchaValidateDto, {
+			captchaKey: this.captchaKey,
+			captchaInput: this.captchaInput,
+		})
+		const errors = validateSync(obj, { stopAtFirstError: true, groups: ["captcha"] })
+		return errors.length === 0
+	}
 }

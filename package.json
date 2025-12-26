@@ -65,6 +65,7 @@
 		"@nestjs/schematics": "^10.0.0",
 		"@nestjs/testing": "^10.0.0",
 		"@types/bcrypt": "^6.0.0",
+		"@types/jest": "^30.0.0",
 		"@types/js-yaml": "^4.0.9",
 		"@types/ms": "^2.1.0",
 		"@types/node": "20.3.1",
@@ -75,8 +76,10 @@
 		"eslint-config-prettier": "^9.1.0",
 		"eslint-plugin-prettier": "^5.2.1",
 		"husky": "^9.1.7",
+		"jest": "^30.2.0",
 		"lint-staged": "^16.2.3",
 		"prettier": "^3.4.2",
+		"ts-jest": "^29.4.6",
 		"ts-loader": "^9.5.2",
 		"ts-node": "^10.9.2",
 		"typescript": "^5.7.2"

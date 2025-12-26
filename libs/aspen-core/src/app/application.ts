@@ -17,15 +17,23 @@ import { ValidationExceptionFilter } from "../exception/filter/validation-except
 import { WinstonLogger } from "../logger/winston-logger"
 import { ClassSerializerInterceptor, ValidationPipe, BadRequestException } from "@nestjs/common"
 
+export type ApplicationOptions = {
+	/**
+	 * 是否为测试环境
+	 * @default false
+	 */
+	test?: boolean
+}
+
 export class Application {
 	private app: NestFastifyApplication
 	private config: ConfigService<GlobalConfig.Application, true>
 
 	public constructor() {}
 
-	async create(configFilePath: string, module: any): Promise<Application> {
+	async create(configFilePath: string, module: any, options?: ApplicationOptions): Promise<Application> {
 		this.app = await NestFactory.create<NestFastifyApplication>(
-			ApplicationModule.forRoot([this.readActiveYamlFile(configFilePath)], module),
+			ApplicationModule.forRoot([this.readActiveYamlFile(configFilePath)], module, options),
 			new FastifyAdapter({
 				logger: false,
 			}),
@@ -73,6 +81,10 @@ export class Application {
 		const appConfig = this.config.get<GlobalConfig.AppConfig>("app")
 		await this.app.listen(appConfig.port)
 		console.log(`|应用启动|,地址:127.0.0.1:${appConfig.port}/${appConfig.prefix}`)
+	}
+
+	getApp(): NestFastifyApplication {
+		return this.app
 	}
 
 	/**
@@ -154,7 +166,7 @@ export class Application {
 	private getJwtConfig = () => {
 		return {
 			secret: "",
-			expiresIn: "1Y",
+			accessExpiresIn: "1Y",
 		} as GlobalConfig.JwtConfig
 	}
 

@@ -1,5 +1,3 @@
-import * as path from "node:path"
-
 import { Application } from "@aspen/aspen-core"
 
 import { AppModule } from "./app-module"

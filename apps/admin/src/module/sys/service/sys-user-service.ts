@@ -127,7 +127,7 @@ export class SysUserService {
 		const { username, password, captchaKey, captchaInput } = dto
 		if (captchaKey) {
 			// 1.1 校验验证码
-			if (!captchaKey || !captchaInput) {
+			if (!dto.validateCaptcha()) {
 				throw new exception.validator("验证码不能为空")
 			}
 			// 1.2 校验验证码是否正确

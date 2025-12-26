@@ -1,7 +1,6 @@
 import { Module } from "@nestjs/common"
 import { ConfigModule } from "@nestjs/config"
 
-import { coreModule } from "@aspen/aspen-core"
 import { frameworkModule } from "@aspen/aspen-framework"
 
 import { SysModule } from "apps/admin/src/module/sys/sys-module"

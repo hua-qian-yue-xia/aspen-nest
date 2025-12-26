@@ -8,6 +8,7 @@ import {
 	BeforeUpdate,
 	Column,
 	DeleteDateColumn,
+	Index,
 } from "typeorm"
 
 import { Exclude } from "class-transformer"
@@ -22,6 +23,7 @@ export class BaseRecordDb extends BaseDb {
 	@Exclude()
 	createBy: string
 
+	@Index()
 	@Column({ type: "datetime", comment: "新增时间" })
 	@AspenSummary({ summary: "新增时间" })
 	createAt: Date

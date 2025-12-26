@@ -10,11 +10,19 @@ import { RedisCacheModule } from "../cache/redis-module"
 import { LogModule } from "../decorator/log/log-module"
 import { NoTokenModule } from "../decorator/no-token/no-token-module"
 
+import { ApplicationOptions } from "./application"
+
 @Module({})
 export class ApplicationModule {
-	static forRoot(load: Array<ConfigFactory | Record<string, any>>, rootModule: any) {
+	static forRoot(load: Array<ConfigFactory | Record<string, any>>, rootModule: any, options?: ApplicationOptions) {
 		// 规范化 load：允许传对象，内部包裹成工厂函数
 		const normalized = load.map((l: any) => (typeof l === "function" ? l : () => l))
+
+		const { test = false } = options ?? {}
+
+		const entityPattern = test
+			? `${process.cwd()}/{apps,libs}/**/*-entity{.ts,.js}`
+			: `${process.cwd()}/dist/**/*-entity{.ts,.js}`
 		return {
 			module: rootModule,
 			imports: [
@@ -23,7 +31,7 @@ export class ApplicationModule {
 				// 引入 CLS 模块(全局)
 				ApplicationCls.forRoot({ isGlobal: true }),
 				// 引入数据库模块(全局)
-				DatabaseModule.forRoot({ isGlobal: true, entityPattern: `${process.cwd()}/dist/**/*-entity{.ts,.js}` }),
+				DatabaseModule.forRoot({ isGlobal: true, entityPattern: entityPattern }),
 				// 引入Redis缓存模块(全局)
 				RedisCacheModule.forRoot({ isGlobal: true }),
 				// 引入日志模块(全局)

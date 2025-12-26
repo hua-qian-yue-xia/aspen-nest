@@ -107,7 +107,13 @@ declare namespace GlobalConfig {
 		 * @see https://www.npmjs.com/package/ms
 		 * @default '1D'
 		 */
-		expiresIn: import("ms").StringValue
+		accessExpiresIn?: import("ms").StringValue
+		/**
+		 * refresh token过期时间,默认7天过期
+		 * @see https://www.npmjs.com/package/ms
+		 * @default '7D'
+		 */
+		refreshExpiresIn?: import("ms").StringValue
 	}
 
 	interface LoggerConfig {

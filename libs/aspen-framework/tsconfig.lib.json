@@ -1,17 +1,10 @@
 {
-  "extends": "../../tsconfig.option.json",
-  "compilerOptions": {
-    "declaration": false,
-    "experimentalDecorators": true,
-    "outDir": "../../dist/libs/aspen-framework"
-  },
-  "include": [
-    "src/**/*"
-  ],
-  "exclude": [
-    "node_modules",
-    "dist",
-    "test",
-    "**/*spec.ts"
-  ]
+	"extends": "../../tsconfig.option.json",
+	"compilerOptions": {
+		"declaration": false,
+		"experimentalDecorators": true,
+		"outDir": "../../dist/libs/aspen-framework"
+	},
+	"include": ["src/**/*"],
+	"exclude": ["node_modules", "dist", "test", "**/*spec.ts"]
 }

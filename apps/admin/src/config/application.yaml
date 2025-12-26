@@ -8,5 +8,7 @@ app:
 jwt:
   # token 密钥
   secret: DFmCuCzt6GEMtdd0tfgPhtdyUElG1TTW
-  # token 过期时间
-  expiresIn: 2D
+  # access token 过期时间
+  accessExpiresIn: 1D
+  # refresh token 过期时间
+  refreshExpiresIn: 7D

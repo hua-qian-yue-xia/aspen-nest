@@ -1,9 +1,7 @@
 {
-  "name": "@aspen/framework",
-  "private": true,
-  "version": "1.0.0",
-  "description": "aspen框架模块",
-  "dependencies": {
-
-  }
+	"name": "@aspen/framework",
+	"private": true,
+	"version": "1.0.0",
+	"description": "aspen框架模块",
+	"dependencies": {}
 }

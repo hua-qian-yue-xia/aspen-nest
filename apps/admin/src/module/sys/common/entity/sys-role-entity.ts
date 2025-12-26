@@ -1,4 +1,4 @@
-import { Brackets, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, Repository } from "typeorm"
+import { Brackets, Column, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn, Repository } from "typeorm"
 
 import { plainToInstance } from "class-transformer"
 import * as _ from "radash"
@@ -23,6 +23,7 @@ export class SysRoleEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "角色名" })
 	roleName: string
 
+	@Index()
 	@Column({ type: "varchar", length: 64, comment: "角色编码" })
 	@AspenSummary({ summary: "角色编码" })
 	roleCode: string
@@ -86,7 +87,7 @@ export class SysRoleQueryDto {
  */
 export class SysRoleSaveDto {
 	@AspenSummary({ summary: "角色id", rule: AspenRule() })
-	roleId: string
+	roleId?: string
 
 	@AspenSummary({ summary: "角色名", rule: AspenRule().isNotEmpty() })
 	roleName: string
