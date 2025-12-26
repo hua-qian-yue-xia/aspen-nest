@@ -211,6 +211,45 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
 	}
 
 	/**
+	 * 移除token
+	 */
+	async removeByAccessToken(accessToken: string) {
+		// 1. 校验accessToken是否有效
+		try {
+			await this.jwtService.verifyAsync(accessToken)
+		} catch (error) {
+			this.logger.error(`校验accessToken失败accessToken:${accessToken},error:${error}`)
+			return
+		}
+		// 2. 解析payload并校验Redis中的数据
+		const payload = this.parsePayload(accessToken)
+		const redisKey = `auth:${payload.platform}:${payload.sub}-${payload.uuid}`
+		await this.redisTool.del(redisKey)
+	}
+
+	/**
+	 * 根据accessToken获取用户信息
+	 */
+	async getUserByAccessToken(accessToken: string): Promise<LoginUserInfo | null> {
+		// 1. 校验accessToken是否有效
+		try {
+			await this.jwtService.verifyAsync(accessToken)
+		} catch (error) {
+			this.logger.error(`校验accessToken失败accessToken:${accessToken},error:${error}`)
+			return null
+		}
+		// 2. 解析payload并校验Redis中的数据
+		const payload = this.parsePayload(accessToken)
+		const redisKey = `auth:${payload.platform}:${payload.sub}-${payload.uuid}`
+		const userJson = await this.redisTool.get(redisKey)
+		if (_.isEmpty(userJson)) {
+			this.logger.error(`校验accessToken失败accessToken:${accessToken},error:redisKey不存在`)
+			return null
+		}
+		return JSON.parse(userJson) as LoginUserInfo
+	}
+
+	/**
 	 * 生成payload
 	 */
 	private generatePayload(baseUser: BaseUser, platform: string): JwtUserPayload {

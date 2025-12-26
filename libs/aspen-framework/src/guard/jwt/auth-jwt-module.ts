@@ -12,7 +12,7 @@ export const registerAuthJwt = () => {
 		imports: [ConfigModule],
 		inject: [ConfigService],
 		useFactory: (config: ConfigService<GlobalConfig.Application, true>) => {
-			const { secret, accessExpiresIn: expiresIn = "1D" } = config.get<GlobalConfig.JwtConfig>("jwt")
+			const { secret, refreshExpiresIn: expiresIn = "7D" } = config.get<GlobalConfig.JwtConfig>("jwt")
 			if (_.isEmpty(secret)) throw new exception.core(JwtError.JWT_SECRET_NOT_FOUND)
 			return {
 				secret: secret,
