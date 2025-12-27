@@ -6,7 +6,7 @@ import * as _ from "radash"
 
 import { BasePageVo, exception, RedisTool } from "@aspen/aspen-core"
 import { cache, FrameCaptchaService } from "@aspen/aspen-framework"
-import { JwtStrategy } from "libs/aspen-framework/src/guard/jwt"
+import { JwtStrategy } from "@aspen/aspen-core/guard/jwt"
 
 import { SysUserEntity, SysUserAdminLoginDto, SysUserSaveDto, SysUserQueryDto } from "../common/entity/sys-user-entity"
 import { SysDeptShare } from "./share/sys-dept.share"
@@ -151,5 +151,12 @@ export class SysUserService {
 	}
 
 	// admin登出
-	async adminLogout() {}
+	async adminLogout() {
+		await this.jwtStrategy.removeByAccessToken("")
+	}
+
+	// 校验accessToken是否有效
+	async isLogin() {
+		throw new Error("Method not implemented.")
+	}
 }

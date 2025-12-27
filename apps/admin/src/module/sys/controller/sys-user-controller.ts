@@ -1,6 +1,6 @@
 import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
-import { R, router } from "@aspen/aspen-core"
+import { R, router, ApplicationCtx, LoginUserInfoBO } from "@aspen/aspen-core"
 import { FrameCaptchaService, CaptchaCreateBO } from "@aspen/aspen-framework"
 
 import { SysUserService } from "../service/sys-user-service"
@@ -93,6 +93,9 @@ export class SysUserController {
 		log: {
 			tag: "ADMIN",
 		},
+		resType: {
+			type: LoginUserInfoBO,
+		},
 	})
 	async adminLogin(@Body() dto: SysUserAdminLoginDto) {
 		const result = await this.sysUserService.adminLogin(dto)
@@ -114,8 +117,23 @@ export class SysUserController {
 	}
 
 	@router.get({
+		summary: "获取当前登录的admin用户",
+		router: "/admin/user",
+		resType: {
+			type: SysUserEntity,
+		},
+		log: {
+			tag: "ADMIN",
+		},
+	})
+	async getCurrentUser() {
+		const user = await ApplicationCtx.getInstance().getLoginUser()
+		await this.sysUserService.adminLogout()
+		return R.success()
+	}
+
+	@router.delete({
 		summary: "admin登出",
-		description: "用户手动退出时调用,会清空redis中的token,用户下次需要重新登录",
 		router: "/admin/logout",
 		log: {
 			tag: "ADMIN",
@@ -124,5 +142,17 @@ export class SysUserController {
 	async adminLogout() {
 		await this.sysUserService.adminLogout()
 		return R.success()
+	}
+
+	@router.post({
+		summary: "校验accessToken是否有效",
+		router: "/admin/check-login",
+		log: {
+			tag: "ADMIN",
+		},
+	})
+	async adminIsLogin() {
+		const result = await this.sysUserService.isLogin()
+		return R.success(result)
 	}
 }

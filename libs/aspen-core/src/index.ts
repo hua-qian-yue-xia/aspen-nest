@@ -58,3 +58,7 @@ export type { TreeNode } from "@aspen/aspen-core/tool/tree-tool"
 /******************** start 模块 start ********************/
 export * from "libs/aspen-core/src/export"
 /******************** end 模块 end ********************/
+
+/******************** start 守卫 start ********************/
+export * from "libs/aspen-core/src/guard/BO/jwt-bo"
+/******************** end 守卫 end ********************/

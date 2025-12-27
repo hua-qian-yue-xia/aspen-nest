@@ -28,6 +28,11 @@ export class ApplicationCls {
 						setup(cls, context) {
 							const req = context.switchToHttp().getRequest<FastifyRequest>()
 							cls.set("page", BasePageTool.getPageByReq(req))
+
+							const auth = req.headers["authorization"]
+							if (auth) {
+								cls.set("token", auth.replace("Bearer ", ""))
+							}
 						},
 					},
 				}),

@@ -1,3 +1,4 @@
+import { instanceToPlain, plainToClass } from "class-transformer"
 import * as bcrypt from "bcrypt"
 
 import { BaseRecordDb } from "../index"
@@ -20,6 +21,10 @@ export class BaseUser extends BaseRecordDb {
 
 	// 是否启用
 	enable: boolean
+
+	static toClass(obj: Record<string, any>): BaseUser {
+		return plainToClass(BaseUser, obj)
+	}
 
 	/**
 	 * 是否是超级管理员
@@ -47,5 +52,9 @@ export class BaseUser extends BaseRecordDb {
 	 */
 	encryptPassword(password: string, rounds = 10): string {
 		return bcrypt.hashSync(password, bcrypt.genSaltSync(rounds))
+	}
+
+	toObj() {
+		return instanceToPlain(this)
 	}
 }

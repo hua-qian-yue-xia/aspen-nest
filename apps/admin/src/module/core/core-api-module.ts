@@ -11,4 +11,4 @@ import { CoreApiService, CoreLogService } from "apps/admin/src/module/core/servi
 	controllers: [CoreApiController, CoreLogController],
 	providers: [CoreApiService, CoreLogService],
 })
-export class CoreModule {}
+export class CoreApiModule {}

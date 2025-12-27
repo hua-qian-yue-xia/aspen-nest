@@ -86,7 +86,7 @@ export class SysUserSaveDto {
 	toEntity() {
 		const obj = plainToInstance(SysUserEntity, this)
 		// 生成默认8位数密码
-		obj.password = obj.encryptPassword(_.uid(8))
+		obj.password = obj.encryptPassword("123456")
 		if (_.isEmpty(obj.enable)) obj.enable = true
 		if (_.isEmpty(obj.sort)) obj.sort = 0
 		return obj
@@ -174,11 +174,8 @@ export class SysUserAdminLoginDto {
 	captchaInput?: string
 
 	validateCaptcha() {
-		const obj = plainToInstance(CaptchaValidateDto, {
-			captchaKey: this.captchaKey,
-			captchaInput: this.captchaInput,
-		})
-		const errors = validateSync(obj, { stopAtFirstError: true, groups: ["captcha"] })
+		const errors = validateSync(this, { stopAtFirstError: true, groups: ["captcha"] })
+		console.log("errors:", errors)
 		return errors.length === 0
 	}
 }

@@ -3,8 +3,6 @@ import { GenDictModule } from "./decorator/gen-dict/gen-dict-module"
 
 import { AspenCacheable, AspenCacheEvict, AspenCachePut } from "./decorator/cache/cache-decorator"
 
-import { JwtStrategyModule } from "./guard/jwt/index"
-
 import { comActiveEnum } from "./enum/com-active.enum-gen"
 import { comBoolEnum } from "./enum/com-bool.enum-gen"
 import { comEnableEnum } from "./enum/com-enable.enum-gen"
@@ -24,7 +22,6 @@ export const cache = {
 
 export const frameworkModule = {
 	genDict: GenDictModule,
-	jwtStrategy: JwtStrategyModule,
 	service: ServiceModule,
 }
 

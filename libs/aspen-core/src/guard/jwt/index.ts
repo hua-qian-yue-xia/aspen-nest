@@ -1,3 +1,4 @@
+import { ConfigModule } from "@nestjs/config"
 import { Global, Module } from "@nestjs/common"
 import { PassportModule } from "@nestjs/passport"
 import { registerAuthJwt } from "./auth-jwt-module"
@@ -14,9 +15,9 @@ export class JwtStrategyModule {
 		return {
 			module: JwtStrategyModule,
 			global: true,
-			imports: [PassportModule, registerAuthJwt()],
-			providers: [JwtStrategy, RedisTool],
-			exports: [JwtStrategy, RedisTool],
+			imports: [PassportModule, registerAuthJwt(), ConfigModule],
+			providers: [JwtStrategy],
+			exports: [JwtStrategy],
 		}
 	}
 }

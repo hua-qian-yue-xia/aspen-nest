@@ -1,11 +1,11 @@
-import { INestApplication, Type } from "@nestjs/common"
-import { FastifyRequest } from "fastify"
+import { INestApplication } from "@nestjs/common"
+import { JwtService } from "@nestjs/jwt"
 import { ClsService } from "nestjs-cls"
 import * as _ from "radash"
 
 import { exception } from "../exception/common-exception"
 
-import { BaseUser, RedisTool, BasePage } from "../index"
+import { BaseUser, RedisTool, BasePage, JwtUserPayloadBO } from "../index"
 
 /**
  * 应用上下文
@@ -41,11 +41,15 @@ export class ApplicationCtx {
 	}
 
 	getClsService(): Promise<ClsService> {
-		return ApplicationCtx.getInstance().getApp().resolve(ClsService)
+		return ApplicationCtx.getInstance().getApp().get(ClsService)
 	}
 
 	getRedisTool(): Promise<RedisTool> {
-		return ApplicationCtx.getInstance().getApp().resolve(RedisTool)
+		return ApplicationCtx.getInstance().getApp().get(RedisTool)
+	}
+
+	getJwtService(): Promise<JwtService> {
+		return ApplicationCtx.getInstance().getApp().get(JwtService)
 	}
 
 	/**
@@ -64,15 +68,30 @@ export class ApplicationCtx {
 	 * 获取当前登录用户
 	 * @returns BaseUser?
 	 */
-	async getLoginAdminUser(): Promise<BaseUser | null> {
+	async getLoginUser(): Promise<BaseUser | null> {
 		const clsService = await ApplicationCtx.getInstance().getClsService()
-		const token = clsService.get<string | undefined>("token")
-		if (_.isEmpty(token)) return null
-		// 从redis查询用户信息
-		const redisTool = await ApplicationCtx.getInstance().getApp().resolve(RedisTool)
-		const userJson = await redisTool.get(token)
-		if (_.isEmpty(userJson)) return null
-		return JSON.parse(userJson) as BaseUser
+		const redisTool = await ApplicationCtx.getInstance().getRedisTool()
+		const jwtService = await ApplicationCtx.getInstance().getJwtService()
+		try {
+			// 解析token
+			const token = clsService.get<string | undefined>("token")
+			if (_.isEmpty(token)) {
+				return null
+			}
+			const payloadObj = jwtService.verify<JwtUserPayloadBO>(token)
+			if (!payloadObj) {
+				return null
+			}
+			const jwtUserPayload = JwtUserPayloadBO.objToClass(payloadObj)
+			// 从redis查询用户信息
+			const userJson = await redisTool.get(jwtUserPayload.getRedisKey())
+			if (_.isEmpty(userJson)) {
+				return null
+			}
+			return BaseUser.toClass(JSON.parse(userJson))
+		} catch (error) {
+			throw new exception.core(`|应用上下文|,获取当前登录用户错误error:${error}`)
+		}
 	}
 
 	/**
@@ -82,7 +101,7 @@ export class ApplicationCtx {
 	 * @returns string?
 	 */
 	async getLoginUserDataScope(sql: string): Promise<string | null> {
-		const loginUser = await ApplicationCtx.instance.getLoginAdminUser()
+		const loginUser = await ApplicationCtx.instance.getLoginUser()
 		if (!loginUser) return null
 		return sql
 	}

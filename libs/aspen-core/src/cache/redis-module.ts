@@ -4,6 +4,8 @@ import { DynamicModule, Global, Logger, Module } from "@nestjs/common"
 import { RedisModule, RedisModuleOptions } from "@liaoliaots/nestjs-redis"
 import * as _ from "radash"
 
+import { RedisTool } from "./redis-tool"
+
 export const REDIS_TAG = "redis"
 
 export type RedisCacheModuleOptions = {
@@ -19,7 +21,7 @@ export type RedisCacheModuleOptions = {
 export class RedisCacheModule {
 	static forRoot(options: RedisCacheModuleOptions): DynamicModule {
 		return {
-			module: RedisModule,
+			module: RedisCacheModule,
 			global: options.isGlobal ?? true,
 			imports: [
 				ConfigModule,
@@ -42,6 +44,8 @@ export class RedisCacheModule {
 					},
 				}),
 			],
+			providers: [RedisTool],
+			exports: [RedisTool],
 		}
 	}
 }
