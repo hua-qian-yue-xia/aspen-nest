@@ -4,7 +4,7 @@ import { coreModule } from "@aspen/aspen-core"
 import { frameworkModule } from "@aspen/aspen-framework"
 
 import { SysModule } from "apps/admin/src/module/sys/sys-module"
-import { FrameworkModule } from "apps/admin/src/module/framework/framework-module"
+import { FrameModule } from "apps/admin/src/module/frame/frame-module"
 import { CoreApiModule } from "apps/admin/src/module/core/core-api-module"
 
 @Module({
@@ -13,7 +13,7 @@ import { CoreApiModule } from "apps/admin/src/module/core/core-api-module"
 		frameworkModule.service.forRoot(),
 		coreModule.authJwt.forRoot(),
 		SysModule,
-		FrameworkModule,
+		FrameModule,
 		CoreApiModule,
 	],
 	providers: [],
