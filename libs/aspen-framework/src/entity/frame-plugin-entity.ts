@@ -2,6 +2,8 @@ import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm"
 
 import { AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
 
+import { comEnableEnum } from "../enum/com-enable.enum-gen"
+
 /**
  * 插件管理表
  */
@@ -36,9 +38,14 @@ export class FramePluginEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "主页" })
 	homepage: string
 
-	@Column({ type: "boolean", default: false, comment: "是否启用" })
+	@Column({
+		type: "enum",
+		enum: comEnableEnum.getCodes(),
+		default: comEnableEnum.YES.code,
+		comment: "是否启用",
+	})
 	@AspenSummary({ summary: "是否启用" })
-	enable: boolean
+	enable: string
 
 	@Column({ type: "json", comment: "插件配置", nullable: true })
 	@AspenSummary({ summary: "插件配置" })

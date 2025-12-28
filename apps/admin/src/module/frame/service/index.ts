@@ -1,2 +1,5 @@
-export * from "./framework-dict-service"
-export * from "./framework-dict-item-service"
+export * from "./frame-dict-service"
+export * from "./frame-dict-item-service"
+export * from "./frame-file-config-service"
+export * from "./frame-file-content-service"
+export * from "./frame-file-service"

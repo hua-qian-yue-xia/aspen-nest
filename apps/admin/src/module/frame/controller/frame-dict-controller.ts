@@ -2,8 +2,8 @@ import { Body, Param, ParseArrayPipe } from "@nestjs/common"
 
 import { R, router } from "@aspen/aspen-core"
 
-import { FrameDictService } from "../service/framework-dict-service"
-import { FrameDictEntity, FrameDictQueryDto, FrameDictSaveDto } from "../common/entity/frame-dict-dto"
+import { FrameDictService } from "../service/frame-dict-service"
+import { FrameDictEntity, FrameDictQueryDto, FrameDictSaveDto } from "../common/entity/frame-dict-entity"
 
 @router.controller({ prefix: "/frame/dict", summary: "字典管理" })
 export class FrameDictController {

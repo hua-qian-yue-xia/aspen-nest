@@ -13,6 +13,10 @@ export class FrameFileConfigEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "文件配置id" })
 	configId: string
 
+	@Column({ type: "varchar", length: 100, comment: "文件配置名称" })
+	@AspenSummary({ summary: "文件配置名称" })
+	name: string
+
 	@Index({ unique: true })
 	@Column({ type: "varchar", length: 100, comment: "存储类型" })
 	@AspenSummary({ summary: "存储类型" })

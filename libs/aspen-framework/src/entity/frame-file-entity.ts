@@ -11,6 +11,10 @@ export class FrameFileEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "文件id" })
 	fileId: string
 
+	@Column({ type: "varchar", length: 64, comment: "父文件id" })
+	@AspenSummary({ summary: "父文件id" })
+	parentFileId: string
+
 	@ManyToOne(() => FrameFileConfigEntity)
 	@JoinTable({ name: "config_id" })
 	config: FrameFileConfigEntity

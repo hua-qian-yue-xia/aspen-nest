@@ -6,7 +6,7 @@ import { plainToInstance } from "class-transformer"
 import { exception, RedisTool } from "@aspen/aspen-core"
 import { cache, FrameDictItemEntity } from "@aspen/aspen-framework"
 
-import { FrameDictEntity, FrameDictQueryDto, FrameDictSaveDto } from "../common/entity/frame-dict-dto"
+import { FrameDictEntity, FrameDictQueryDto, FrameDictSaveDto } from "../common/entity/frame-dict-entity"
 
 @Injectable()
 export class FrameDictService {
