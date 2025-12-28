@@ -1,4 +1,4 @@
-import { Column, Entity, ManyToMany, OneToMany, PrimaryGeneratedColumn, Repository } from "typeorm"
+import { Column, Entity, Index, ManyToMany, OneToMany, PrimaryGeneratedColumn, Repository } from "typeorm"
 
 import { plainToInstance } from "class-transformer"
 import * as _ from "radash"
@@ -23,6 +23,7 @@ export class SysDeptEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "部门父id" })
 	deptParentId: string
 
+	@Index()
 	@Column({ type: "varchar", length: 64, comment: "部门名" })
 	@AspenSummary({ summary: "部门名" })
 	deptName: string

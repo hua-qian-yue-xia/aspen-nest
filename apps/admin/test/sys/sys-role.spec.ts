@@ -5,13 +5,13 @@ import * as _ from "radash"
 
 import { Application } from "@aspen/aspen-core"
 
-import { SysRoleService } from "../../src/module/sys/service/sys-role-service"
-import { SysRoleEntity, SysRoleSaveDto } from "../../src/module/sys/common/entity/sys-role-entity"
 import { AppModule } from "apps/admin/src/app-module"
+import { SysRoleService } from "apps/admin/src/module/sys/service/sys-role-service"
+import { SysRoleEntity, SysRoleSaveDto } from "apps/admin/src/module/sys/common/entity/sys-role-entity"
 
 describe("sys-role测试", () => {
 	const config = {
-		generateRoleCount: 100,
+		generateRoleCount: 10000,
 	}
 
 	let sysRoleService: SysRoleService
@@ -41,12 +41,22 @@ describe("sys-role测试", () => {
 		}
 	}, 60_000)
 
-	it.only(`删除自动生成的${config.generateRoleCount}个角色`, async () => {
-		await sysRoleRepo
-			.createQueryBuilder()
-			.delete()
-			.from(SysRoleEntity)
-			.where("role_code LIKE :roleCode", { roleCode: "auto-roleCode-%" })
-			.execute()
+	it(`删除自动生成的${config.generateRoleCount}个角色`, async () => {
+		const rows = await sysRoleRepo
+			.createQueryBuilder("a")
+			.select(["a.role_id as roleId"])
+			.where("a.role_code LIKE :roleCode", { roleCode: "auto-roleCode-%" })
+			.getRawMany()
+
+		if (rows.length === 0) return
+
+		const ids = rows.map((r) => r.roleId)
+
+		const chunkSize = 1000
+		const chunks = _.cluster(ids, chunkSize)
+
+		for (const chunkIds of chunks) {
+			await sysRoleRepo.delete(chunkIds)
+		}
 	}, 60_000)
 })

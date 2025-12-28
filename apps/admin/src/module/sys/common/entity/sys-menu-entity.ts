@@ -165,10 +165,10 @@ export class SysMenuSaveDto {
 	perm?: string
 
 	@AspenSummary({ summary: "是否显示", rule: AspenRule() })
-	visible?: boolean
+	visible?: string
 
 	@AspenSummary({ summary: "是否缓存", rule: AspenRule() })
-	keepAlive?: boolean
+	keepAlive?: string
 
 	@AspenSummary({ summary: "排序", rule: AspenRule() })
 	sort?: number

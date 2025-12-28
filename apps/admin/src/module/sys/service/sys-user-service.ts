@@ -4,11 +4,18 @@ import { InjectRepository } from "@nestjs/typeorm"
 
 import * as _ from "radash"
 
-import { BasePageVo, exception, RedisTool } from "@aspen/aspen-core"
+import { exception, RedisTool } from "@aspen/aspen-core"
 import { cache, FrameCaptchaService } from "@aspen/aspen-framework"
 import { JwtStrategy } from "@aspen/aspen-core/guard/jwt"
 
-import { SysUserEntity, SysUserAdminLoginDto, SysUserSaveDto, SysUserQueryDto } from "../common/entity/sys-user-entity"
+import {
+	SysUserEntity,
+	SysUserAdminLoginDto,
+	SysUserSaveDto,
+	SysUserQueryDto,
+	SysUserResetPwdDto,
+	SysUserEditEnableDto,
+} from "../common/entity/sys-user-entity"
 import { SysDeptShare } from "./share/sys-dept.share"
 import { SysRoleShare } from "./share/sys-role.share"
 import { SysUserShare } from "./share/sys-user.share"
@@ -122,6 +129,34 @@ export class SysUserService {
 		return affected ?? 0
 	}
 
+	// 修改用户是否启用
+	async editEnable(dto: SysUserEditEnableDto) {
+		// 查询存不存在
+		const user = await this.sysUserRepo.findOne({ where: { userId: dto.userId } })
+		if (!user) {
+			throw new exception.validator(`用户id:"${dto.userId}"不存在`)
+		}
+		// 更新是否启用
+		await this.sysUserRepo.update(dto.userId, { enable: dto.enable })
+		// 删除缓存
+		this.redisTool.del(`sys:user:id:${dto.userId}`)
+		return 1
+	}
+
+	// 重置密码
+	async resetPwd(dto: SysUserResetPwdDto) {
+		// 查询存不存在
+		const user = await this.sysUserRepo.findOne({ where: { userId: dto.userId } })
+		if (!user) {
+			throw new exception.validator(`用户id:"${dto.userId}"不存在`)
+		}
+		// 重置密码
+		await this.sysUserRepo.update(dto.userId, { password: dto.password })
+		// 删除缓存
+		this.redisTool.del(`sys:user:id:${dto.userId}`)
+		return 1
+	}
+
 	// admin登录
 	async adminLogin(dto: SysUserAdminLoginDto) {
 		const { username, password, captchaKey, captchaInput } = dto
@@ -151,12 +186,12 @@ export class SysUserService {
 	}
 
 	// admin登出
-	async adminLogout() {
-		await this.jwtStrategy.removeByAccessToken("")
+	async adminLogout(accessToken: string) {
+		await this.jwtStrategy.removeByAccessToken(accessToken)
 	}
 
 	// 校验accessToken是否有效
-	async isLogin() {
-		throw new Error("Method not implemented.")
+	async isLogin(accessToken: string) {
+		return await this.jwtStrategy.checkLoginByAccessToken(accessToken)
 	}
 }

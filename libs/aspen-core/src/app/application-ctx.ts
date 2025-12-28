@@ -94,6 +94,11 @@ export class ApplicationCtx {
 		}
 	}
 
+	async getLoginAccessToken(): Promise<string | null> {
+		const clsService = await ApplicationCtx.getInstance().getClsService()
+		return clsService.get<string | null>("token")
+	}
+
 	/**
 	 * 更具当前用户获取包装对应数据权限的sql
 	 *
@@ -101,7 +106,7 @@ export class ApplicationCtx {
 	 * @returns string?
 	 */
 	async getLoginUserDataScope(sql: string): Promise<string | null> {
-		const loginUser = await ApplicationCtx.instance.getLoginUser()
+		const loginUser = await ApplicationCtx.getInstance().getLoginUser()
 		if (!loginUser) return null
 		return sql
 	}

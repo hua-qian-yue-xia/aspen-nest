@@ -4,7 +4,14 @@ import { R, router, ApplicationCtx, LoginUserInfoBO } from "@aspen/aspen-core"
 import { FrameCaptchaService, CaptchaCreateBO } from "@aspen/aspen-framework"
 
 import { SysUserService } from "../service/sys-user-service"
-import { SysUserEntity, SysUserSaveDto, SysUserAdminLoginDto, SysUserQueryDto } from "../common/entity/sys-user-entity"
+import {
+	SysUserEntity,
+	SysUserSaveDto,
+	SysUserAdminLoginDto,
+	SysUserQueryDto,
+	SysUserResetPwdDto,
+	SysUserEditEnableDto,
+} from "../common/entity/sys-user-entity"
 
 @router.controller({ prefix: "sys/user", summary: "用户管理" })
 export class SysUserController {
@@ -87,6 +94,24 @@ export class SysUserController {
 	}
 
 	@router.post({
+		summary: "重置密码",
+		router: "/reset-pwd",
+	})
+	async resetPwd(@Body() dto: SysUserResetPwdDto) {
+		const resetCount = await this.sysUserService.resetPwd(dto)
+		return R.success(resetCount)
+	}
+
+	@router.post({
+		summary: "修改用户是否启用",
+		router: "/edit-enable",
+	})
+	async editEnable(@Body() dto: SysUserEditEnableDto) {
+		const editCount = await this.sysUserService.editEnable(dto)
+		return R.success(editCount)
+	}
+
+	@router.post({
 		summary: "admin登录",
 		description: "admin登录,会校验用户名、密码、用户是否启用、用户是否有权限登录管理后台",
 		router: "/admin/login",
@@ -128,8 +153,8 @@ export class SysUserController {
 	})
 	async getCurrentUser() {
 		const user = await ApplicationCtx.getInstance().getLoginUser()
-		await this.sysUserService.adminLogout()
-		return R.success()
+		const detail = await this.sysUserService.getByUserId(user.userId)
+		return R.success(detail)
 	}
 
 	@router.delete({
@@ -140,7 +165,8 @@ export class SysUserController {
 		},
 	})
 	async adminLogout() {
-		await this.sysUserService.adminLogout()
+		const accessToken = await ApplicationCtx.getInstance().getLoginAccessToken()
+		await this.sysUserService.adminLogout(accessToken)
 		return R.success()
 	}
 
@@ -152,7 +178,8 @@ export class SysUserController {
 		},
 	})
 	async adminIsLogin() {
-		const result = await this.sysUserService.isLogin()
+		const accessToken = await ApplicationCtx.getInstance().getLoginAccessToken()
+		const result = await this.sysUserService.isLogin(accessToken)
 		return R.success(result)
 	}
 }

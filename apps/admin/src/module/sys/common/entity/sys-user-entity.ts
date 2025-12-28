@@ -1,4 +1,4 @@
-import { Brackets, Column, Entity, JoinTable, ManyToMany, PrimaryGeneratedColumn, Repository } from "typeorm"
+import { Brackets, Column, Entity, Index, JoinTable, ManyToMany, PrimaryGeneratedColumn, Repository } from "typeorm"
 import { Exclude, plainToInstance } from "class-transformer"
 import { IsNotEmpty, validateSync } from "class-validator"
 
@@ -19,6 +19,7 @@ export class SysUserEntity extends BaseUser {
 	@AspenSummary({ summary: "登录名" })
 	override userId: string
 
+	@Index()
 	@Column({ type: "varchar", length: 64, comment: "登录名" })
 	@AspenSummary({ summary: "登录名" })
 	override username: string
@@ -32,6 +33,7 @@ export class SysUserEntity extends BaseUser {
 	@Exclude()
 	override password: string
 
+	@Index()
 	@Column({ type: "varchar", length: 128, comment: "用户手机号" })
 	@AspenSummary({ summary: "用户手机号" })
 	override mobile: string
@@ -60,7 +62,7 @@ export class SysUserEntity extends BaseUser {
  */
 export class SysUserSaveDto {
 	@AspenSummary({ summary: "用户id", rule: AspenRule() })
-	userId: string
+	userId?: string
 
 	@AspenSummary({ summary: "登录名", rule: AspenRule().isNotEmpty() })
 	username: string
@@ -72,10 +74,10 @@ export class SysUserSaveDto {
 	mobile: string
 
 	@AspenSummary({ summary: "是否启用" })
-	enable: boolean
+	enable?: boolean
 
 	@AspenSummary({ summary: "排序" })
-	sort: number
+	sort?: number
 
 	@AspenSummary({ summary: "部门id列表", rule: AspenRule().isNotEmpty() })
 	deptIdList: Array<string>
@@ -91,6 +93,32 @@ export class SysUserSaveDto {
 		if (_.isEmpty(obj.sort)) obj.sort = 0
 		return obj
 	}
+}
+
+/*
+ * ---------------------------------------------------------------
+ * ## 用户-重置密码
+ * ---------------------------------------------------------------
+ */
+export class SysUserResetPwdDto {
+	@AspenSummary({ summary: "用户id", rule: AspenRule().isNotEmpty() })
+	userId: string
+
+	@AspenSummary({ summary: "用户密码", rule: AspenRule().isNotEmpty() })
+	password: string
+}
+
+/*
+ * ---------------------------------------------------------------
+ * ## 用户-修改是否启用
+ * ---------------------------------------------------------------
+ */
+export class SysUserEditEnableDto {
+	@AspenSummary({ summary: "用户id", rule: AspenRule().isNotEmpty() })
+	userId: string
+
+	@AspenSummary({ summary: "是否启用", rule: AspenRule().isNotEmpty() })
+	enable: boolean
 }
 
 /*

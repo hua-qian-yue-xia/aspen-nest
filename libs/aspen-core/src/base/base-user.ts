@@ -22,6 +22,9 @@ export class BaseUser extends BaseRecordDb {
 	// 是否启用
 	enable: boolean
 
+	/**
+	 * 将对象转换为BaseUser类
+	 */
 	static toClass(obj: Record<string, any>): BaseUser {
 		return plainToClass(BaseUser, obj)
 	}
