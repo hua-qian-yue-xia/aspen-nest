@@ -24,7 +24,7 @@ export class FrameFileConfigEntity extends BaseRecordDb {
 
 	@Column({ type: "json", comment: "文件配置", nullable: true })
 	@AspenSummary({ summary: "文件配置" })
-	config: Record<string, any>
+	config?: Record<string, any>
 
 	@Column({
 		type: "enum",

@@ -31,8 +31,8 @@ export class FrameFileConfigController {
 			type: FrameFileConfigEntity,
 		},
 	})
-	async getByDictId(@Param("configId") configId: string) {
-		const configDetail = await this.frameFileConfigService.getByDictId(configId)
+	async getByConfigId(@Param("configId") configId: string) {
+		const configDetail = await this.frameFileConfigService.getByConfigId(configId)
 		return R.success(configDetail)
 	}
 

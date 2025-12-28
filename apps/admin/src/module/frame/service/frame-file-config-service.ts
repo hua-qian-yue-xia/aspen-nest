@@ -26,7 +26,7 @@ export class FrameFileConfigService {
 
 	// 根据configId查询文件配置(有缓存)
 	@cache.able({ key: "frame:file-config:id", value: ([configId]) => `${configId}`, expiresIn: "2h" })
-	async getByDictId(configId: string) {
+	async getByConfigId(configId: string) {
 		const dictDetail = await this.frameFileConfigRep.findOne({
 			where: {
 				configId,

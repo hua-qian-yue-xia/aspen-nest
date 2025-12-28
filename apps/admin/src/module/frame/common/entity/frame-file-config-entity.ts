@@ -39,7 +39,7 @@ export class FrameFileConfigSaveDto {
 	description?: string
 
 	toEntity() {
-		const obj = plainToInstance(FrameFileConfigSaveDto, this)
+		const obj = plainToInstance(FrameFileConfigEntity, this)
 		if (_.isEmpty(obj.configId)) obj.configId = undefined
 		if (_.isEmpty(obj.enable)) obj.enable = comEnableEnum.YES.code
 		return obj

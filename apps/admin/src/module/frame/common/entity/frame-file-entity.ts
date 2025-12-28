@@ -37,7 +37,7 @@ export class FrameFileSaveDto {
 	fileType: string
 
 	toEntity() {
-		const obj = plainToInstance(FrameFileSaveDto, this)
+		const obj = plainToInstance(FrameFileEntity, this)
 		if (_.isEmpty(obj.fileId)) obj.fileId = undefined
 		return obj
 	}

@@ -14,6 +14,7 @@ import {
 import { Exclude } from "class-transformer"
 
 import { AspenSummary } from "../decorator/summary/summary-decorator"
+import { ApplicationCtx } from "../app/application-ctx"
 
 export abstract class BaseDb extends BaseEntity {}
 
@@ -49,24 +50,40 @@ export class BaseRecordDb extends BaseDb {
 	delAt: Date
 
 	@BeforeInsert()
-	BeforeInsert() {
-		if (isEmpty(this.createBy)) this.createBy = "auto"
-		if (isEmpty(this.createAt)) this.createAt = new Date()
+	async BeforeInsert() {
+		const user = await ApplicationCtx.getInstance().getLoginUser()
+		if (isEmpty(this.createBy)) {
+			this.createBy = user?.username || "auto"
+		}
+		if (isEmpty(this.createAt)) {
+			this.createAt = new Date()
+		}
 	}
 
 	@BeforeUpdate()
-	beforeUpdate() {
-		if (isEmpty(this.updateBy)) this.updateBy = "auto"
-		if (isEmpty(this.updateAt)) this.updateAt = new Date()
+	async beforeUpdate() {
+		const user = await ApplicationCtx.getInstance().getLoginUser()
+		if (isEmpty(this.updateBy)) {
+			this.updateBy = user?.username || "auto"
+		}
+		if (isEmpty(this.updateAt)) {
+			this.updateAt = new Date()
+		}
 	}
 
 	@BeforeSoftRemove()
-	beforeSoftRemove() {
-		if (isEmpty(this.delBy)) this.delBy = "auto"
+	async beforeSoftRemove() {
+		const user = await ApplicationCtx.getInstance().getLoginUser()
+		if (isEmpty(this.delBy)) {
+			this.delBy = user?.username || "auto"
+		}
 	}
 
 	@BeforeRemove()
-	beforeRemove() {
-		if (isEmpty(this.delBy)) this.delBy = "auto"
+	async beforeRemove() {
+		const user = await ApplicationCtx.getInstance().getLoginUser()
+		if (isEmpty(this.delBy)) {
+			this.delBy = user?.username || "auto"
+		}
 	}
 }
