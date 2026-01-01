@@ -1,5 +1,7 @@
 import { AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
 import { Column, Entity, Index, JoinTable, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
+
+import { FrameFileCategoryEntity } from "./frame-file-category-entity"
 import { FrameFileConfigEntity } from "./frame-file-config-entity"
 
 /**
@@ -18,6 +20,10 @@ export class FrameFileEntity extends BaseRecordDb {
 	@ManyToOne(() => FrameFileConfigEntity)
 	@JoinTable({ name: "config_id" })
 	config: FrameFileConfigEntity
+
+	@ManyToOne(() => FrameFileCategoryEntity)
+	@JoinTable({ name: "category_id" })
+	category: FrameFileCategoryEntity
 
 	@Column({ type: "varchar", length: 64, comment: "文件名" })
 	@AspenSummary({ summary: "文件名" })

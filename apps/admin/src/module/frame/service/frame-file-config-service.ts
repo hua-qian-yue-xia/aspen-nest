@@ -2,7 +2,7 @@ import { Injectable } from "@nestjs/common"
 import { InjectRepository } from "@nestjs/typeorm"
 import { In, Repository } from "typeorm"
 
-import { RedisTool } from "@aspen/aspen-core"
+import { exception, RedisTool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
 import {
@@ -18,6 +18,16 @@ export class FrameFileConfigService {
 
 		private readonly redisTool: RedisTool,
 	) {}
+
+	// 分类名称是否重复
+	async isCategoryNameDuplicate(entity: FrameFileConfigEntity): Promise<boolean> {
+		const queryBuilder = this.frameFileConfigRep.createQueryBuilder("a").where("a.name = :name", { name: entity.name })
+		if (entity.configId) {
+			queryBuilder.andWhere("a.config_id != :configId", { configId: entity.configId })
+		}
+		const count = await queryBuilder.getCount()
+		return count > 0
+	}
 
 	// 文件配置分页
 	async page(dto: FrameFileConfigQueryDto) {
@@ -38,14 +48,22 @@ export class FrameFileConfigService {
 	// 新增文件配置
 	@cache.put({ key: "frame:file-config:id", value: (_, result) => `${result.configId}`, expiresIn: "2h" })
 	async save(body: FrameFileConfigSaveDto) {
-		const saveObj = await this.frameFileConfigRep.save(body.toEntity())
+		const entity = body.toEntity()
+		if (await this.isCategoryNameDuplicate(entity)) {
+			throw new exception.validator(`文件配置名称"${body.name}"重复`)
+		}
+		const saveObj = await this.frameFileConfigRep.save(entity)
 		return saveObj
 	}
 
 	// 更新文件配置
 	@cache.evict({ key: "frame:file-config:id", value: ([body]) => `${body.configId}` })
 	async edit(body: FrameFileConfigSaveDto) {
-		await this.frameFileConfigRep.update({ configId: body.configId }, body.toEntity())
+		const entity = body.toEntity()
+		if (await this.isCategoryNameDuplicate(entity)) {
+			throw new exception.validator(`文件配置名称"${body.name}"重复`)
+		}
+		await this.frameFileConfigRep.update({ configId: body.configId }, entity)
 	}
 
 	// 删除文件配置

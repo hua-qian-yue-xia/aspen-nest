@@ -1,5 +1,6 @@
 export * from "./frame-dict-controller"
 export * from "./frame-dict-item-controller"
+export * from "./frame-file-category-controller"
 export * from "./frame-file-config-controller"
 export * from "./frame-file-content-controller"
 export * from "./frame-file-controller"

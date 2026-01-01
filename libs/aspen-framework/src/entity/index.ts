@@ -1,5 +1,6 @@
 export * from "./frame-dict-entity"
 export * from "./frame-dict-item-entity"
+export * from "./frame-file-category-entity"
 export * from "./frame-file-config-entity"
 export * from "./frame-file-content-entity"
 export * from "./frame-file-entity"
