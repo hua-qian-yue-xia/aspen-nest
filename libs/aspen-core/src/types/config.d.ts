@@ -5,6 +5,7 @@ declare namespace GlobalConfig {
 		database: DatabaseConfig
 		jwt: JwtConfig
 		logger: LoggerConfig
+		localFile: LocalFileConfig
 	}
 
 	interface AppConfig {
@@ -154,5 +155,18 @@ declare namespace GlobalConfig {
 		 * loki: loki输出
 		 */
 		transports?: Array<"console" | "file" | "loki">
+	}
+
+	interface LocalFileConfig {
+		/**
+		 * 本地文件存储路径
+		 * @default '/file'
+		 */
+		basePath?: string
+		/**
+		 * 最大文件大小(M)
+		 * @default 20
+		 */
+		maxFileSize?: number
 	}
 }

@@ -12,3 +12,9 @@ jwt:
   accessExpiresIn: 1D
   # refresh token 过期时间
   refreshExpiresIn: 7D
+# 本地文件上传配置
+localFile:
+  # 本地文件存储路径
+  basePath: /file
+  # 最大文件大小(M)
+  maxFileSize: 20

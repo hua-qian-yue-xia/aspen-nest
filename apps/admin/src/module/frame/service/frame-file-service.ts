@@ -1,12 +1,41 @@
 import { Injectable } from "@nestjs/common"
 import { In, Repository } from "typeorm"
 import { InjectRepository } from "@nestjs/typeorm"
+import { MemoryStorageFile } from "@blazity/nest-file-fastify"
 
-import { FrameFileEntity, FrameFileQueryDto } from "../common/entity/frame-file-entity"
+import {
+	FrameFileChunkUploadDto,
+	FrameFileEntity,
+	FrameFileQueryDto,
+	FrameFileSingleUploadDto,
+} from "../common/entity/frame-file-entity"
+import { FileService } from "./file"
 
 @Injectable()
 export class FrameFileService {
-	constructor(@InjectRepository(FrameFileEntity) private readonly frameFileRepo: Repository<FrameFileEntity>) {}
+	constructor(
+		@InjectRepository(FrameFileEntity) private readonly frameFileRepo: Repository<FrameFileEntity>,
+		private readonly fileService: FileService,
+	) {}
+
+	// 单文件上传
+	async uploadSimple(file: MemoryStorageFile, dto: FrameFileSingleUploadDto) {
+		const fileService = await this.fileService.getFileService()
+		return fileService.uploadSingle(file.buffer, dto.filename, file.mimetype)
+	}
+
+	// 分片文件上传
+	async uploadChunk(file: MemoryStorageFile, dto: FrameFileChunkUploadDto) {
+		const fileService = await this.fileService.getFileService()
+		return fileService.uploadChunk({
+			identifier: dto.identifier,
+			chunkNumber: dto.chunkNumber,
+			totalChunks: dto.totalChunks,
+			filename: dto.filename,
+			fileType: file.mimetype,
+			file: file.buffer,
+		})
+	}
 
 	// 文件分页
 	async page(dto: FrameFileQueryDto) {

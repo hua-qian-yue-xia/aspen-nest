@@ -17,7 +17,7 @@ export class FrameFileConfigTypeEnum extends BaseEnum {
 	}
 	readonly FILE = {
 		code: "200",
-		summary: "数据库存储",
+		summary: "服务器存储",
 	}
 }
 

@@ -1,4 +1,5 @@
 import { Brackets, Repository } from "typeorm"
+import { ApiProperty } from "@nestjs/swagger"
 import { plainToInstance } from "class-transformer"
 import * as _ from "radash"
 
@@ -73,4 +74,33 @@ export class FrameFileQueryDto {
 		query.orderBy("a.create_at", "DESC").addOrderBy("a.file_type", "DESC").addOrderBy("a.file_id", "DESC")
 		return query
 	}
+}
+
+/*
+ * ---------------------------------------------------------------
+ * ## 文件内容存储-分片文件存储
+ * ---------------------------------------------------------------
+ */
+export class FrameFileSingleUploadDto {
+	@AspenSummary({ summary: "原始文件名", rule: AspenRule() })
+	filename?: string
+}
+
+/*
+ * ---------------------------------------------------------------
+ * ## 文件内容存储-分片文件存储
+ * ---------------------------------------------------------------
+ */
+export class FrameFileChunkUploadDto {
+	@AspenSummary({ summary: "文件唯一标识(MD5)", rule: AspenRule() })
+	identifier: string
+
+	@AspenSummary({ summary: "当前分片序号", rule: AspenRule() })
+	chunkNumber: number
+
+	@AspenSummary({ summary: "总分片数", rule: AspenRule() })
+	totalChunks: number
+
+	@AspenSummary({ summary: "原始文件名", rule: AspenRule() })
+	filename?: string
 }

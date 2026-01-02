@@ -8,8 +8,7 @@ import { DecoratorKey, tool, BaseEnum } from "@aspen/aspen-core"
 import { GEN_DICT_MODULE_OPTIONS, GenDictModuleOptions } from "./gen-dict-module"
 
 import { GenDictRegistry } from "./gen-dict-share"
-import { FrameDictEntity } from "@aspen/aspen-framework/entity/frame-dict-entity"
-import { FrameDictItemEntity } from "@aspen/aspen-framework/entity/frame-dict-item-entity"
+import { FrameDictEntity, FrameDictItemEntity } from "@aspen/aspen-framework"
 
 /******************** start type start ********************/
 

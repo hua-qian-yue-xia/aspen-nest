@@ -18,12 +18,15 @@ import {
 } from "./controller/index"
 
 import {
+	FrameFileConfigShare,
 	FrameDictService,
 	FrameDictItemService,
 	FrameFileCategoryService,
 	FrameFileConfigService,
 	FrameFileService,
 } from "./service/index"
+
+import { FileService } from "./service/file/index"
 
 @Module({
 	imports: [
@@ -43,11 +46,14 @@ import {
 		FrameFileController,
 	],
 	providers: [
+		FrameFileConfigShare,
 		FrameDictService,
 		FrameDictItemService,
 		FrameFileCategoryService,
 		FrameFileConfigService,
 		FrameFileService,
+		FileService,
 	],
+	exports: [FileService],
 })
 export class FrameModule {}

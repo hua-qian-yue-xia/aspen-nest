@@ -70,6 +70,7 @@ export class DatabaseModule {
 							synchronize: synchronize,
 							logging: ["error", "warn", "schema", "migration"],
 							entities: [options.entityPattern],
+							autoLoadEntities: true,
 							// 转换为蛇形命名
 							namingStrategy: new SnakeNamingStrategy(),
 							// 全局类型转换

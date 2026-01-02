@@ -4,6 +4,6 @@
 		"declaration": false,
 		"outDir": "../../dist/apps/admin"
 	},
-	"include": ["src/**/*", "src/config/*.yaml"],
+	"include": ["src/**/*", "src/config/*.yaml", "../../libs/**/*.d.ts"],
 	"exclude": ["node_modules", "dist"]
 }

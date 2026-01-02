@@ -1,7 +1,10 @@
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm"
+import { Transform } from "class-transformer"
+import * as _ from "radash"
 
-import { AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
-import { comEnableEnum } from "../enum/com-enable.enum-gen"
+import { AspenSummary, BaseRecordDb, EnumValues } from "@aspen/aspen-core"
+
+import { ComEnableEnum, comEnableEnum } from "../enum/com-enable.enum-gen"
 import { FrameFileEntity } from "./frame-file-entity"
 
 /**
@@ -13,12 +16,17 @@ export class FrameFileConfigEntity extends BaseRecordDb {
 	@AspenSummary({ summary: "文件配置id" })
 	configId: string
 
-	@Column({ type: "varchar", length: 100, comment: "文件配置名称" })
+	@Column({ type: "varchar", length: 64, comment: "文件配置名称" })
 	@AspenSummary({ summary: "文件配置名称" })
 	name: string
 
 	@Index({ unique: true })
-	@Column({ type: "varchar", length: 100, comment: "存储类型" })
+	@Column({ type: "varchar", length: 16, comment: "存储类型" })
+	@AspenSummary({ summary: "存储类型" })
+	uniqueCode: string
+
+	@Index({ unique: true })
+	@Column({ type: "varchar", length: 32, comment: "存储类型" })
 	@AspenSummary({ summary: "存储类型" })
 	type: string
 
@@ -29,11 +37,13 @@ export class FrameFileConfigEntity extends BaseRecordDb {
 	@Column({
 		type: "enum",
 		enum: comEnableEnum.getCodes(),
-		default: comEnableEnum.YES.code,
+		default: comEnableEnum.NO.code,
 		comment: "是否启用",
+		transformer: comEnableEnum.typeOrmTransformer(),
 	})
+	@Transform(({ value }) => value.code)
 	@AspenSummary({ summary: "是否启用" })
-	enable: string
+	default: EnumValues<ComEnableEnum>
 
 	@Column({ type: "varchar", length: 500, comment: "文件配置描述", nullable: true })
 	@AspenSummary({ summary: "文件配置描述" })
@@ -41,24 +51,4 @@ export class FrameFileConfigEntity extends BaseRecordDb {
 
 	@OneToMany(() => FrameFileEntity, (file) => file.config)
 	fileList: Array<FrameFileEntity>
-}
-
-/**
- * s3文件配置管理表
- */
-export class FrameFileS3ConfigEntity {
-	@AspenSummary({ summary: "endpoint" })
-	endpoint: string
-
-	@AspenSummary({ summary: "domain" })
-	domain: string
-
-	@AspenSummary({ summary: "存储bucket" })
-	bucket: string
-
-	@AspenSummary({ summary: "访问key" })
-	accessKey: string
-
-	@AspenSummary({ summary: "访问secret" })
-	accessSecret: string
 }

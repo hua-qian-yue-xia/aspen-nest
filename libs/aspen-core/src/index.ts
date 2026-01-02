@@ -7,6 +7,7 @@ export { Application } from "libs/aspen-core/src/app/application"
 /******************** start base start ********************/
 export { BaseDb, BaseRecordDb } from "libs/aspen-core/src/base/base-db"
 export { BaseEnum } from "libs/aspen-core/src/base/base-enum"
+export type { EnumType, EnumValues } from "libs/aspen-core/src/base/base-enum"
 export { BasePage, BasePageVo, BasePageTool } from "libs/aspen-core/src/base/base-page"
 export { R } from "libs/aspen-core/src/base/base-result"
 export { BaseUser } from "libs/aspen-core/src/base/base-user"

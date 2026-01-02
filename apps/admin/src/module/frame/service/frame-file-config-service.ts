@@ -3,31 +3,23 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { In, Repository } from "typeorm"
 
 import { exception, RedisTool } from "@aspen/aspen-core"
-import { cache } from "@aspen/aspen-framework"
+import { cache, enums } from "@aspen/aspen-framework"
 
 import {
 	FrameFileConfigEntity,
 	FrameFileConfigQueryDto,
 	FrameFileConfigSaveDto,
 } from "../common/entity/frame-file-config-entity"
+import { FrameFileConfigShare } from "./share/frame-file-config-share"
 
 @Injectable()
 export class FrameFileConfigService {
 	constructor(
 		@InjectRepository(FrameFileConfigEntity) private readonly frameFileConfigRep: Repository<FrameFileConfigEntity>,
-
 		private readonly redisTool: RedisTool,
-	) {}
 
-	// 分类名称是否重复
-	async isCategoryNameDuplicate(entity: FrameFileConfigEntity): Promise<boolean> {
-		const queryBuilder = this.frameFileConfigRep.createQueryBuilder("a").where("a.name = :name", { name: entity.name })
-		if (entity.configId) {
-			queryBuilder.andWhere("a.config_id != :configId", { configId: entity.configId })
-		}
-		const count = await queryBuilder.getCount()
-		return count > 0
-	}
+		private readonly frameFileConfigShare: FrameFileConfigShare,
+	) {}
 
 	// 文件配置分页
 	async page(dto: FrameFileConfigQueryDto) {
@@ -45,22 +37,44 @@ export class FrameFileConfigService {
 		return dictDetail
 	}
 
+	// 根据uniqueCode查询文件配置,如果没有code就查询默认配置
+	async getConfigByCodeOrDefault(uniqueCode?: string) {
+		let config: FrameFileConfigEntity | null = null
+		if (uniqueCode) {
+			config = await this.frameFileConfigRep.findOne({
+				where: {
+					uniqueCode,
+				},
+			})
+		}
+		if (!config) {
+			config = await this.frameFileConfigRep.findOne({
+				where: {
+					default: enums.comEnableEnum.NO,
+				},
+			})
+		}
+		return config
+	}
+
 	// 新增文件配置
-	@cache.put({ key: "frame:file-config:id", value: (_, result) => `${result.configId}`, expiresIn: "2h" })
+	@cache.put([{ key: "frame:file-config:id", value: (_, result) => `${result.configId}`, expiresIn: "2h" }])
 	async save(body: FrameFileConfigSaveDto) {
 		const entity = body.toEntity()
-		if (await this.isCategoryNameDuplicate(entity)) {
+		if (await this.frameFileConfigShare.isConfigNameDuplicate(entity)) {
 			throw new exception.validator(`文件配置名称"${body.name}"重复`)
 		}
+		// 生成唯一code
+		entity.uniqueCode = await this.frameFileConfigShare.generateUniqueCode()
 		const saveObj = await this.frameFileConfigRep.save(entity)
 		return saveObj
 	}
 
 	// 更新文件配置
-	@cache.evict({ key: "frame:file-config:id", value: ([body]) => `${body.configId}` })
+	@cache.evict([{ key: "frame:file-config:id", value: ([body]) => `${body.configId}` }])
 	async edit(body: FrameFileConfigSaveDto) {
 		const entity = body.toEntity()
-		if (await this.isCategoryNameDuplicate(entity)) {
+		if (await this.frameFileConfigShare.isConfigNameDuplicate(entity)) {
 			throw new exception.validator(`文件配置名称"${body.name}"重复`)
 		}
 		await this.frameFileConfigRep.update({ configId: body.configId }, entity)

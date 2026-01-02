@@ -1,3 +1,5 @@
+export * from "./share/frame-file-config-share"
+
 export * from "./frame-dict-service"
 export * from "./frame-dict-item-service"
 export * from "./frame-file-category-service"

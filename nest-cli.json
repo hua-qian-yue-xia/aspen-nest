@@ -10,10 +10,10 @@
 		"assets": [
 			{
 				"include": "**/*.yaml",
-				"outDir": "./dist/apps/admin/src"
+				"outDir": "./dist/apps/admin"
 			}
 		],
-		"webpack": false
+		"webpack": true
 	},
 	"projects": {
 		"@aspen-app/admin": {

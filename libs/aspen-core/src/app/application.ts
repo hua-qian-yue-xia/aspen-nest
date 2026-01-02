@@ -3,6 +3,7 @@ import * as fs from "node:fs"
 
 import * as yaml from "js-yaml"
 import * as _ from "radash"
+import * as fastifyMultipart from "@fastify/multipart"
 
 import { NestFactory, Reflector } from "@nestjs/core"
 
@@ -39,13 +40,24 @@ export class Application {
 			}),
 			{ bufferLogs: true },
 		)
+
 		// 设置应用上下文
 		ApplicationCtx.getInstance().setApp(this.app)
 
 		this.config = this.app.get(ConfigService)
 		const appConfig = this.config.get<GlobalConfig.AppConfig>("app")
+		const localFileConfig = this.config.get<GlobalConfig.LocalFileConfig>("localFile")
 
+		// 启用CORS
 		this.app.enableCors()
+
+		// 注册 multipart 插件，用于处理文件上传
+		// @ts-ignore
+		this.app.register(fastifyMultipart, {
+			limits: {
+				fileSize: 1024 * 1024 * (localFileConfig.maxFileSize || 10),
+			},
+		})
 
 		// 配置全局路由前缀
 		this.app.setGlobalPrefix(appConfig.prefix)
@@ -99,6 +111,7 @@ export class Application {
 				database: this.getDatabaseDefault(),
 				jwt: this.getJwtConfig(),
 				logger: this.getLoggerDefault(),
+				localFile: this.getLocalFileDefault(),
 			},
 			defaultConf,
 		)
@@ -181,5 +194,15 @@ export class Application {
 			maxFiles: "3m",
 			transports: ["console", "file"],
 		} as GlobalConfig.LoggerConfig
+	}
+
+	/**
+	 * 获取本地文件默认配置
+	 */
+	private getLocalFileDefault = () => {
+		return {
+			basePath: "/file",
+			maxFileSize: 20,
+		} as GlobalConfig.LocalFileConfig
 	}
 }

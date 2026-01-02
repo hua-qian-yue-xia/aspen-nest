@@ -3,9 +3,7 @@ import { plainToInstance } from "class-transformer"
 import * as _ from "radash"
 
 import { AspenRule, AspenSummary } from "@aspen/aspen-core"
-import { FrameFileConfigEntity } from "@aspen/aspen-framework"
-
-import { comEnableEnum } from "@aspen/aspen-framework/enum/com-enable.enum-gen"
+import { enums, FrameFileConfigEntity } from "@aspen/aspen-framework"
 
 /*
  * ---------------------------------------------------------------
@@ -33,7 +31,7 @@ export class FrameFileConfigSaveDto {
 	config: Record<string, any>
 
 	@AspenSummary({ summary: "是否启用" })
-	enable?: string
+	default?: string
 
 	@AspenSummary({ summary: "文件配置描述" })
 	description?: string
@@ -41,7 +39,7 @@ export class FrameFileConfigSaveDto {
 	toEntity() {
 		const obj = plainToInstance(FrameFileConfigEntity, this)
 		if (_.isEmpty(obj.configId)) obj.configId = undefined
-		if (_.isEmpty(obj.enable)) obj.enable = comEnableEnum.YES.code
+		if (_.isEmpty(obj.default)) obj.default = enums.comEnableEnum.NO
 		return obj
 	}
 }
