@@ -1,4 +1,5 @@
 import { Injectable } from "@nestjs/common"
+import { InjectRepository } from "@nestjs/typeorm"
 import { In, Repository } from "typeorm"
 
 import { exception, RedisTool } from "@aspen/aspen-core"
@@ -8,6 +9,7 @@ import { FrameFileCategoryQueryDto, FrameFileCategorySaveDto } from "../common/e
 @Injectable()
 export class FrameFileCategoryService {
 	constructor(
+		@InjectRepository(FrameFileCategoryEntity)
 		private readonly frameFileCategoryRepo: Repository<FrameFileCategoryEntity>,
 		private readonly redisTool: RedisTool,
 	) {}

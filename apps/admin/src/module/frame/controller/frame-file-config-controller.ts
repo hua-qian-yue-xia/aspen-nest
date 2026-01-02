@@ -7,7 +7,7 @@ import { FrameFileConfigService } from "../service"
 
 import { FrameFileConfigQueryDto, FrameFileConfigSaveDto } from "../common/entity/frame-file-config-entity"
 
-@router.controller({ prefix: "/frame/file-config", summary: "文件配置管理" })
+@router.controller({ prefix: "/frame/file-config", summary: "文件配置" })
 export class FrameFileConfigController {
 	constructor(private readonly frameFileConfigService: FrameFileConfigService) {}
 

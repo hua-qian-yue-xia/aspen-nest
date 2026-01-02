@@ -4,24 +4,24 @@ import { TypeOrmModule } from "@nestjs/typeorm"
 import {
 	FrameDictEntity,
 	FrameDictItemEntity,
+	FrameFileCategoryEntity,
 	FrameFileConfigEntity,
-	FrameFileContentEntity,
 	FrameFileEntity,
 } from "@aspen/aspen-framework"
 
 import {
 	FrameDictController,
 	FrameDictItemController,
+	FrameFileCategoryController,
 	FrameFileConfigController,
-	FrameFileContentController,
 	FrameFileController,
 } from "./controller/index"
 
 import {
 	FrameDictService,
 	FrameDictItemService,
+	FrameFileCategoryService,
 	FrameFileConfigService,
-	FrameFileContentService,
 	FrameFileService,
 } from "./service/index"
 
@@ -30,23 +30,23 @@ import {
 		TypeOrmModule.forFeature([
 			FrameDictEntity,
 			FrameDictItemEntity,
+			FrameFileCategoryEntity,
 			FrameFileConfigEntity,
-			FrameFileContentEntity,
 			FrameFileEntity,
 		]),
 	],
 	controllers: [
 		FrameDictController,
 		FrameDictItemController,
+		FrameFileCategoryController,
 		FrameFileConfigController,
-		FrameFileContentController,
 		FrameFileController,
 	],
 	providers: [
 		FrameDictService,
 		FrameDictItemService,
+		FrameFileCategoryService,
 		FrameFileConfigService,
-		FrameFileContentService,
 		FrameFileService,
 	],
 })

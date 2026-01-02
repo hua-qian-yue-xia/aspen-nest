@@ -9,7 +9,7 @@ import {
 	FrameDictItemQueryDto,
 } from "../common/entity/frame-dict-item-entity"
 
-@router.controller({ prefix: "/frame/dict-item", summary: "字典项管理" })
+@router.controller({ prefix: "/frame/dict-item", summary: "字典项" })
 export class FrameDictItemController {
 	constructor(private readonly frameDictItemService: FrameDictItemService) {}
 
