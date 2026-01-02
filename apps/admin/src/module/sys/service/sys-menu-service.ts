@@ -7,7 +7,7 @@ import * as _ from "radash"
 import { RedisTool, tool } from "@aspen/aspen-core"
 import { cache } from "@aspen/aspen-framework"
 
-import { sysMenuTypeEnum } from "../common/sys-enum.enum-gen"
+import { sysMenuEnum } from "../common/sys-enum.enum-gen"
 import { SysMenuEntity, SysMenuQueryDto, SysMenuSaveDto } from "../common/entity/sys-menu-entity"
 import { SysMenuShare } from "./share/sys-menu.share"
 
@@ -82,7 +82,7 @@ export class SysMenuService {
 			throw new DOMException(`路径"${dto.path}"重复`)
 		}
 		const obj = plainToInstance(SysMenuEntity, dto)
-		if (obj.type == sysMenuTypeEnum.CATALOGUE.code) {
+		if (obj.type == sysMenuEnum.type.named.CATALOGUE.raw.code) {
 			obj.path = null
 		}
 		await this.sysMenuRep.update({ menuId: dto.menuId }, obj)

@@ -1,8 +1,7 @@
 import { Column, Entity, Index, PrimaryGeneratedColumn } from "typeorm"
 
 import { AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
-
-import { comEnableEnum } from "../enum/com-enable.enum-gen"
+import { comEnums } from "../enum/com-enum.enum-gen"
 
 /**
  * 插件管理表
@@ -40,8 +39,8 @@ export class FramePluginEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: comEnableEnum.getCodes(),
-		default: comEnableEnum.YES.code,
+		enum: comEnums.bool.meta.code,
+		default: comEnums.bool.named.YES.raw.code,
 		comment: "是否启用",
 	})
 	@AspenSummary({ summary: "是否启用" })

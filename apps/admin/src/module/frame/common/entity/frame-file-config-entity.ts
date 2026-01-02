@@ -1,9 +1,9 @@
 import { Brackets, Repository } from "typeorm"
-import { plainToInstance } from "class-transformer"
+import { plainToInstance, Transform } from "class-transformer"
 import * as _ from "radash"
 
 import { AspenRule, AspenSummary } from "@aspen/aspen-core"
-import { enums, FrameFileConfigEntity } from "@aspen/aspen-framework"
+import { comEnums, FrameFileConfigEntity } from "@aspen/aspen-framework"
 
 /*
  * ---------------------------------------------------------------
@@ -39,7 +39,7 @@ export class FrameFileConfigSaveDto {
 	toEntity() {
 		const obj = plainToInstance(FrameFileConfigEntity, this)
 		if (_.isEmpty(obj.configId)) obj.configId = undefined
-		if (_.isEmpty(obj.default)) obj.default = enums.comEnableEnum.NO
+		if (_.isEmpty(obj.default)) obj.default = "YES"
 		return obj
 	}
 }

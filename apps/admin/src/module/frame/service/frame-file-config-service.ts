@@ -3,7 +3,7 @@ import { InjectRepository } from "@nestjs/typeorm"
 import { In, Repository } from "typeorm"
 
 import { exception, RedisTool } from "@aspen/aspen-core"
-import { cache, enums } from "@aspen/aspen-framework"
+import { cache, comEnums } from "@aspen/aspen-framework"
 
 import {
 	FrameFileConfigEntity,
@@ -50,7 +50,7 @@ export class FrameFileConfigService {
 		if (!config) {
 			config = await this.frameFileConfigRep.findOne({
 				where: {
-					default: enums.comEnableEnum.NO,
+					default: "NO",
 				},
 			})
 		}

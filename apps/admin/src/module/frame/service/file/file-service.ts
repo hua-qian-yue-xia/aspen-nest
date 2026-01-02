@@ -10,7 +10,7 @@ import LocalFileService from "./impl/local-file-service"
 
 import { FrameFileConfigService } from "../frame-file-config-service"
 
-import { frameFileConfigTypeEnum } from "../../common/frame-enum.enum-gen"
+import { frameFileEnum } from "../../common/frame-enum.enum-gen"
 
 @Injectable({ scope: Scope.DEFAULT })
 export class FileService {
@@ -35,10 +35,10 @@ export class FileService {
 		let fileService: AbstractFileClient = null
 		// 根据配置创建文件客户端
 		switch (config.type) {
-			case frameFileConfigTypeEnum.MINIO.code:
+			case frameFileEnum.configType.named.MINIO.raw.code:
 				fileService = new MinioFileService(config.uniqueCode, plainToInstance(FileS3Config, config.config))
 				break
-			case frameFileConfigTypeEnum.FILE.code:
+			case frameFileEnum.configType.named.FILE.raw.code:
 				fileService = new LocalFileService(config.uniqueCode, plainToInstance(FileLocalConfig, config.config))
 				break
 			default:

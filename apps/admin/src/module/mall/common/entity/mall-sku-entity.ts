@@ -2,7 +2,7 @@ import { BaseDb } from "@aspen/aspen-core"
 import { Column, Entity, JoinColumn, ManyToOne, PrimaryGeneratedColumn } from "typeorm"
 
 import { MallSpuEntity } from "./mall-spu-entity"
-import { mallProductSourceEnum, mallProductTypeEnum, mallProductStatusEnum } from "../enum/index"
+import { mallProductEnum } from "../enum/index"
 
 @Entity({ comment: "SKU 商品", name: "mall_sku" })
 export class MallSkuEntity extends BaseDb {
@@ -30,19 +30,19 @@ export class MallSkuEntity extends BaseDb {
 
 	@Column({
 		type: "enum",
-		enum: mallProductStatusEnum.getCodes(),
-		default: mallProductStatusEnum.DRAFT.code,
+		enum: mallProductEnum.status.meta.code,
+		default: mallProductEnum.status.named.DRAFT.raw.code,
 		comment: "状态",
 	})
-	status: typeof mallProductStatusEnum
+	status: string
 
 	@Column({
 		type: "enum",
-		enum: mallProductSourceEnum.getCodes(),
-		default: mallProductSourceEnum.OWN.code,
+		enum: mallProductEnum.source.meta.code,
+		default: mallProductEnum.source.named.OWN.raw.code,
 		comment: "来源",
 	})
-	source: typeof mallProductSourceEnum
+	source: string
 
 	@Column({ type: "varchar", length: 64, nullable: true, comment: "第三方平台(如 JD/MT/ELM/TB)" })
 	externalSource?: string

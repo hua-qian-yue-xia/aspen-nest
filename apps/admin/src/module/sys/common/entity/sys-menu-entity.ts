@@ -5,11 +5,9 @@ import * as classValidator from "class-validator"
 import * as _ from "radash"
 
 import { AspenRule, AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
-import { enums } from "@aspen/aspen-framework"
+import { comEnums } from "@aspen/aspen-framework"
 
-import { sysMenuTypeEnum } from "../sys-enum.enum-gen"
-
-const { comBoolEnum } = enums
+import { sysMenuEnum } from "../sys-enum.enum-gen"
 
 /*
  * ---------------------------------------------------------------
@@ -32,7 +30,7 @@ export class SysMenuEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: sysMenuTypeEnum.getCodes(),
+		enum: sysMenuEnum.type.meta.code,
 		comment: "菜单类型",
 	})
 	@AspenSummary({ summary: "菜单类型" })
@@ -52,8 +50,8 @@ export class SysMenuEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: comBoolEnum.getCodes(),
-		default: comBoolEnum.NO.code,
+		enum: comEnums.bool.meta.code,
+		default: comEnums.active.named.NO.raw.code,
 		comment: "是否显示",
 	})
 	@AspenSummary({ summary: "是否显示" })
@@ -61,8 +59,8 @@ export class SysMenuEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: comBoolEnum.getCodes(),
-		default: comBoolEnum.NO.code,
+		enum: comEnums.bool.meta.code,
+		default: comEnums.active.named.NO.raw.code,
 		comment: "是否缓存",
 	})
 	@AspenSummary({ summary: "是否缓存" })
@@ -174,8 +172,11 @@ export class SysMenuSaveDto {
 	sort?: number
 
 	toEntity() {
-		if (this.type == sysMenuTypeEnum.CATALOGUE.code) {
+		if (this.type == sysMenuEnum.type.named.CATALOGUE.raw.code) {
 			return this.toCatalogueEntity()
+		}
+		if (this.type == sysMenuEnum.type.named.PERM.raw.code) {
+			return this.toPermEntity()
 		}
 		return this.toMenuEntity()
 	}

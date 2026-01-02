@@ -1,9 +1,7 @@
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
 import { BaseRecordDb } from "@aspen/aspen-core"
-import { enums } from "@aspen/aspen-framework"
-
-const { comBoolEnum } = enums
+import { comEnums } from "@aspen/aspen-framework"
 
 @Entity({ comment: "用户评论商品操作记录", name: "mall_operate_comment" })
 export class MallOperateCommentEntity extends BaseRecordDb {
@@ -18,11 +16,11 @@ export class MallOperateCommentEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: comBoolEnum.getCodes(),
-		default: comBoolEnum.NO.code,
+		enum: comEnums.bool.meta.code,
+		default: comEnums.active.named.NO.raw.code,
 		comment: "是否匿名",
 	})
-	anonymous: typeof comBoolEnum
+	anonymous: string
 
 	@Column({ type: "varchar", length: 36, nullable: true, comment: "用户昵称" })
 	nickname?: string
@@ -62,11 +60,11 @@ export class MallOperateCommentEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: comBoolEnum.getCodes(),
-		default: comBoolEnum.NO.code,
+		enum: comEnums.bool.meta.code,
+		default: comEnums.active.named.NO.raw.code,
 		comment: "商家是否回复",
 	})
-	replyStatus?: typeof comBoolEnum
+	replyStatus?: string
 
 	@Column({ type: "varchar", length: 36, nullable: true, comment: "商家回复人id" })
 	replyUserId?: string

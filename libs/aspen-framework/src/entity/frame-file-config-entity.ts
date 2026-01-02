@@ -1,10 +1,9 @@
 import { Column, Entity, Index, OneToMany, PrimaryGeneratedColumn } from "typeorm"
-import { Transform } from "class-transformer"
 import * as _ from "radash"
 
-import { AspenSummary, BaseRecordDb, EnumValues } from "@aspen/aspen-core"
+import { AspenSummary, BaseRecordDb } from "@aspen/aspen-core"
+import { comEnums } from "../enum/com-enum.enum-gen"
 
-import { ComEnableEnum, comEnableEnum } from "../enum/com-enable.enum-gen"
 import { FrameFileEntity } from "./frame-file-entity"
 
 /**
@@ -36,14 +35,12 @@ export class FrameFileConfigEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: comEnableEnum.getCodes(),
-		default: comEnableEnum.NO.code,
+		enum: comEnums.bool.meta.code,
+		default: comEnums.active.named.NO.raw.code,
 		comment: "是否启用",
-		transformer: comEnableEnum.typeOrmTransformer(),
 	})
-	@Transform(({ value }) => value.code)
 	@AspenSummary({ summary: "是否启用" })
-	default: EnumValues<ComEnableEnum>
+	default: string
 
 	@Column({ type: "varchar", length: 500, comment: "文件配置描述", nullable: true })
 	@AspenSummary({ summary: "文件配置描述" })

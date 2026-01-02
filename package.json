@@ -4,8 +4,8 @@
 	"description": "nest多模块快速开发系统",
 	"private": true,
 	"scripts": {
-		"admin:dev": "NODE_ENV=dev nest start @aspen-app/admin --debug --watch",
-		"admin:build": "NODE_ENV=prod nest build @aspen-app/admin",
+		"admin:dev": "tsc --noEmit -p apps/admin/tsconfig.json && NODE_ENV=dev nest start @aspen-app/admin --debug --watch",
+		"admin:build": "tsc --noEmit -p apps/admin/tsconfig.json && NODE_ENV=prod nest build @aspen-app/admin",
 		"app:dev": "NODE_ENV=dev nest start @aspen-app/app --debug --watch",
 		"app:build": "NODE_ENV=prod nest build @aspen-app/app",
 		"format": "prettier --write \"**/*.{ts,js,json,md}\"",
@@ -44,6 +44,7 @@
 		"class-transformer": "^0.5.1",
 		"class-validator": "^0.14.1",
 		"dayjs": "^1.11.18",
+		"enum-plus": "^3.1.6",
 		"fastify": "^5.2.1",
 		"fs-extra": "^11.3.3",
 		"glob": "^11.0.3",

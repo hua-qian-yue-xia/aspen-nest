@@ -77,6 +77,9 @@ importers:
       dayjs:
         specifier: ^1.11.18
         version: 1.11.18
+      enum-plus:
+        specifier: ^3.1.6
+        version: 3.1.6
       fastify:
         specifier: ^5.2.1
         version: 5.2.1
@@ -2064,6 +2067,10 @@ packages:
   enhanced-resolve@5.18.0:
     resolution: {integrity: sha512-0/r0MySGYG8YqlayBZ6MuCfECmHFdJ5qyPh8s8wa5Hnm6SaFLSK1VYCbj+NKp090Nm1caZhD+QTnmxO7esYGyQ==}
     engines: {node: '>=10.13.0'}
+
+  enum-plus@3.1.6:
+    resolution: {integrity: sha512-9nHr0FqFpDYHlSFGyMOKVOCqm5TxqxZ00UWI3a+oHBkUc7bvD2O0ELfb22ijbfb/B2aTl4jKz0gXV9z3f3nJ5Q==}
+    engines: {node: '>=7.10.1'}
 
   environment@1.1.0:
     resolution: {integrity: sha512-xUtoPkMggbz0MPyPiIWr1Kp4aeWJjDZ6SMvURhimjdZgsRuDplF5/s9hcgGhyXMhs+6vpnuoiZ2kFiu3FMnS8Q==}
@@ -6185,6 +6192,8 @@ snapshots:
     dependencies:
       graceful-fs: 4.2.11
       tapable: 2.2.1
+
+  enum-plus@3.1.6: {}
 
   environment@1.1.0: {}
 

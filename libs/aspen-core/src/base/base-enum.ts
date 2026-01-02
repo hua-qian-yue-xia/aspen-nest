@@ -1,72 +1,45 @@
-import { ValueTransformer } from "typeorm"
+import { Enum } from "enum-plus"
 
-type BaseEnumOptions = {
-	/**
-	 * 枚举值
-	 */
-	code: string
-	/**
-	 * 枚举描述
-	 */
-	summary: string
-	/**
-	 * 枚举排序
-	 * @default 0
-	 */
-	order?: number
+interface IEnumGroup {
+	list: Array<{
+		code: string
+		summary: string
+		enum: ReturnType<typeof Enum>
+	}>
 }
 
-type RemoveIndex<T> = {
-	[K in keyof T as string extends K ? never : number extends K ? never : K]: T[K]
-}
+export abstract class AbstractEnumGroup implements IEnumGroup {
+	list: Array<{
+		code: string
+		summary: string
+		enum: ReturnType<typeof Enum>
+	}> = []
 
-export type EnumType<T> = Exclude<keyof RemoveIndex<T>, keyof RemoveIndex<BaseEnum>>
-
-export type EnumValues<T> = T[EnumType<T>]
-
-export class BaseEnum {
-	readonly [key: string]: BaseEnumOptions
-
-	// @ts-ignore
-	getValues(): Array<BaseEnumOptions> {
-		return Object.values(this)
+	/**
+	 * 创建并注册枚举
+	 * @param key 枚举的唯一标识
+	 * @param defs 枚举定义
+	 */
+	protected create<const T extends Record<string, { code: string; summary: string }>>(
+		key: string,
+		summary: string,
+		defs: T,
+	) {
+		// 使用 enum-plus 创建枚举
+		const enumObj = Enum(defs)
+		// 触发监听并保存
+		this.listen(key, summary, enumObj)
+		return enumObj
 	}
 
-	// @ts-ignore
-	getKeys(): Array<string> {
-		return Object.keys(this)
-	}
-
-	// @ts-ignore
-	getCodes(): Array<string> {
-		return this.getKeys().map((key) => this[key].code)
-	}
-
-	// @ts-ignore
-	getByCode(code: string): BaseEnumOptions | null {
-		return this.getValues().find((item) => item.code === code) ?? null
-	}
-
-	// @ts-ignore
-	getByCodes(codes: Array<string>): Array<BaseEnumOptions> {
-		return this.getValues().filter((item) => codes.includes(item.code))
-	}
-
-	// @ts-ignore
-	getBySummary(summary: string): BaseEnumOptions | null {
-		return this.getValues().find((item) => item.summary === summary) ?? null
-	}
-
-	// @ts-ignore
-	getBySummarys(summaries: Array<string>): Array<BaseEnumOptions> {
-		return this.getValues().filter((item) => summaries.includes(item.summary))
-	}
-
-	// @ts-ignore
-	typeOrmTransformer(): ValueTransformer {
-		return {
-			to: (value: EnumValues<this>) => value.code,
-			from: (value: string) => this.getByCode(value),
-		}
+	/**
+	 * 监听枚举创建事件
+	 */
+	private listen(key: string, summary: string, enumObj: any) {
+		this.list.push({
+			code: key,
+			summary,
+			enum: enumObj,
+		})
 	}
 }

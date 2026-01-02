@@ -9,7 +9,7 @@ import { CoreApiModule } from "apps/admin/src/module/core/core-api-module"
 
 @Module({
 	imports: [
-		frameworkModule.genDict.forRoot({ isGlobal: true, scanPatterns: ["**/dist/**/*.enum-gen.js"] }),
+		frameworkModule.genDict.forRoot({ isGlobal: true, scanPatterns: ["**/{libs,admin}/**/*.enum-gen.{js,ts}"] }),
 		frameworkModule.service.forRoot(),
 		coreModule.authJwt.forRoot(),
 		SysModule,

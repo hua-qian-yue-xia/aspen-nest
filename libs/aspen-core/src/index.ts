@@ -6,8 +6,7 @@ export { Application } from "libs/aspen-core/src/app/application"
 
 /******************** start base start ********************/
 export { BaseDb, BaseRecordDb } from "libs/aspen-core/src/base/base-db"
-export { BaseEnum } from "libs/aspen-core/src/base/base-enum"
-export type { EnumType, EnumValues } from "libs/aspen-core/src/base/base-enum"
+export { AbstractEnumGroup } from "@aspen/aspen-core/base/base-enum"
 export { BasePage, BasePageVo, BasePageTool } from "libs/aspen-core/src/base/base-page"
 export { R } from "libs/aspen-core/src/base/base-result"
 export { BaseUser } from "libs/aspen-core/src/base/base-user"
@@ -29,7 +28,6 @@ export * from "libs/aspen-core/src/cache/redis-tool"
 /******************** start database start ********************/
 export * from "@aspen/aspen-core/database/common/common-column"
 export * from "@aspen/aspen-core/database/tool/orm-query-tool"
-export * from "@aspen/aspen-core/database/tool/transformer-tool"
 export * from "@aspen/aspen-core/database/database-module"
 export * from "@aspen/aspen-core/database/extension/orm-extension"
 /******************** end database end ********************/

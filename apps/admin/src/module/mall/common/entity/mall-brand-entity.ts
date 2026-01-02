@@ -1,9 +1,7 @@
 import { PrimaryGeneratedColumn, Column, Entity } from "typeorm"
 
 import { BaseRecordDb } from "@aspen/aspen-core"
-import { enums } from "@aspen/aspen-framework"
-
-const { comBoolEnum } = enums
+import { comEnums } from "@aspen/aspen-framework"
 
 @Entity({ comment: "商品品牌", name: "mall_brand" })
 export class MallBrandEntity extends BaseRecordDb {
@@ -27,9 +25,9 @@ export class MallBrandEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: comBoolEnum.getCodes(),
-		default: comBoolEnum.YES.code,
+		enum: comEnums.bool.meta.code,
+		default: comEnums.bool.named.YES.raw.code,
 		comment: "是否显示",
 	})
-	displayed: typeof comBoolEnum
+	displayed: string
 }

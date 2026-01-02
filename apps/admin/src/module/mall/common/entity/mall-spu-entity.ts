@@ -1,7 +1,7 @@
 import { BaseRecordDb } from "@aspen/aspen-core"
 import { Column, Entity, PrimaryGeneratedColumn } from "typeorm"
 
-import { mallProductSourceEnum, mallProductTypeEnum, mallProductStatusEnum } from "../enum/index"
+import { mallProductEnum } from "../enum/index"
 
 @Entity({ comment: "SPU 商品", name: "mall_spu" })
 export class MallSpuEntity extends BaseRecordDb {
@@ -31,27 +31,27 @@ export class MallSpuEntity extends BaseRecordDb {
 
 	@Column({
 		type: "enum",
-		enum: mallProductStatusEnum.getCodes(),
-		default: mallProductStatusEnum.DRAFT.code,
+		enum: mallProductEnum.status.meta.code,
+		default: mallProductEnum.status.named.DRAFT.raw.code,
 		comment: "状态",
 	})
-	status: typeof mallProductStatusEnum
+	status: string
 
 	@Column({
 		type: "enum",
-		enum: mallProductTypeEnum.getCodes(),
-		default: mallProductTypeEnum.PHYSICAL.code,
+		enum: mallProductEnum.type.meta.code,
+		default: mallProductEnum.type.named.PHYSICAL.raw.code,
 		comment: "商品类型",
 	})
-	type: typeof mallProductTypeEnum
+	type: string
 
 	@Column({
 		type: "enum",
-		enum: mallProductSourceEnum.getCodes(),
-		default: mallProductSourceEnum.OWN.code,
+		enum: mallProductEnum.source.meta.code,
+		default: mallProductEnum.source.named.OWN.raw.code,
 		comment: "来源",
 	})
-	source: typeof mallProductSourceEnum
+	source: string
 
 	@Column({ type: "varchar", length: 64, nullable: true, comment: "第三方平台(如 JD/MT/ELM/TB)" })
 	externalSource?: string
